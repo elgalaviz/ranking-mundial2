@@ -1,0 +1,27 @@
+{
+  "entry": [
+    {
+      "changes": [
+        {
+          "value": {
+            "messages": [
+              {
+                "from": "5218112345678",
+                "text": {
+                  "body": "Hola, quiero más clientes para mi negocio"
+                }
+              }
+            ],
+            "contacts": [
+              {
+                "profile": {
+                  "name": "Alejandro Test"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
