@@ -1,9 +1,35 @@
 import Link from "next/link";
 import { Search, ArrowUpRight, MessageCircle } from "lucide-react";
-import { getLeadsFromSheet } from "@/lib/googleSheets";
+import { supabaseServer } from "@/lib/supabase/server";
+
+type Contacto = {
+  id: string;
+  whatsapp: string;
+  nombre: string | null;
+  resumen: string | null;
+  ultimo_tema: string | null;
+  necesidad: string | null;
+  estado: string | null;
+  veces_contacto: number | null;
+  created_at: string | null;
+  ultima_respuesta: string | null;
+};
 
 export default async function LeadsPage() {
-  const leads = await getLeadsFromSheet();
+  const { data, error } = await supabaseServer
+    .from("contactos")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    return (
+      <div className="rounded-3xl border border-red-200 bg-red-50 p-6 text-red-700">
+        Error cargando leads: {error.message}
+      </div>
+    );
+  }
+
+  const leads: Contacto[] = data ?? [];
 
   return (
     <div className="space-y-8">
@@ -57,7 +83,7 @@ export default async function LeadsPage() {
             <thead className="bg-gray-50 text-left text-gray-700">
               <tr>
                 <th className="px-5 py-4 font-semibold">Nombre</th>
-                <th className="px-5 py-4 font-semibold">Teléfono</th>
+                <th className="px-5 py-4 font-semibold">WhatsApp</th>
                 <th className="px-5 py-4 font-semibold">Estado</th>
                 <th className="px-5 py-4 font-semibold">Último tema</th>
                 <th className="px-5 py-4 font-semibold">Necesidad</th>
@@ -71,12 +97,12 @@ export default async function LeadsPage() {
             <tbody>
               {leads.length > 0 ? (
                 leads.map((lead) => {
-                  const phone = String(lead.telefono || "").trim();
+                  const phone = String(lead.whatsapp || "").trim();
                   const whatsappPhone = normalizeMexPhone(phone);
 
                   return (
                     <tr
-                      key={phone}
+                      key={lead.id}
                       className="border-t border-gray-100 transition hover:bg-gray-50"
                     >
                       <td className="px-5 py-4">
@@ -98,15 +124,15 @@ export default async function LeadsPage() {
                       </td>
 
                       <td className="px-5 py-4 text-gray-800">
-                        {lead.ultimoTema || "Sin tema"}
+                        {lead.ultimo_tema || "Sin tema"}
                       </td>
 
                       <td className="px-5 py-4 text-gray-800">
-                        {lead.necesidadDetectada || "Sin clasificar"}
+                        {lead.necesidad || "Sin clasificar"}
                       </td>
 
                       <td className="px-5 py-4 text-center font-semibold text-black">
-                        {lead.vecesContacto ?? 0}
+                        {lead.veces_contacto ?? 0}
                       </td>
 
                       <td className="px-5 py-4">
@@ -161,7 +187,7 @@ function StatusBadge({ status }: { status: string }) {
   if (["nuevo"].includes(normalized)) {
     classes += "bg-blue-50 text-blue-700 ring-blue-200";
   } else if (
-    ["seguimiento", "interesado", "interesadoo", "interesadoo"].includes(
+    ["seguimiento", "interesado", "interesadoo", "evaluando"].includes(
       normalized
     )
   ) {
