@@ -13,8 +13,6 @@ interface Props {
   }>;
 }
 
-
-
 type Contacto = {
   id: string;
   whatsapp: string;
@@ -27,18 +25,22 @@ type Contacto = {
   ultima_respuesta: string | null;
 };
 
+type Mensaje = {
+  id: string;
+  whatsapp: string;
+  texto: string | null;
+  tipo: "cliente" | "bot" | null;
+  created_at: string | null;
+};
+
 export default async function LeadDetailPage({ params }: Props) {
- const { id } = await params;
+  const { id } = await params;
 
- const { data: lead, error } = await supabaseServer
-  .from("contactos")
-  .select("*")
-.eq("id", id.trim())
-  .single();
-
-  console.log("ID recibido:", id);
-console.log("Lead:", lead);
-console.log("Error:", error);
+  const { data: lead, error } = await supabaseServer
+    .from("contactos")
+    .select("*")
+    .eq("id", id.trim())
+    .maybeSingle();
 
   if (!lead || error) {
     return (
@@ -66,6 +68,14 @@ console.log("Error:", error);
   const contacto = lead as Contacto;
   const phone = String(contacto.whatsapp || "").trim();
   const whatsappPhone = normalizeMexPhone(phone);
+
+  const { data: mensajesData } = await supabaseServer
+    .from("mensajes_recibidos")
+    .select("*")
+    .eq("whatsapp", phone)
+    .order("created_at", { ascending: true });
+
+  const mensajes: Mensaje[] = (mensajesData as Mensaje[]) ?? [];
 
   return (
     <div className="space-y-8">
@@ -131,6 +141,54 @@ console.log("Error:", error);
           <Card title="Última respuesta del bot">
             {contacto.ultima_respuesta || "Sin respuesta"}
           </Card>
+
+          <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
+            <h2 className="text-xl font-semibold text-gray-900">
+              Conversación
+            </h2>
+            <p className="mt-1 text-sm text-gray-500">
+              Historial de mensajes entre el lead y el bot.
+            </p>
+
+            <div className="mt-5 max-h-[520px] space-y-3 overflow-y-auto rounded-2xl bg-gray-50 p-4">
+              {mensajes.length > 0 ? (
+                mensajes.map((msg) => {
+                  const isBot = msg.tipo === "bot";
+
+                  return (
+                    <div
+                      key={msg.id}
+                      className={`flex ${isBot ? "justify-end" : "justify-start"}`}
+                    >
+                      <div
+                        className={`max-w-[82%] rounded-2xl px-4 py-3 text-sm shadow-sm ${
+                          isBot
+                            ? "bg-gray-900 text-white"
+                            : "bg-white text-gray-800 border border-gray-200"
+                        }`}
+                      >
+                        <div className="whitespace-pre-wrap leading-6">
+                          {msg.texto || "-"}
+                        </div>
+
+                        <div
+                          className={`mt-2 text-[11px] ${
+                            isBot ? "text-gray-300" : "text-gray-400"
+                          }`}
+                        >
+                          {formatMessageDate(msg.created_at)}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })
+              ) : (
+                <p className="text-sm text-gray-500">
+                  No hay mensajes registrados todavía.
+                </p>
+              )}
+            </div>
+          </div>
         </div>
 
         <div className="space-y-6">
@@ -161,8 +219,6 @@ console.log("Error:", error);
     </div>
   );
 }
-
-/* COMPONENTES */
 
 function Card({
   title,
@@ -210,12 +266,12 @@ function StatusBadge({ status }: { status: string }) {
   if (["nuevo"].includes(normalized)) {
     classes += "bg-blue-50 text-blue-700 ring-blue-200";
   } else if (
-    ["seguimiento", "interesado", "evaluando", "LLamada"].includes(normalized)
+    ["seguimiento", "interesado", "evaluando"].includes(normalized)
   ) {
     classes += "bg-amber-50 text-amber-700 ring-amber-200";
   } else if (["cerrado", "ganado", "cliente"].includes(normalized)) {
     classes += "bg-emerald-50 text-emerald-700 ring-emerald-200";
-  } else if (["perdido"].includes(normalized)) {
+  } else if (["perdido", "llamar"].includes(normalized)) {
     classes += "bg-red-50 text-red-700 ring-red-200";
   } else {
     classes += "bg-gray-100 text-gray-700 ring-gray-200";
@@ -238,4 +294,20 @@ function normalizeMexPhone(phone: string) {
   }
 
   return cleaned;
+}
+
+function formatMessageDate(value: string | null) {
+  if (!value) return "-";
+
+  try {
+    return new Date(value).toLocaleString("es-MX", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  } catch {
+    return value;
+  }
 }

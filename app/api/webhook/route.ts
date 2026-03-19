@@ -40,7 +40,7 @@ type SummaryMemory = {
   resumen: string;
   ultimo_tema: string;
   necesidad: string;
-  estado: "Interesado" | "Evaluando" | "Cliente";
+  estado: "Interesado" | "Evaluando" | "Llamar";
 };
 
 export async function GET(req: NextRequest) {
@@ -85,6 +85,7 @@ export async function POST(req: NextRequest) {
 
     const incomingText = cleanText(message.text.body);
     const whatsapp = normalizePhone(String(message.from || ""));
+    const messageId = String(message.id || "");
     const waProfileName = cleanText(change?.contacts?.[0]?.profile?.name || "");
 
     if (!whatsapp || !incomingText) {
@@ -108,6 +109,13 @@ export async function POST(req: NextRequest) {
       existing: contacto,
     });
 
+    await saveMessage({
+      id: messageId,
+      whatsapp,
+      texto: incomingText,
+      tipo: "cliente",
+    });
+
     console.log("CONTACTO DESPUES CREATE/UPDATE:", contacto);
 
     if (isCallIntent(incomingText)) {
@@ -120,6 +128,13 @@ export async function POST(req: NextRequest) {
       console.log("BOT REPLY:", callReply);
 
       await sendWhatsAppText(whatsapp, callReply);
+
+      await saveMessage({
+        id: `${messageId}-bot`,
+        whatsapp,
+        texto: callReply,
+        tipo: "bot",
+      });
 
       await updateContactoAfterReply({
         id: contacto?.id,
@@ -143,6 +158,13 @@ export async function POST(req: NextRequest) {
     console.log("BOT REPLY:", botReply);
 
     await sendWhatsAppText(whatsapp, botReply);
+
+    await saveMessage({
+      id: `${messageId}-bot`,
+      whatsapp,
+      texto: botReply,
+      tipo: "bot",
+    });
 
     await updateContactoAfterReply({
       id: contacto?.id,
@@ -284,6 +306,35 @@ async function createOrUpdateContacto({
   return (result.data as ContactoRow) ?? null;
 }
 
+async function saveMessage({
+  id,
+  whatsapp,
+  texto,
+  tipo,
+}: {
+  id: string;
+  whatsapp: string;
+  texto: string;
+  tipo: "cliente" | "bot";
+}): Promise<void> {
+  if (!supabase || !id || !whatsapp || !texto) return;
+
+  const { error } = await supabase.from("mensajes_recibidos").upsert(
+    {
+      id,
+      whatsapp,
+      texto,
+      tipo,
+      created_at: new Date().toISOString(),
+    },
+    { onConflict: "id" }
+  );
+
+  if (error) {
+    console.error("saveMessage error:", error.message);
+  }
+}
+
 async function updateContactoAfterReply({
   id,
   ultima_respuesta,
@@ -360,11 +411,10 @@ PROHIBIDO:
 - Decir que ya se avanzó en producción
 - Comprometer tiempos de entrega
 
-
 REGLAS DE EJECUCIÓN:
 - Respeta la intención estratégica del turno. No la cambies.
 - La IA solo debe decidir cómo decir el mensaje, no qué etapa sigue.
-- Si el resumen previo ya indica avance suficiente y estás en etapa de cierre,  pregunta si quiere seguimiento por llamada.
+- Si el resumen previo ya indica avance suficiente y estás en etapa de cierre, pregunta si quiere seguimiento por llamada.
 - Si el usuario muestra interés:
   NO prometas entregables ni avances ficticios.
   Lleva la conversación hacia una llamada para revisar su caso.
@@ -414,7 +464,7 @@ function getStageInstruction(vecesContacto: number): string {
     return "Da una recomendación clara y concreta, sin rodeos, y cierra con una sola pregunta útil.";
   }
 
-   if (vecesContacto === 3) {
+  if (vecesContacto === 3) {
     return "Da otra recomendación clara y concreta, sin rodeos, y cierra con una sola pregunta útil.";
   }
 
@@ -502,9 +552,9 @@ async function updateContactSummaryWithAI({
     resumen: previousSummary,
     ultimo_tema: previousTopic,
     necesidad: previousNeed,
-    estado: (["Interesado", "Evaluando", "Cliente"].includes(previousStatus)
-      ? previousStatus
-      : "Interesado") as SummaryMemory["estado"],
+    estado: (["Interesado", "Evaluando", "Llamar"].includes(previousStatus)
+      ? (previousStatus as SummaryMemory["estado"])
+      : "Interesado"),
   };
 
   if (OPENAI_API_KEY) {
@@ -570,7 +620,7 @@ Llamar
         parsed.resumen !== undefined &&
         parsed.ultimo_tema !== undefined &&
         parsed.necesidad !== undefined &&
-        ["Interesado", "Evaluando", "Cliente"].includes(parsed.estado)
+        ["Interesado", "Evaluando", "Llamar"].includes(parsed.estado)
       ) {
         memory = parsed as SummaryMemory;
       }
