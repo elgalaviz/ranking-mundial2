@@ -2,21 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 import { createClient } from "@supabase/supabase-js";
 
-/**
- * =========================
- * ENV VARS REQUERIDAS
- * =========================
- *
- * META_VERIFY_TOKEN=
- * WHATSAPP_TOKEN=
- * WHATSAPP_PHONE_NUMBER_ID=
- *
- * OPENAI_API_KEY=
- * OPENAI_MODEL=gpt-5-mini
- *
- * SUPABASE_URL=
- * SUPABASE_SERVICE_ROLE_KEY=
- */
+export const runtime = "nodejs";
 
 const VERIFY_TOKEN = process.env.META_VERIFY_TOKEN || "";
 const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN || "";
@@ -37,33 +23,24 @@ const supabase =
     ? createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
     : null;
 
-type LeadRow = {
+type ContactoRow = {
   id?: string;
-  phone: string;
-  name?: string | null;
-  business_name?: string | null;
-  city?: string | null;
-  conversation_summary?: string | null;
-  last_topic?: string | null;
-  need_detected?: string | null;
-  status?: string | null;
-  last_user_message?: string | null;
-  last_bot_message?: string | null;
-  updated_at?: string | null;
+  whatsapp: string;
+  nombre: string | null;
+  resumen: string | null;
+  ultimo_tema: string | null;
+  necesidad: string | null;
+  estado: string | null;
+  veces_contacto: number | null;
   created_at?: string | null;
+  ultima_respuesta: string | null;
 };
 
-type MemoryUpdate = {
-  ResumenConversacion: string;
-  UltimoTema: string;
-  NecesidadDetectada: string;
-  Estado: "Interesado" | "Evaluando" | "Cliente";
-};
-
-type ExtractedData = {
-  name?: string | null;
-  business_name?: string | null;
-  city?: string | null;
+type SummaryMemory = {
+  resumen: string;
+  ultimo_tema: string;
+  necesidad: string;
+  estado: "Interesado" | "Evaluando" | "Cliente";
 };
 
 export async function GET(req: NextRequest) {
@@ -82,7 +59,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
+    const body: any = await req.json();
     console.log("WEBHOOK BODY:", JSON.stringify(body));
 
     const change = body?.entry?.[0]?.changes?.[0]?.value;
@@ -90,7 +67,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true, ignored: "no_change" }, { status: 200 });
     }
 
-    // Ignorar status updates para evitar dobles respuestas
     if (Array.isArray(change.statuses) && change.statuses.length > 0) {
       console.log("IGNORADO: status_update");
       return NextResponse.json({ ok: true, ignored: "status_update" }, { status: 200 });
@@ -108,28 +84,32 @@ export async function POST(req: NextRequest) {
     }
 
     const incomingText = cleanText(message.text.body);
-    const phone = normalizePhone(String(message.from || ""));
+    const whatsapp = normalizePhone(String(message.from || ""));
+    const waProfileName = cleanText(change?.contacts?.[0]?.profile?.name || "");
 
-    if (!phone || !incomingText) {
-      console.log("IGNORADO: missing_phone_or_text", { phone, incomingText });
-      return NextResponse.json({ ok: true, ignored: "missing_phone_or_text" }, { status: 200 });
+    if (!whatsapp || !incomingText) {
+      console.log("IGNORADO: missing_whatsapp_or_text", { whatsapp, incomingText });
+      return NextResponse.json(
+        { ok: true, ignored: "missing_whatsapp_or_text" },
+        { status: 200 }
+      );
     }
 
-    let lead = await getLeadByPhone(phone);
-
-    console.log("PHONE:", phone);
+    console.log("WHATSAPP:", whatsapp);
+    console.log("WA PROFILE NAME:", waProfileName);
     console.log("MENSAJE:", incomingText);
-    console.log("LEAD ANTES:", lead);
 
-    const extracted = extractContactData(incomingText, lead);
+    let contacto = await getContactoByWhatsApp(whatsapp);
+    console.log("CONTACTO ANTES:", contacto);
 
-    console.log("EXTRACTED:", extracted);
+    contacto = await createOrUpdateContacto({
+      whatsapp,
+      waProfileName,
+      existing: contacto,
+    });
 
-    lead = await upsertLeadMemory(phone, extracted, incomingText, lead);
+    console.log("CONTACTO DESPUES CREATE/UPDATE:", contacto);
 
-    console.log("LEAD DESPUES UPSERT:", lead);
-
-    // Flujo especial: intención de llamada
     if (isCallIntent(incomingText)) {
       const callReply =
         "Perfecto, te agendamos para llamada y revisamos tu caso a detalle.\n\n" +
@@ -139,10 +119,15 @@ export async function POST(req: NextRequest) {
       console.log("CALL INTENT DETECTED");
       console.log("BOT REPLY:", callReply);
 
-      await sendWhatsAppText(phone, callReply);
+      await sendWhatsAppText(whatsapp, callReply);
 
-      await updateLeadSummaryWithAI({
-        lead,
+      await updateContactoAfterReply({
+        id: contacto?.id,
+        ultima_respuesta: callReply,
+      });
+
+      await updateContactSummaryWithAI({
+        contacto,
         userMessage: incomingText,
         botReply: callReply,
       });
@@ -151,16 +136,21 @@ export async function POST(req: NextRequest) {
     }
 
     const botReply = await generateAssistantReply({
-      lead,
+      contacto,
       incomingText,
     });
 
     console.log("BOT REPLY:", botReply);
 
-    await sendWhatsAppText(phone, botReply);
+    await sendWhatsAppText(whatsapp, botReply);
 
-    await updateLeadSummaryWithAI({
-      lead,
+    await updateContactoAfterReply({
+      id: contacto?.id,
+      ultima_respuesta: botReply,
+    });
+
+    await updateContactSummaryWithAI({
+      contacto,
       userMessage: incomingText,
       botReply,
     });
@@ -178,10 +168,6 @@ export async function POST(req: NextRequest) {
   }
 }
 
-/* =========================================================
-   HELPERS
-========================================================= */
-
 function cleanText(text: string): string {
   return String(text || "")
     .replace(/\s+/g, " ")
@@ -192,28 +178,8 @@ function normalizePhone(phone: string): string {
   return String(phone || "").replace(/\D/g, "").slice(-10);
 }
 
-function toTitleCase(value: string): string {
-  return value
-    .toLowerCase()
-    .split(" ")
-    .filter(Boolean)
-    .map((w) => {
-      if (["y", "de", "del", "la", "las", "los", "el"].includes(w)) return w;
-      return w.charAt(0).toUpperCase() + w.slice(1);
-    })
-    .join(" ");
-}
-
-function cleanBusinessName(value: string): string {
-  return value
-    .replace(/\s+y\s+est[aá]\s+en\s+.+$/i, "")
-    .replace(/\s+est[aá]\s+en\s+.+$/i, "")
-    .replace(/[.]+$/g, "")
-    .trim();
-}
-
 function isCallIntent(text: string): boolean {
-  const t = text.toLowerCase();
+  const t = String(text || "").toLowerCase();
 
   const keywords = [
     "llamada",
@@ -233,281 +199,180 @@ function isCallIntent(text: string): boolean {
     "agendar llamada",
     "agenda una llamada",
     "quisiera una llamada",
+    "llámenme",
+    "llamenme",
   ];
 
   return keywords.some((k) => t.includes(k));
 }
 
-async function getLeadByPhone(phone: string): Promise<LeadRow | null> {
+async function getContactoByWhatsApp(whatsapp: string): Promise<ContactoRow | null> {
   if (!supabase) return null;
 
   const { data, error } = await supabase
-    .from("leads")
+    .from("contactos")
     .select("*")
-    .eq("phone", phone)
+    .eq("whatsapp", whatsapp)
     .maybeSingle();
 
   if (error) {
-    console.error("getLeadByPhone error:", error.message);
+    console.error("getContactoByWhatsApp error:", error.message);
     return null;
   }
 
-  return data as LeadRow | null;
+  return (data as ContactoRow | null) ?? null;
 }
 
-function extractName(text: string, existingLead?: LeadRow | null): string | null {
-  const normalized = text.trim();
-
-  if (existingLead?.name) return existingLead.name;
-
-  const patterns = [
-    /(?:me llamo|mi nombre es|soy)\s+([A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,50})/i,
-    /(?:nombre[:\s]+)([A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,50})/i,
-  ];
-
-  for (const pattern of patterns) {
-    const match = normalized.match(pattern);
-    if (match?.[1]) {
-      return toTitleCase(match[1].trim());
-    }
-  }
-
-  const cleaned = normalized.replace(/[.,;:!?]/g, "").trim();
-  const words = cleaned.split(/\s+/);
-
-  if (
-    words.length >= 1 &&
-    words.length <= 3 &&
-    /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/.test(cleaned) &&
-    !/(guadalupe|monterrey|apodaca|saltillo|quer[eé]taro|cdmx|m[eé]rida|canc[uú]n|negocio|empresa|tienda|ventas|marketing|redes|publicidad)/i.test(
-      cleaned
-    )
-  ) {
-    return toTitleCase(cleaned);
-  }
-
-  return null;
-}
-
-function extractBusiness(text: string, existingLead?: LeadRow | null): string | null {
-  if (existingLead?.business_name) return existingLead.business_name;
-
-  const normalized = text.trim();
-
-  const patterns = [
-    /mi negocio se llama\s+(.+?)(?:\.|,|$)/i,
-    /mi empresa se llama\s+(.+?)(?:\.|,|$)/i,
-    /el negocio se llama\s+(.+?)(?:\.|,|$)/i,
-    /la empresa se llama\s+(.+?)(?:\.|,|$)/i,
-    /mi negocio es\s+(.+?)(?:\.|,|$)/i,
-    /mi empresa es\s+(.+?)(?:\.|,|$)/i,
-  ];
-
-  for (const pattern of patterns) {
-    const match = normalized.match(pattern);
-    if (match?.[1]) {
-      return cleanBusinessName(match[1]);
-    }
-  }
-
-  return null;
-}
-
-function extractCity(text: string, existingLead?: LeadRow | null): string | null {
-  if (existingLead?.city) return existingLead.city;
-
-  const normalized = text.trim();
-
-  const patterns = [
-    /est[aá]\s+en\s+([A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,50})/i,
-    /estoy en\s+([A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,50})/i,
-    /ubicado en\s+([A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,50})/i,
-    /ubicada en\s+([A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,50})/i,
-    /soy de\s+([A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,50})/i,
-    /estamos en\s+([A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,50})/i,
-    /desde\s+([A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,50})/i,
-  ];
-
-  for (const pattern of patterns) {
-    const match = normalized.match(pattern);
-    if (match?.[1]) {
-      return toTitleCase(
-        match[1]
-          .trim()
-          .replace(/\b(nl|n\.l\.|nuevo le[oó]n|coahuila|qro|quer[eé]taro|m[eé]xico)\b/gi, "")
-          .trim()
-      );
-    }
-  }
-
-  const cleaned = normalized.replace(/[.,;:!?]/g, "").trim();
-  const possibleCities = [
-    "Guadalupe",
-    "Monterrey",
-    "San Nicolás",
-    "Apodaca",
-    "Escobedo",
-    "Santa Catarina",
-    "Saltillo",
-    "Querétaro",
-    "CDMX",
-    "Mérida",
-    "Cancún",
-    "Torreón",
-    "Guadalajara",
-    "Puebla",
-  ];
-
-  const found = possibleCities.find(
-    (city) => city.toLowerCase() === cleaned.toLowerCase()
-  );
-
-  if (found) return found;
-
-  return null;
-}
-
-function extractContactData(text: string, existingLead: LeadRow | null): ExtractedData {
-  return {
-    name: extractName(text, existingLead) ?? existingLead?.name ?? null,
-    business_name: extractBusiness(text, existingLead) ?? existingLead?.business_name ?? null,
-    city: extractCity(text, existingLead) ?? existingLead?.city ?? null,
-  };
-}
-
-async function upsertLeadMemory(
-  phone: string,
-  extracted: ExtractedData,
-  incomingText: string,
-  existingLead: LeadRow | null
-): Promise<LeadRow> {
+async function createOrUpdateContacto({
+  whatsapp,
+  waProfileName,
+  existing,
+}: {
+  whatsapp: string;
+  waProfileName: string;
+  existing: ContactoRow | null;
+}): Promise<ContactoRow | null> {
   if (!supabase) {
     return {
-      phone,
-      name: extracted.name || existingLead?.name || null,
-      business_name: extracted.business_name || existingLead?.business_name || null,
-      city: extracted.city || existingLead?.city || null,
-      last_user_message: incomingText,
+      whatsapp,
+      nombre: existing?.nombre || waProfileName || null,
+      resumen: existing?.resumen || null,
+      ultimo_tema: existing?.ultimo_tema || null,
+      necesidad: existing?.necesidad || null,
+      estado: existing?.estado || "Interesado",
+      veces_contacto: (existing?.veces_contacto || 0) + 1,
+      ultima_respuesta: existing?.ultima_respuesta || null,
     };
   }
 
-  const payload: LeadRow = {
-    phone,
-    name: extracted.name ?? existingLead?.name ?? null,
-    business_name: extracted.business_name ?? existingLead?.business_name ?? null,
-    city: extracted.city ?? existingLead?.city ?? null,
-    conversation_summary: existingLead?.conversation_summary ?? null,
-    last_topic: existingLead?.last_topic ?? null,
-    need_detected: existingLead?.need_detected ?? null,
-    status: existingLead?.status ?? "Interesado",
-    last_user_message: incomingText,
-    updated_at: new Date().toISOString(),
+  const payload = {
+    whatsapp,
+    nombre: existing?.nombre || waProfileName || null,
+    resumen: existing?.resumen || null,
+    ultimo_tema: existing?.ultimo_tema || null,
+    necesidad: existing?.necesidad || null,
+    estado: existing?.estado || "Interesado",
+    veces_contacto: (existing?.veces_contacto || 0) + 1,
+    ultima_respuesta: existing?.ultima_respuesta || null,
   };
 
-  let data: LeadRow | null = null;
-  let error: any = null;
+  let result;
 
-  if (existingLead?.id) {
-    const result = await supabase
-      .from("leads")
+  if (existing?.id) {
+    result = await supabase
+      .from("contactos")
       .update(payload)
-      .eq("id", existingLead.id)
+      .eq("id", existing.id)
       .select("*")
       .single();
-
-    data = result.data as LeadRow | null;
-    error = result.error;
   } else {
-    const result = await supabase
-      .from("leads")
-      .upsert(payload, { onConflict: "phone" })
+    result = await supabase
+      .from("contactos")
+      .insert(payload)
       .select("*")
       .single();
-
-    data = result.data as LeadRow | null;
-    error = result.error;
   }
+
+  if (result.error) {
+    console.error("createOrUpdateContacto error:", result.error.message);
+    return {
+      ...(existing || ({} as ContactoRow)),
+      ...payload,
+    } as ContactoRow;
+  }
+
+  return (result.data as ContactoRow) ?? null;
+}
+
+async function updateContactoAfterReply({
+  id,
+  ultima_respuesta,
+}: {
+  id?: string;
+  ultima_respuesta: string;
+}): Promise<void> {
+  if (!supabase || !id) return;
+
+  const { error } = await supabase
+    .from("contactos")
+    .update({
+      ultima_respuesta,
+    })
+    .eq("id", id);
 
   if (error) {
-    console.error("upsertLeadMemory error:", error.message);
-    return {
-      ...(existingLead || { phone }),
-      ...payload,
-    };
+    console.error("updateContactoAfterReply error:", error.message);
   }
-
-  return data || {
-    ...(existingLead || { phone }),
-    ...payload,
-  };
 }
 
 async function generateAssistantReply({
-  lead,
+  contacto,
   incomingText,
 }: {
-  lead: LeadRow | null;
+  contacto: ContactoRow | null;
   incomingText: string;
 }): Promise<string> {
+  const nombre = cleanText(contacto?.nombre || "");
+  const resumen = cleanText(contacto?.resumen || "");
+  const ultimoTema = cleanText(contacto?.ultimo_tema || "");
+  const necesidad = cleanText(contacto?.necesidad || "");
+  const estado = cleanText(contacto?.estado || "Interesado");
+  const vecesContacto = Number(contacto?.veces_contacto || 1);
+
   if (!OPENAI_API_KEY) {
-    return fallbackReply(lead);
+    return minimalFallback({ nombre, vecesContacto });
   }
 
-  const knownName = lead?.name?.trim() || "";
-  const knownBusiness = lead?.business_name?.trim() || "";
-  const knownCity = lead?.city?.trim() || "";
-  const summary = lead?.conversation_summary?.trim() || "";
-  const lastTopic = lead?.last_topic?.trim() || "";
-  const needDetected = lead?.need_detected?.trim() || "";
-  const status = lead?.status?.trim() || "Interesado";
-
-  const missingFields = {
-    name: !knownName,
-    business_name: !knownBusiness,
-    city: !knownCity,
-  };
+  const stageInstruction = getStageInstruction(vecesContacto);
 
   const developerPrompt = `
 Eres el asistente comercial de Ranking Agencia por WhatsApp.
-Tu objetivo es calificar prospectos sin sonar robot.
 
-REGLAS CRÍTICAS:
-1. Nunca vuelvas a pedir información que ya exista en memoria.
-2. Si ya tienes nombre, negocio o ciudad, úsalo directamente.
-3. Haz solo una pregunta a la vez.
-4. No repitas bloques enteros.
-5. Responde en español natural, claro y breve.
-6. No uses markdown, listas ni títulos.
-7. Máximo 80 palabras.
-8. Si ya tienes nombre, negocio y ciudad, pregunta por su principal necesidad u objetivo.
-9. No inventes datos.
-10. Si el usuario acaba de compartir un dato, reconócelo y avanza.
+Tu trabajo NO es decidir el flujo comercial desde cero.
+Tu trabajo es ejecutar con lenguaje natural la estrategia ya definida.
 
-MEMORIA ACTUAL:
-Nombre: ${knownName || "desconocido"}
-Negocio: ${knownBusiness || "desconocido"}
-Ciudad: ${knownCity || "desconocida"}
-Resumen: ${summary || "sin resumen"}
-Último tema: ${lastTopic || "sin tema"}
-Necesidad detectada: ${needDetected || "sin detectar"}
-Estado: ${status}
+REGLAS DE TONO:
+- Habla en español natural de México.
+- Sé directo, claro y humano.
+- No uses frases como "anoté", "ya guardé", "registro", "tomo que".
+- No uses voseo como "querés", "contás", "decime".
+- No uses markdown, listas ni títulos.
+- Máximo 90 palabras.
+- Haz solo una pregunta a la vez.
+- No repitas preguntas ya respondidas.
+- No inventes datos.
+- No preguntes presupuesto como paso automático.
+- No suenes como formulario ni como bot obvio.
 
-CAMPOS FALTANTES:
-Falta nombre: ${missingFields.name ? "sí" : "no"}
-Falta negocio: ${missingFields.business_name ? "sí" : "no"}
-Falta ciudad: ${missingFields.city ? "sí" : "no"}
+ESTRATEGIA OBLIGATORIA:
+- Veces de contacto actuales: ${vecesContacto}
+- Instrucción estratégica de este turno: ${stageInstruction}
 
-LÓGICA:
-- Si falta nombre, pide solo el nombre.
-- Si falta negocio, pide solo el nombre del negocio.
-- Si falta ciudad, pide solo la ciudad.
-- Si ya tienes los tres, pregunta qué quiere lograr: más ventas, más mensajes, más visibilidad, pauta, web, redes o similar.
+MEMORIA DISPONIBLE:
+Nombre: ${nombre || "desconocido"}
+Resumen previo: ${resumen || "sin resumen"}
+Último tema: ${ultimoTema || "sin tema"}
+Necesidad detectada: ${necesidad || "sin detectar"}
+Estado actual: ${estado}
+
+REGLAS DE EJECUCIÓN:
+- Respeta la intención estratégica del turno. No la cambies.
+- La IA solo debe decidir cómo decir el mensaje, no qué etapa sigue.
+- Si el resumen previo ya indica avance suficiente y estás en etapa de cierre, confirma avance y pregunta si quiere seguimiento por llamada.
+- Si ya fue atendido varias veces, evita repetir exploración básica.
+- Si el usuario ya respondió una pregunta anterior, avanza.
+- Si estás en cierre, puedes mencionar casualmente que fue atendido por un bot con IA y que ese servicio también se ofrece, pero sin sonar vendedor agresivo.
 `;
 
-  const userPrompt = `Mensaje del cliente: ${incomingText}`;
+  const userPrompt = `
+Resumen previo: ${resumen || "sin resumen"}
+Último tema: ${ultimoTema || "sin tema"}
+Necesidad: ${necesidad || "sin detectar"}
+Mensaje nuevo del cliente: ${incomingText}
+`;
 
   try {
-    const response = await openai.responses.create({
+    const response: any = await openai.responses.create({
       model: OPENAI_MODEL,
       input: [
         {
@@ -524,31 +389,65 @@ LÓGICA:
     const text = extractResponseText(response);
     if (text) return normalizeReply(text);
 
-    return fallbackReply(lead);
+    return minimalFallback({ nombre, vecesContacto });
   } catch (error) {
     console.error("generateAssistantReply error:", error);
-    return fallbackReply(lead);
+    return minimalFallback({ nombre, vecesContacto });
   }
 }
 
-function fallbackReply(lead: LeadRow | null): string {
-  if (!lead?.name) {
-    return "Perfecto. Para avanzar bien, compárteme tu nombre, por favor.";
+function getStageInstruction(vecesContacto: number): string {
+  if (vecesContacto <= 1) {
+    return "Detecta rápido la necesidad y haz una pregunta directa para entender qué quiere lograr.";
   }
 
-  if (!lead?.business_name) {
-    return `Perfecto, ${lead.name}. Ahora dime el nombre de tu negocio.`;
+  if (vecesContacto === 2) {
+    return "Da una recomendación clara y concreta, sin rodeos, y cierra con una sola pregunta útil.";
   }
 
-  if (!lead?.city) {
-    return `Gracias, ${lead.name}. ¿En qué ciudad está tu negocio?`;
+   if (vecesContacto === 3) {
+    return "Da otra recomendación clara y concreta, sin rodeos, y cierra con una sola pregunta útil.";
   }
 
-  return `Perfecto, ${lead.name}. Ya tengo que tu negocio es ${lead.business_name} y está en ${lead.city}. Ahora cuéntame, ¿qué te gustaría lograr primero: más ventas, más mensajes o más presencia en redes?`;
+  if (vecesContacto === 4) {
+    return "Propón una solución y menciona el resultado esperado, como más leads, ventas o visibilidad. Cierra con una sola pregunta natural.";
+  }
+
+  return "Haz cierre directo. Pregunta si quiere que lo contacten por llamada. Si hay avance suficiente, confírmalo de forma natural. Puedes mencionar casualmente que fue atendido por un bot con IA y que ese servicio también se ofrece.";
+}
+
+function minimalFallback({
+  nombre,
+  vecesContacto,
+}: {
+  nombre: string;
+  vecesContacto: number;
+}): string {
+  if (vecesContacto >= 5) {
+    return nombre
+      ? `Perfecto, ${nombre}. Con lo que ya vimos, lo más práctico es seguirlo por llamada. ¿Quieres que te contacten por esa vía?`
+      : "Con lo que ya vimos, lo más práctico es seguirlo por llamada. ¿Quieres que te contacten por esa vía?";
+  }
+
+  if (vecesContacto === 4) {
+    return nombre
+      ? `Perfecto, ${nombre}. Aquí ya conviene aterrizar una solución para ayudarte a generar más movimiento real. ¿Te gustaría que lo revisemos por llamada?`
+      : "Aquí ya conviene aterrizar una solución para ayudarte a generar más movimiento real. ¿Te gustaría que lo revisemos por llamada?";
+  }
+
+  if (vecesContacto === 3) {
+    return nombre
+      ? `Perfecto, ${nombre}. Aquí lo importante es enfocarlo bien desde el inicio. ¿Hoy cómo te llegan más clientes?`
+      : "Aquí lo importante es enfocarlo bien desde el inicio. ¿Hoy cómo te llegan más clientes?";
+  }
+
+  return nombre
+    ? `Perfecto, ${nombre}. Cuéntame qué te gustaría lograr primero y te digo por dónde conviene empezar.`
+    : "Perfecto. Cuéntame qué te gustaría lograr primero y te digo por dónde conviene empezar.";
 }
 
 function normalizeReply(text: string): string {
-  return text
+  return String(text || "")
     .replace(/\n{2,}/g, "\n")
     .replace(/[ \t]+/g, " ")
     .trim();
@@ -574,7 +473,136 @@ function extractResponseText(response: any): string {
   return "";
 }
 
-async function sendWhatsAppText(to: string, body: string) {
+async function updateContactSummaryWithAI({
+  contacto,
+  userMessage,
+  botReply,
+}: {
+  contacto: ContactoRow | null;
+  userMessage: string;
+  botReply: string;
+}): Promise<void> {
+  if (!supabase || !contacto?.id) return;
+
+  const previousSummary = cleanText(contacto?.resumen || "");
+  const previousTopic = cleanText(contacto?.ultimo_tema || "");
+  const previousNeed = cleanText(contacto?.necesidad || "");
+  const previousStatus = cleanText(contacto?.estado || "Interesado");
+
+  let memory: SummaryMemory = {
+    resumen: previousSummary,
+    ultimo_tema: previousTopic,
+    necesidad: previousNeed,
+    estado: (["Interesado", "Evaluando", "Cliente"].includes(previousStatus)
+      ? previousStatus
+      : "Interesado") as SummaryMemory["estado"],
+  };
+
+  if (OPENAI_API_KEY) {
+    try {
+      const prompt = `
+Analiza la conversación y actualiza la memoria comercial del contacto.
+
+RESUMEN PREVIO:
+${previousSummary || "Sin resumen previo"}
+
+ULTIMO TEMA PREVIO:
+${previousTopic || "Sin tema previo"}
+
+NECESIDAD PREVIA:
+${previousNeed || "Sin necesidad detectada"}
+
+ESTADO PREVIO:
+${previousStatus || "Interesado"}
+
+MENSAJE NUEVO DEL CLIENTE:
+${userMessage}
+
+RESPUESTA DEL BOT:
+${botReply}
+
+Devuelve únicamente un objeto JSON puro con esta estructura exacta:
+{
+  "resumen": "",
+  "ultimo_tema": "",
+  "necesidad": "",
+  "estado": ""
+}
+
+REGLAS:
+- estado debe ser solo uno de estos valores:
+Interesado
+Evaluando
+Llamar
+- No pongas markdown.
+- No pongas texto antes o después del JSON.
+- Resume de forma compacta y útil para ventas.
+`;
+
+      const response: any = await openai.responses.create({
+        model: OPENAI_MODEL,
+        input: [
+          {
+            role: "developer",
+            content: [{ type: "input_text", text: "Responde solo JSON válido." }],
+          },
+          {
+            role: "user",
+            content: [{ type: "input_text", text: prompt }],
+          },
+        ],
+      });
+
+      const raw = extractResponseText(response);
+      const parsed = safeJsonParse(raw);
+
+      if (
+        parsed &&
+        parsed.resumen !== undefined &&
+        parsed.ultimo_tema !== undefined &&
+        parsed.necesidad !== undefined &&
+        ["Interesado", "Evaluando", "Cliente"].includes(parsed.estado)
+      ) {
+        memory = parsed as SummaryMemory;
+      }
+    } catch (error) {
+      console.error("updateContactSummaryWithAI error:", error);
+    }
+  }
+
+  const { error } = await supabase
+    .from("contactos")
+    .update({
+      resumen: memory.resumen,
+      ultimo_tema: memory.ultimo_tema,
+      necesidad: memory.necesidad,
+      estado: memory.estado,
+    })
+    .eq("id", contacto.id);
+
+  if (error) {
+    console.error("updateContactSummaryWithAI supabase error:", error.message);
+  }
+}
+
+function safeJsonParse(value: string): Record<string, any> | null {
+  try {
+    return JSON.parse(value);
+  } catch {
+    const firstBrace = String(value || "").indexOf("{");
+    const lastBrace = String(value || "").lastIndexOf("}");
+    if (firstBrace >= 0 && lastBrace > firstBrace) {
+      try {
+        return JSON.parse(String(value).slice(firstBrace, lastBrace + 1));
+      } catch {
+        return null;
+      }
+    }
+    return null;
+  }
+}
+
+async function sendWhatsAppText(to: string, body: string): Promise<any> {
   if (!WHATSAPP_TOKEN || !WHATSAPP_PHONE_NUMBER_ID) {
     throw new Error("Missing WhatsApp credentials");
   }
@@ -605,134 +633,4 @@ async function sendWhatsAppText(to: string, body: string) {
   }
 
   return data;
-}
-
-async function updateLeadSummaryWithAI({
-  lead,
-  userMessage,
-  botReply,
-}: {
-  lead: LeadRow | null;
-  userMessage: string;
-  botReply: string;
-}) {
-  if (!supabase || !lead?.phone) return;
-
-  const previousSummary = lead?.conversation_summary || "";
-  const previousTopic = lead?.last_topic || "";
-  const previousNeed = lead?.need_detected || "";
-  const previousStatus = lead?.status || "Interesado";
-
-  let memory: MemoryUpdate = {
-    ResumenConversacion: previousSummary,
-    UltimoTema: previousTopic,
-    NecesidadDetectada: previousNeed,
-    Estado: previousStatus as MemoryUpdate["Estado"],
-  };
-
-  if (OPENAI_API_KEY) {
-    try {
-      const prompt = `
-Analiza la conversación y actualiza la memoria comercial del lead.
-
-RESUMEN PREVIO:
-${previousSummary || "Sin resumen previo"}
-
-ULTIMO TEMA PREVIO:
-${previousTopic || "Sin tema previo"}
-
-NECESIDAD PREVIA:
-${previousNeed || "Sin necesidad detectada"}
-
-ESTADO PREVIO:
-${previousStatus || "Interesado"}
-
-MENSAJE NUEVO DEL CLIENTE:
-${userMessage}
-
-RESPUESTA DEL BOT:
-${botReply}
-
-Devuelve únicamente un objeto JSON puro con esta estructura exacta:
-{
-  "ResumenConversacion": "",
-  "UltimoTema": "",
-  "NecesidadDetectada": "",
-  "Estado": ""
-}
-
-REGLAS:
-- Estado debe ser solo uno de estos valores:
-Interesado
-Evaluando
-Cliente
-- No pongas markdown.
-- No pongas texto antes o después del JSON.
-- Resume de forma compacta y útil para ventas.
-`;
-
-      const response = await openai.responses.create({
-        model: OPENAI_MODEL,
-        input: [
-          {
-            role: "developer",
-            content: [{ type: "input_text", text: "Responde solo JSON válido." }],
-          },
-          {
-            role: "user",
-            content: [{ type: "input_text", text: prompt }],
-          },
-        ],
-      });
-
-      const raw = extractResponseText(response);
-      const parsed = safeJsonParse<MemoryUpdate>(raw);
-
-      if (
-        parsed &&
-        parsed.ResumenConversacion !== undefined &&
-        parsed.UltimoTema !== undefined &&
-        parsed.NecesidadDetectada !== undefined &&
-        ["Interesado", "Evaluando", "Cliente"].includes(parsed.Estado)
-      ) {
-        memory = parsed;
-      }
-    } catch (error) {
-      console.error("updateLeadSummaryWithAI error:", error);
-    }
-  }
-
-  const { error } = await supabase
-    .from("leads")
-    .update({
-      conversation_summary: memory.ResumenConversacion,
-      last_topic: memory.UltimoTema,
-      need_detected: memory.NecesidadDetectada,
-      status: memory.Estado,
-      last_user_message: userMessage,
-      last_bot_message: botReply,
-      updated_at: new Date().toISOString(),
-    })
-    .eq("phone", lead.phone);
-
-  if (error) {
-    console.error("updateLeadSummaryWithAI supabase error:", error.message);
-  }
-}
-
-function safeJsonParse<T>(value: string): T | null {
-  try {
-    return JSON.parse(value) as T;
-  } catch {
-    const firstBrace = value.indexOf("{");
-    const lastBrace = value.lastIndexOf("}");
-    if (firstBrace >= 0 && lastBrace > firstBrace) {
-      try {
-        return JSON.parse(value.slice(firstBrace, lastBrace + 1)) as T;
-      } catch {
-        return null;
-      }
-    }
-    return null;
-  }
 }
