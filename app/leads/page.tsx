@@ -107,7 +107,7 @@ export default async function LeadsPage() {
                     >
                       <td className="px-5 py-4">
                         <Link
-                          href={`/leads/${phone}`}
+                          href={`/leads/${lead.id}`}
                           className="font-semibold text-black hover:underline"
                         >
                           {lead.nombre || "Sin nombre"}
@@ -138,7 +138,7 @@ export default async function LeadsPage() {
                       <td className="px-5 py-4">
                         <div className="flex items-center justify-center gap-2">
                           <Link
-                            href={`/leads/${phone}`}
+                            href={`/leads/${lead.id}`}
                             className="inline-flex items-center gap-2 rounded-xl border border-gray-200 px-3 py-2 text-xs font-semibold text-gray-700 transition hover:bg-gray-100"
                           >
                             Ver ficha
