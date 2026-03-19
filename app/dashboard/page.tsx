@@ -167,7 +167,7 @@ export default async function DashboardPage() {
                     >
                       <td className="px-4 py-3 font-medium">
                         <Link
-                          href={`/leads/${lead.whatsapp}`}
+                          href={`/leads/${lead.id}`}
                           className="hover:underline"
                         >
                           {lead.nombre || "Sin nombre"}
