@@ -1,6 +1,6 @@
 "use server";
 
-import { updateLeadNotesByPhone } from "@/lib/googleSheets";
+import { supabaseServer } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 
 export async function saveLeadNotes(formData: FormData) {
@@ -11,12 +11,17 @@ export async function saveLeadNotes(formData: FormData) {
     throw new Error("Teléfono no válido.");
   }
 
-  const updated = await updateLeadNotesByPhone(telefono, notas);
+  const { error } = await supabaseServer
+    .from("contactos")
+    .update({ notas })
+    .eq("whatsapp", telefono);
 
-  if (!updated) {
+  if (error) {
+    console.error("Error actualizando notas:", error.message);
     throw new Error("No se pudo actualizar la nota.");
   }
 
+  // refresca vistas
   revalidatePath("/leads");
   revalidatePath(`/leads/${telefono}`);
 }
