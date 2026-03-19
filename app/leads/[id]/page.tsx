@@ -8,10 +8,12 @@ import {
 import { supabaseServer } from "@/lib/supabase/server";
 
 interface Props {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
+
+
 
 type Contacto = {
   id: string;
@@ -26,13 +28,17 @@ type Contacto = {
 };
 
 export default async function LeadDetailPage({ params }: Props) {
-  const id = params.id;
+ const { id } = await params;
 
-  const { data: lead, error } = await supabaseServer
-    .from("contactos")
-    .select("*")
-    .eq("id", id)
-    .maybeSingle();
+ const { data: lead, error } = await supabaseServer
+  .from("contactos")
+  .select("*")
+.eq("id", id.trim())
+  .single();
+
+  console.log("ID recibido:", id);
+console.log("Lead:", lead);
+console.log("Error:", error);
 
   if (!lead || error) {
     return (
