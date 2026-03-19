@@ -1,453 +1,738 @@
-import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
-import OpenAI from 'openai';
+import { NextRequest, NextResponse } from "next/server";
+import OpenAI from "openai";
+import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const openaiKey = process.env.OPENAI_API_KEY;
-const verifyToken = process.env.VERIFY_TOKEN;
-const whatsappToken = process.env.WHATSAPP_TOKEN;
-const whatsappPhoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID;
+/**
+ * =========================
+ * ENV VARS REQUERIDAS
+ * =========================
+ *
+ * META_VERIFY_TOKEN=
+ * WHATSAPP_TOKEN=
+ * WHATSAPP_PHONE_NUMBER_ID=
+ *
+ * OPENAI_API_KEY=
+ * OPENAI_MODEL=gpt-5-mini
+ *
+ * SUPABASE_URL=
+ * SUPABASE_SERVICE_ROLE_KEY=
+ */
 
-if (!supabaseUrl) {
-  throw new Error('Falta SUPABASE_URL en variables de entorno');
-}
+const VERIFY_TOKEN = process.env.META_VERIFY_TOKEN || "";
+const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN || "";
+const WHATSAPP_PHONE_NUMBER_ID = process.env.WHATSAPP_PHONE_NUMBER_ID || "";
 
-if (!supabaseKey) {
-  throw new Error('Falta SUPABASE_SERVICE_ROLE_KEY en variables de entorno');
-}
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY || "";
+const OPENAI_MODEL = process.env.OPENAI_MODEL || "gpt-5-mini";
 
-if (!openaiKey) {
-  throw new Error('Falta OPENAI_API_KEY en variables de entorno');
-}
-
-if (!verifyToken) {
-  throw new Error('Falta VERIFY_TOKEN en variables de entorno');
-}
-
-if (!whatsappToken) {
-  throw new Error('Falta WHATSAPP_TOKEN en variables de entorno');
-}
-
-if (!whatsappPhoneNumberId) {
-  throw new Error('Falta WHATSAPP_PHONE_NUMBER_ID en variables de entorno');
-}
-
-const supabase = createClient(supabaseUrl, supabaseKey);
+const SUPABASE_URL = process.env.SUPABASE_URL || "";
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
 
 const openai = new OpenAI({
-  apiKey: openaiKey,
+  apiKey: OPENAI_API_KEY,
 });
 
-export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const mode = searchParams.get('hub.mode');
-  const token = searchParams.get('hub.verify_token');
-  const challenge = searchParams.get('hub.challenge');
+const supabase =
+  SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY
+    ? createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
+    : null;
 
-  if (mode === 'subscribe' && token === verifyToken) {
-    return new Response(challenge || '', { status: 200 });
+type LeadRow = {
+  id?: string;
+  phone: string;
+  name?: string | null;
+  business_name?: string | null;
+  city?: string | null;
+  conversation_summary?: string | null;
+  last_topic?: string | null;
+  need_detected?: string | null;
+  status?: string | null;
+  last_user_message?: string | null;
+  last_bot_message?: string | null;
+  updated_at?: string | null;
+  created_at?: string | null;
+};
+
+type MemoryUpdate = {
+  ResumenConversacion: string;
+  UltimoTema: string;
+  NecesidadDetectada: string;
+  Estado: "Interesado" | "Evaluando" | "Cliente";
+};
+
+type ExtractedData = {
+  name?: string | null;
+  business_name?: string | null;
+  city?: string | null;
+};
+
+export async function GET(req: NextRequest) {
+  const { searchParams } = new URL(req.url);
+
+  const mode = searchParams.get("hub.mode");
+  const token = searchParams.get("hub.verify_token");
+  const challenge = searchParams.get("hub.challenge");
+
+  if (mode === "subscribe" && token === VERIFY_TOKEN) {
+    return new NextResponse(challenge, { status: 200 });
   }
 
-  return new Response('Error de validación', { status: 403 });
+  return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
 }
 
-export async function POST(request: Request) {
+export async function POST(req: NextRequest) {
   try {
-    let body: any;
+    const body = await req.json();
+    console.log("WEBHOOK BODY:", JSON.stringify(body));
 
-    try {
-      body = await request.json();
-    } catch (parseError) {
-      console.error('Error parseando body JSON:', parseError);
-      return NextResponse.json(
-        { error: 'JSON inválido en el body del request' },
-        { status: 400 }
-      );
+    const change = body?.entry?.[0]?.changes?.[0]?.value;
+    if (!change) {
+      return NextResponse.json({ ok: true, ignored: "no_change" }, { status: 200 });
     }
 
-    console.log('1. Body recibido:', JSON.stringify(body, null, 2));
+    // Ignorar status updates para evitar dobles respuestas
+    if (Array.isArray(change.statuses) && change.statuses.length > 0) {
+      console.log("IGNORADO: status_update");
+      return NextResponse.json({ ok: true, ignored: "status_update" }, { status: 200 });
+    }
 
-    const value = body.entry?.[0]?.changes?.[0]?.value;
-    const message = value?.messages?.[0];
-
+    const message = change?.messages?.[0];
     if (!message) {
-      return NextResponse.json({ status: 'ignored' });
+      console.log("IGNORADO: no_message");
+      return NextResponse.json({ ok: true, ignored: "no_message" }, { status: 200 });
     }
 
-    const incomingMessageId = message?.id;
-
-    if (!incomingMessageId) {
-      return NextResponse.json({ status: 'ignored_no_message_id' });
+    if (message.type !== "text" || !message.text?.body) {
+      console.log("IGNORADO: non_text_message");
+      return NextResponse.json({ ok: true, ignored: "non_text_message" }, { status: 200 });
     }
 
-    if (!message.text?.body) {
-      return NextResponse.json({
-        status: 'ignored_non_text',
-        detectedType: message.type || 'unknown',
+    const incomingText = cleanText(message.text.body);
+    const phone = normalizePhone(String(message.from || ""));
+
+    if (!phone || !incomingText) {
+      console.log("IGNORADO: missing_phone_or_text", { phone, incomingText });
+      return NextResponse.json({ ok: true, ignored: "missing_phone_or_text" }, { status: 200 });
+    }
+
+    let lead = await getLeadByPhone(phone);
+
+    console.log("PHONE:", phone);
+    console.log("MENSAJE:", incomingText);
+    console.log("LEAD ANTES:", lead);
+
+    const extracted = extractContactData(incomingText, lead);
+
+    console.log("EXTRACTED:", extracted);
+
+    lead = await upsertLeadMemory(phone, extracted, incomingText, lead);
+
+    console.log("LEAD DESPUES UPSERT:", lead);
+
+    // Flujo especial: intención de llamada
+    if (isCallIntent(incomingText)) {
+      const callReply =
+        "Perfecto, te agendamos para llamada y revisamos tu caso a detalle.\n\n" +
+        "Por cierto, para que lo tengas en cuenta: esta conversación la estás teniendo con un asistente con inteligencia artificial como el que implementamos para negocios.\n\n" +
+        "Si te interesa algo así para tu empresa, coméntalo en la llamada y te explicamos cómo aplicarlo en tu caso.";
+
+      console.log("CALL INTENT DETECTED");
+      console.log("BOT REPLY:", callReply);
+
+      await sendWhatsAppText(phone, callReply);
+
+      await updateLeadSummaryWithAI({
+        lead,
+        userMessage: incomingText,
+        botReply: callReply,
       });
+
+      return NextResponse.json({ ok: true, flow: "call_detected" }, { status: 200 });
     }
 
-    const { data: existingMessage, error: existingMessageError } = await supabase
-      .from('mensajes_recibidos')
-      .select('id')
-      .eq('id', incomingMessageId)
-      .maybeSingle();
-
-    if (existingMessageError) {
-      return NextResponse.json({ error: existingMessageError.message }, { status: 500 });
-    }
-
-    if (existingMessage) {
-      console.log('Mensaje duplicado ignorado:', incomingMessageId);
-      return NextResponse.json({ status: 'duplicate_ignored' });
-    }
-
-    const phone = message.from;
-    const text = message.text.body || '';
-    const clientName = value?.contacts?.[0]?.profile?.name || 'Cliente';
-
-    const { error: insertMessageError } = await supabase
-      .from('mensajes_recibidos')
-      .insert([
-        {
-          id: incomingMessageId,
-          whatsapp: phone,
-          texto: text,
-        },
-      ]);
-
-    if (insertMessageError) {
-      return NextResponse.json({ error: insertMessageError.message }, { status: 500 });
-    }
-
-    console.log('2. Phone:', phone);
-    console.log('3. Text:', text);
-
-    let { data: contact, error: contactError } = await supabase
-      .from('contactos')
-      .select('*')
-      .eq('whatsapp', phone)
-      .maybeSingle();
-
-    console.log('4. Contact antes de IA:', contact);
-
-    if (contactError) {
-      return NextResponse.json({ error: contactError.message }, { status: 500 });
-    }
-
-    if (!contact) {
-      const { data: newContact, error: insertError } = await supabase
-        .from('contactos')
-        .insert([
-          {
-            whatsapp: phone,
-            nombre: clientName,
-            ultimo_tema: text,
-            veces_contacto: 1,
-            estado: 'Nuevo',
-          },
-        ])
-        .select()
-        .single();
-
-      if (insertError) {
-        return NextResponse.json({ error: insertError.message }, { status: 500 });
-      }
-
-      contact = newContact;
-    } else {
-      const { error: updateError } = await supabase
-        .from('contactos')
-        .update({
-          nombre: clientName || contact.nombre,
-          ultimo_tema: text,
-          veces_contacto: (contact.veces_contacto || 0) + 1,
-        })
-        .eq('whatsapp', phone);
-
-      if (updateError) {
-        return NextResponse.json({ error: updateError.message }, { status: 500 });
-      }
-
-      const { data: refreshedContact, error: refreshError } = await supabase
-        .from('contactos')
-        .select('*')
-        .eq('whatsapp', phone)
-        .maybeSingle();
-
-      if (refreshError) {
-        return NextResponse.json({ error: refreshError.message }, { status: 500 });
-      }
-
-      contact = refreshedContact;
-    }
-
-    const classificationPrompt = `
-Analiza el mensaje del cliente y devuelve únicamente un JSON válido con esta estructura exacta:
-
-{
-  "resumen": "",
-  "ultimo_tema": "",
-  "necesidad": "",
-  "estado": ""
-}
-
-Reglas:
-- "estado" solo puede ser uno de estos valores: "Interesado", "Evaluando", "Cliente"
-- "resumen" debe ser breve, claro y útil para CRM
-- "ultimo_tema" debe resumir el tema principal del mensaje
-- "necesidad" debe describir qué busca resolver o conseguir el cliente
-- No agregues texto antes ni después
-- No uses markdown
-- Devuelve solo JSON puro
-
-Contexto previo del cliente:
-- Resumen previo: ${contact?.resumen || 'Sin historial'}
-- Último tema previo: ${contact?.ultimo_tema || 'Sin historial'}
-- Necesidad previa: ${contact?.necesidad || 'Sin historial'}
-- Estado previo: ${contact?.estado || 'Sin historial'}
-
-Mensaje nuevo del cliente:
-"${text}"
-`;
-
-    const classification = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
-      temperature: 0.2,
-      messages: [
-        {
-          role: 'system',
-          content: classificationPrompt,
-        },
-      ],
+    const botReply = await generateAssistantReply({
+      lead,
+      incomingText,
     });
 
-    console.log(
-      '5. Respuesta cruda clasificación:',
-      classification.choices[0]?.message?.content
+    console.log("BOT REPLY:", botReply);
+
+    await sendWhatsAppText(phone, botReply);
+
+    await updateLeadSummaryWithAI({
+      lead,
+      userMessage: incomingText,
+      botReply,
+    });
+
+    return NextResponse.json({ ok: true }, { status: 200 });
+  } catch (error: any) {
+    console.error("Webhook POST error:", error?.response?.data || error?.message || error);
+    return NextResponse.json(
+      {
+        ok: false,
+        error: error?.message || "Unknown error",
+      },
+      { status: 500 }
     );
+  }
+}
 
-    let parsed: {
-      resumen?: string;
-      ultimo_tema?: string;
-      necesidad?: string;
-      estado?: 'Interesado' | 'Evaluando' | 'Cliente';
-    } = {};
+/* =========================================================
+   HELPERS
+========================================================= */
 
-    try {
-      parsed = JSON.parse(classification.choices[0]?.message?.content || '{}');
-    } catch (parseError) {
-      console.error('Error parsing JSON de OpenAI:', parseError);
-      parsed = {};
+function cleanText(text: string): string {
+  return String(text || "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function normalizePhone(phone: string): string {
+  return String(phone || "").replace(/\D/g, "").slice(-10);
+}
+
+function toTitleCase(value: string): string {
+  return value
+    .toLowerCase()
+    .split(" ")
+    .filter(Boolean)
+    .map((w) => {
+      if (["y", "de", "del", "la", "las", "los", "el"].includes(w)) return w;
+      return w.charAt(0).toUpperCase() + w.slice(1);
+    })
+    .join(" ");
+}
+
+function cleanBusinessName(value: string): string {
+  return value
+    .replace(/\s+y\s+est[aá]\s+en\s+.+$/i, "")
+    .replace(/\s+est[aá]\s+en\s+.+$/i, "")
+    .replace(/[.]+$/g, "")
+    .trim();
+}
+
+function isCallIntent(text: string): boolean {
+  const t = text.toLowerCase();
+
+  const keywords = [
+    "llamada",
+    "llamen",
+    "llámame",
+    "llamame",
+    "marcar",
+    "márcame",
+    "marcame",
+    "contacten",
+    "quiero llamada",
+    "prefiero llamada",
+    "hablar con alguien",
+    "que me llamen",
+    "me pueden llamar",
+    "pueden llamarme",
+    "agendar llamada",
+    "agenda una llamada",
+    "quisiera una llamada",
+  ];
+
+  return keywords.some((k) => t.includes(k));
+}
+
+async function getLeadByPhone(phone: string): Promise<LeadRow | null> {
+  if (!supabase) return null;
+
+  const { data, error } = await supabase
+    .from("leads")
+    .select("*")
+    .eq("phone", phone)
+    .maybeSingle();
+
+  if (error) {
+    console.error("getLeadByPhone error:", error.message);
+    return null;
+  }
+
+  return data as LeadRow | null;
+}
+
+function extractName(text: string, existingLead?: LeadRow | null): string | null {
+  const normalized = text.trim();
+
+  if (existingLead?.name) return existingLead.name;
+
+  const patterns = [
+    /(?:me llamo|mi nombre es|soy)\s+([A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,50})/i,
+    /(?:nombre[:\s]+)([A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,50})/i,
+  ];
+
+  for (const pattern of patterns) {
+    const match = normalized.match(pattern);
+    if (match?.[1]) {
+      return toTitleCase(match[1].trim());
     }
+  }
 
-    console.log('6. JSON parseado:', parsed);
+  const cleaned = normalized.replace(/[.,;:!?]/g, "").trim();
+  const words = cleaned.split(/\s+/);
 
-    const estadoValido =
-      parsed.estado === 'Interesado' ||
-      parsed.estado === 'Evaluando' ||
-      parsed.estado === 'Cliente'
-        ? parsed.estado
-        : contact?.estado === 'Interesado' ||
-            contact?.estado === 'Evaluando' ||
-            contact?.estado === 'Cliente'
-          ? contact.estado
-          : 'Interesado';
+  if (
+    words.length >= 1 &&
+    words.length <= 3 &&
+    /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/.test(cleaned) &&
+    !/(guadalupe|monterrey|apodaca|saltillo|quer[eé]taro|cdmx|m[eé]rida|canc[uú]n|negocio|empresa|tienda|ventas|marketing|redes|publicidad)/i.test(
+      cleaned
+    )
+  ) {
+    return toTitleCase(cleaned);
+  }
 
-    const { data: updatedContact, error: memoryUpdateError } = await supabase
-      .from('contactos')
-      .update({
-        resumen: parsed.resumen || contact?.resumen || null,
-        ultimo_tema: parsed.ultimo_tema || text.substring(0, 100),
-        necesidad: parsed.necesidad || contact?.necesidad || null,
-        estado: estadoValido,
-      })
-      .eq('whatsapp', phone)
-      .select()
+  return null;
+}
+
+function extractBusiness(text: string, existingLead?: LeadRow | null): string | null {
+  if (existingLead?.business_name) return existingLead.business_name;
+
+  const normalized = text.trim();
+
+  const patterns = [
+    /mi negocio se llama\s+(.+?)(?:\.|,|$)/i,
+    /mi empresa se llama\s+(.+?)(?:\.|,|$)/i,
+    /el negocio se llama\s+(.+?)(?:\.|,|$)/i,
+    /la empresa se llama\s+(.+?)(?:\.|,|$)/i,
+    /mi negocio es\s+(.+?)(?:\.|,|$)/i,
+    /mi empresa es\s+(.+?)(?:\.|,|$)/i,
+  ];
+
+  for (const pattern of patterns) {
+    const match = normalized.match(pattern);
+    if (match?.[1]) {
+      return cleanBusinessName(match[1]);
+    }
+  }
+
+  return null;
+}
+
+function extractCity(text: string, existingLead?: LeadRow | null): string | null {
+  if (existingLead?.city) return existingLead.city;
+
+  const normalized = text.trim();
+
+  const patterns = [
+    /est[aá]\s+en\s+([A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,50})/i,
+    /estoy en\s+([A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,50})/i,
+    /ubicado en\s+([A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,50})/i,
+    /ubicada en\s+([A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,50})/i,
+    /soy de\s+([A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,50})/i,
+    /estamos en\s+([A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,50})/i,
+    /desde\s+([A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,50})/i,
+  ];
+
+  for (const pattern of patterns) {
+    const match = normalized.match(pattern);
+    if (match?.[1]) {
+      return toTitleCase(
+        match[1]
+          .trim()
+          .replace(/\b(nl|n\.l\.|nuevo le[oó]n|coahuila|qro|quer[eé]taro|m[eé]xico)\b/gi, "")
+          .trim()
+      );
+    }
+  }
+
+  const cleaned = normalized.replace(/[.,;:!?]/g, "").trim();
+  const possibleCities = [
+    "Guadalupe",
+    "Monterrey",
+    "San Nicolás",
+    "Apodaca",
+    "Escobedo",
+    "Santa Catarina",
+    "Saltillo",
+    "Querétaro",
+    "CDMX",
+    "Mérida",
+    "Cancún",
+    "Torreón",
+    "Guadalajara",
+    "Puebla",
+  ];
+
+  const found = possibleCities.find(
+    (city) => city.toLowerCase() === cleaned.toLowerCase()
+  );
+
+  if (found) return found;
+
+  return null;
+}
+
+function extractContactData(text: string, existingLead: LeadRow | null): ExtractedData {
+  return {
+    name: extractName(text, existingLead) ?? existingLead?.name ?? null,
+    business_name: extractBusiness(text, existingLead) ?? existingLead?.business_name ?? null,
+    city: extractCity(text, existingLead) ?? existingLead?.city ?? null,
+  };
+}
+
+async function upsertLeadMemory(
+  phone: string,
+  extracted: ExtractedData,
+  incomingText: string,
+  existingLead: LeadRow | null
+): Promise<LeadRow> {
+  if (!supabase) {
+    return {
+      phone,
+      name: extracted.name || existingLead?.name || null,
+      business_name: extracted.business_name || existingLead?.business_name || null,
+      city: extracted.city || existingLead?.city || null,
+      last_user_message: incomingText,
+    };
+  }
+
+  const payload: LeadRow = {
+    phone,
+    name: extracted.name ?? existingLead?.name ?? null,
+    business_name: extracted.business_name ?? existingLead?.business_name ?? null,
+    city: extracted.city ?? existingLead?.city ?? null,
+    conversation_summary: existingLead?.conversation_summary ?? null,
+    last_topic: existingLead?.last_topic ?? null,
+    need_detected: existingLead?.need_detected ?? null,
+    status: existingLead?.status ?? "Interesado",
+    last_user_message: incomingText,
+    updated_at: new Date().toISOString(),
+  };
+
+  let data: LeadRow | null = null;
+  let error: any = null;
+
+  if (existingLead?.id) {
+    const result = await supabase
+      .from("leads")
+      .update(payload)
+      .eq("id", existingLead.id)
+      .select("*")
       .single();
 
-    console.log('7. Contact actualizado:', updatedContact);
-    console.log('8. Error update memoria:', memoryUpdateError);
+    data = result.data as LeadRow | null;
+    error = result.error;
+  } else {
+    const result = await supabase
+      .from("leads")
+      .upsert(payload, { onConflict: "phone" })
+      .select("*")
+      .single();
 
-    if (memoryUpdateError) {
-      return NextResponse.json({ error: memoryUpdateError.message }, { status: 500 });
-    }
+    data = result.data as LeadRow | null;
+    error = result.error;
+  }
 
-    const vecesContacto = updatedContact?.veces_contacto || contact?.veces_contacto || 1;
-    const resumenPrevio = updatedContact?.resumen || parsed.resumen || '';
-    const necesidadDetectada = updatedContact?.necesidad || parsed.necesidad || '';
-    const ultimoTema = updatedContact?.ultimo_tema || parsed.ultimo_tema || text;
-    const ultimaRespuesta = updatedContact?.ultima_respuesta || 'Sin respuesta previa';
+  if (error) {
+    console.error("upsertLeadMemory error:", error.message);
+    return {
+      ...(existingLead || { phone }),
+      ...payload,
+    };
+  }
 
-    const replyPrompt = `
-Eres un bot con IA de atención comercial para servicios de marketing digital y generación de clientes.
-Debes sonar humano, claro, directo y útil. No suenes robótico.
+  return data || {
+    ...(existingLead || { phone }),
+    ...payload,
+  };
+}
 
-IMPORTANTE:
-- Debes aclarar casualmente, de forma breve y natural, que eres un bot con IA.
-- Ofrece el servicio de forma casual, no forzada.
-- Responde en español.
-- Máximo 90 palabras.
-- No uses markdown.
-- No uses emojis.
-- No inventes datos.
-- No uses frases suaves tipo "si quieres", "podrías", "tal vez", "cuando gustes".
-- Debes empujar el avance comercial con seguridad.
+async function generateAssistantReply({
+  lead,
+  incomingText,
+}: {
+  lead: LeadRow | null;
+  incomingText: string;
+}): Promise<string> {
+  if (!OPENAI_API_KEY) {
+    return fallbackReply(lead);
+  }
 
-CONTEXTO DEL CLIENTE:
-- Veces de contacto: ${vecesContacto}
-- Resumen previo: ${resumenPrevio || 'Sin historial'}
-- Último tema: ${ultimoTema || 'Sin tema'}
-- Necesidad detectada: ${necesidadDetectada || 'Sin necesidad detectada'}
-- Estado: ${estadoValido}
-- Nombre actual detectado: ${updatedContact?.nombre || clientName || 'No detectado'}
-- Última respuesta enviada: ${ultimaRespuesta}
-- Mensaje nuevo: "${text}"
+  const knownName = lead?.name?.trim() || "";
+  const knownBusiness = lead?.business_name?.trim() || "";
+  const knownCity = lead?.city?.trim() || "";
+  const summary = lead?.conversation_summary?.trim() || "";
+  const lastTopic = lead?.last_topic?.trim() || "";
+  const needDetected = lead?.need_detected?.trim() || "";
+  const status = lead?.status?.trim() || "Interesado";
 
-ESTRATEGIA OBLIGATORIA SEGÚN VECES DE CONTACTO:
+  const missingFields = {
+    name: !knownName,
+    business_name: !knownBusiness,
+    city: !knownCity,
+  };
 
-1) Si Veces de contacto es 1:
-- Identifica rápido la necesidad.
-- Haz una pregunta directa para avanzar.
-- No des demasiada explicación.
+  const developerPrompt = `
+Eres el asistente comercial de Ranking Agencia por WhatsApp.
+Tu objetivo es calificar prospectos sin sonar robot.
 
-2) Si Veces de contacto es 2:
-- Da una recomendación clara y concreta.
-- Sin rodeos.
-- Debe sentirse como orientación profesional breve.
+REGLAS CRÍTICAS:
+1. Nunca vuelvas a pedir información que ya exista en memoria.
+2. Si ya tienes nombre, negocio o ciudad, úsalo directamente.
+3. Haz solo una pregunta a la vez.
+4. No repitas bloques enteros.
+5. Responde en español natural, claro y breve.
+6. No uses markdown, listas ni títulos.
+7. Máximo 80 palabras.
+8. Si ya tienes nombre, negocio y ciudad, pregunta por su principal necesidad u objetivo.
+9. No inventes datos.
+10. Si el usuario acaba de compartir un dato, reconócelo y avanza.
 
-3) Si Veces de contacto es 3:
-- Propón una solución concreta.
-- Menciona el resultado esperado: más leads, ventas, visibilidad o mejor captación, según aplique.
+MEMORIA ACTUAL:
+Nombre: ${knownName || "desconocido"}
+Negocio: ${knownBusiness || "desconocido"}
+Ciudad: ${knownCity || "desconocida"}
+Resumen: ${summary || "sin resumen"}
+Último tema: ${lastTopic || "sin tema"}
+Necesidad detectada: ${needDetected || "sin detectar"}
+Estado: ${status}
 
-4) Si Veces de contacto es 4 o más:
-- CIERRE OBLIGATORIO.
-- Pide datos clave de forma directa, sin pedir permiso.
-- Debes pedir datos como:
-  - nombre
-  - negocio
-  - ciudad
-  - si seguimos por llamada o por aquí
-- Usa frases seguras como:
-  - "Para avanzarte bien, dime..."
-  - "Necesito este dato para proponerte algo real..."
-  - "Con eso te armo una estrategia clara..."
-- No suavices el cierre.
+CAMPOS FALTANTES:
+Falta nombre: ${missingFields.name ? "sí" : "no"}
+Falta negocio: ${missingFields.business_name ? "sí" : "no"}
+Falta ciudad: ${missingFields.city ? "sí" : "no"}
 
-REGLAS DE NO REPETICIÓN:
-- No repitas la misma pregunta que hiciste en la última respuesta.
-- Si ya pediste nombre, negocio o ciudad, pide el siguiente dato faltante.
-- Si el resumen previo ya muestra que el cliente dio datos, avanza.
-- Evita reformular la misma intención en dos mensajes seguidos.
-- Si ya hay suficiente contexto, confirma avance y lleva a propuesta o llamada.
-
-REGLA EXTRA:
-- Revisa el resumen previo y el contexto.
-- Si el cliente ya dio datos como nombre, negocio o ciudad, confirma avance.
-- En ese caso di que prepararás propuesta o que pasarán a llamada.
-- Debe sentirse como que ya van avanzando, no como si empezaras desde cero.
-
-ESTILO:
-- Directo
-- comercial
-- claro
-- confiado
-- conversacional
-- breve
-
-Devuelve solo el texto final que se enviará al cliente.
+LÓGICA:
+- Si falta nombre, pide solo el nombre.
+- Si falta negocio, pide solo el nombre del negocio.
+- Si falta ciudad, pide solo la ciudad.
+- Si ya tienes los tres, pregunta qué quiere lograr: más ventas, más mensajes, más visibilidad, pauta, web, redes o similar.
 `;
 
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
-      temperature: 0.7,
-      messages: [
+  const userPrompt = `Mensaje del cliente: ${incomingText}`;
+
+  try {
+    const response = await openai.responses.create({
+      model: OPENAI_MODEL,
+      input: [
         {
-          role: 'system',
-          content: replyPrompt,
+          role: "developer",
+          content: [{ type: "input_text", text: developerPrompt }],
         },
         {
-          role: 'user',
-          content: text,
+          role: "user",
+          content: [{ type: "input_text", text: userPrompt }],
         },
       ],
     });
 
-    console.log(
-      '9. Respuesta cruda reply:',
-      response.choices[0]?.message?.content
-    );
+    const text = extractResponseText(response);
+    if (text) return normalizeReply(text);
 
-    const reply =
-      response.choices[0]?.message?.content ||
-      'Soy el bot con IA del equipo. Para avanzarte bien, dime a qué se dedica tu negocio y en qué ciudad estás.';
-
-    const { error: replySaveError } = await supabase
-      .from('contactos')
-      .update({
-        ultima_respuesta: reply,
-      })
-      .eq('whatsapp', phone);
-
-    if (replySaveError) {
-      console.error('10. Error guardando ultima_respuesta:', replySaveError);
-    }
-
-    const metaResponse = await fetch(
-      `https://graph.facebook.com/v18.0/${whatsappPhoneNumberId}/messages`,
-      {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${whatsappToken}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          messaging_product: 'whatsapp',
-          to: phone,
-          type: 'text',
-          text: { body: reply },
-        }),
-      }
-    );
-
-    const metaResult = await metaResponse.json();
-
-    console.log('11. Respuesta Meta:', metaResult);
-
-    if (!metaResponse.ok) {
-      return NextResponse.json(
-        {
-          error: 'Error enviando mensaje a WhatsApp',
-          meta: metaResult,
-          reply,
-          contact: updatedContact,
-          ai: parsed,
-        },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json({
-      status: 'ok',
-      reply,
-      contact: updatedContact,
-      ai: parsed,
-      meta: metaResult,
-    });
+    return fallbackReply(lead);
   } catch (error) {
-    console.error('Error general en POST:', error);
+    console.error("generateAssistantReply error:", error);
+    return fallbackReply(lead);
+  }
+}
 
-    if (error instanceof Error) {
-      return NextResponse.json(
-        {
-          error: error.message,
-          stack: error.stack,
-        },
-        { status: 500 }
-      );
+function fallbackReply(lead: LeadRow | null): string {
+  if (!lead?.name) {
+    return "Perfecto. Para avanzar bien, compárteme tu nombre, por favor.";
+  }
+
+  if (!lead?.business_name) {
+    return `Perfecto, ${lead.name}. Ahora dime el nombre de tu negocio.`;
+  }
+
+  if (!lead?.city) {
+    return `Gracias, ${lead.name}. ¿En qué ciudad está tu negocio?`;
+  }
+
+  return `Perfecto, ${lead.name}. Ya tengo que tu negocio es ${lead.business_name} y está en ${lead.city}. Ahora cuéntame, ¿qué te gustaría lograr primero: más ventas, más mensajes o más presencia en redes?`;
+}
+
+function normalizeReply(text: string): string {
+  return text
+    .replace(/\n{2,}/g, "\n")
+    .replace(/[ \t]+/g, " ")
+    .trim();
+}
+
+function extractResponseText(response: any): string {
+  if (!response) return "";
+
+  if (typeof response.output_text === "string" && response.output_text.trim()) {
+    return response.output_text.trim();
+  }
+
+  const output = response.output || [];
+  for (const item of output) {
+    const content = item?.content || [];
+    for (const part of content) {
+      if (part?.type === "output_text" && part?.text) {
+        return String(part.text).trim();
+      }
     }
+  }
 
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+  return "";
+}
+
+async function sendWhatsAppText(to: string, body: string) {
+  if (!WHATSAPP_TOKEN || !WHATSAPP_PHONE_NUMBER_ID) {
+    throw new Error("Missing WhatsApp credentials");
+  }
+
+  const url = `https://graph.facebook.com/v23.0/${WHATSAPP_PHONE_NUMBER_ID}/messages`;
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${WHATSAPP_TOKEN}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      messaging_product: "whatsapp",
+      to,
+      type: "text",
+      text: {
+        body,
+      },
+    }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    console.error("sendWhatsAppText error:", data);
+    throw new Error(data?.error?.message || "Failed to send WhatsApp message");
+  }
+
+  return data;
+}
+
+async function updateLeadSummaryWithAI({
+  lead,
+  userMessage,
+  botReply,
+}: {
+  lead: LeadRow | null;
+  userMessage: string;
+  botReply: string;
+}) {
+  if (!supabase || !lead?.phone) return;
+
+  const previousSummary = lead?.conversation_summary || "";
+  const previousTopic = lead?.last_topic || "";
+  const previousNeed = lead?.need_detected || "";
+  const previousStatus = lead?.status || "Interesado";
+
+  let memory: MemoryUpdate = {
+    ResumenConversacion: previousSummary,
+    UltimoTema: previousTopic,
+    NecesidadDetectada: previousNeed,
+    Estado: previousStatus as MemoryUpdate["Estado"],
+  };
+
+  if (OPENAI_API_KEY) {
+    try {
+      const prompt = `
+Analiza la conversación y actualiza la memoria comercial del lead.
+
+RESUMEN PREVIO:
+${previousSummary || "Sin resumen previo"}
+
+ULTIMO TEMA PREVIO:
+${previousTopic || "Sin tema previo"}
+
+NECESIDAD PREVIA:
+${previousNeed || "Sin necesidad detectada"}
+
+ESTADO PREVIO:
+${previousStatus || "Interesado"}
+
+MENSAJE NUEVO DEL CLIENTE:
+${userMessage}
+
+RESPUESTA DEL BOT:
+${botReply}
+
+Devuelve únicamente un objeto JSON puro con esta estructura exacta:
+{
+  "ResumenConversacion": "",
+  "UltimoTema": "",
+  "NecesidadDetectada": "",
+  "Estado": ""
+}
+
+REGLAS:
+- Estado debe ser solo uno de estos valores:
+Interesado
+Evaluando
+Cliente
+- No pongas markdown.
+- No pongas texto antes o después del JSON.
+- Resume de forma compacta y útil para ventas.
+`;
+
+      const response = await openai.responses.create({
+        model: OPENAI_MODEL,
+        input: [
+          {
+            role: "developer",
+            content: [{ type: "input_text", text: "Responde solo JSON válido." }],
+          },
+          {
+            role: "user",
+            content: [{ type: "input_text", text: prompt }],
+          },
+        ],
+      });
+
+      const raw = extractResponseText(response);
+      const parsed = safeJsonParse<MemoryUpdate>(raw);
+
+      if (
+        parsed &&
+        parsed.ResumenConversacion !== undefined &&
+        parsed.UltimoTema !== undefined &&
+        parsed.NecesidadDetectada !== undefined &&
+        ["Interesado", "Evaluando", "Cliente"].includes(parsed.Estado)
+      ) {
+        memory = parsed;
+      }
+    } catch (error) {
+      console.error("updateLeadSummaryWithAI error:", error);
+    }
+  }
+
+  const { error } = await supabase
+    .from("leads")
+    .update({
+      conversation_summary: memory.ResumenConversacion,
+      last_topic: memory.UltimoTema,
+      need_detected: memory.NecesidadDetectada,
+      status: memory.Estado,
+      last_user_message: userMessage,
+      last_bot_message: botReply,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("phone", lead.phone);
+
+  if (error) {
+    console.error("updateLeadSummaryWithAI supabase error:", error.message);
+  }
+}
+
+function safeJsonParse<T>(value: string): T | null {
+  try {
+    return JSON.parse(value) as T;
+  } catch {
+    const firstBrace = value.indexOf("{");
+    const lastBrace = value.lastIndexOf("}");
+    if (firstBrace >= 0 && lastBrace > firstBrace) {
+      try {
+        return JSON.parse(value.slice(firstBrace, lastBrace + 1)) as T;
+      } catch {
+        return null;
+      }
+    }
+    return null;
   }
 }
