@@ -1,11 +1,7 @@
 import Link from "next/link";
-import {
-  ArrowLeft,
-  MessageCircle,
-  Phone,
-  User,
-} from "lucide-react";
-import { supabaseServer } from "@/lib/supabase/server";
+import { ArrowLeft, MessageCircle, Phone, User } from "lucide-react";
+import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
 
 interface Props {
   params: Promise<{
@@ -15,6 +11,8 @@ interface Props {
 
 type Contacto = {
   id: string;
+  business_id?: string | null;
+  assigned_user_id?: string | null;
   whatsapp: string;
   nombre: string | null;
   resumen: string | null;
@@ -27,6 +25,7 @@ type Contacto = {
 
 type Mensaje = {
   id: string;
+  business_id?: string | null;
   whatsapp: string;
   texto: string | null;
   tipo: "cliente" | "bot" | null;
@@ -36,278 +35,167 @@ type Mensaje = {
 export default async function LeadDetailPage({ params }: Props) {
   const { id } = await params;
 
-  const { data: lead, error } = await supabaseServer
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
+  // 🔥 obtener negocio del usuario
+  const { data: businessUser } = await supabase
+    .from("business_users")
+    .select("business_id, role")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (!businessUser?.business_id) {
+    return <ErrorBox text="Usuario sin negocio asignado." />;
+  }
+
+  const businessId = businessUser.business_id;
+  const role = businessUser.role || "seller";
+
+  // 🔥 buscar lead SOLO por id (sin filtros agresivos)
+  const { data: lead, error } = await supabase
     .from("contactos")
     .select("*")
     .eq("id", id.trim())
     .maybeSingle();
 
+  // 🔥 DEBUG mental: si existe pero no coincide business
+  if (lead && lead.business_id !== businessId) {
+    return <ErrorBox text="Lead pertenece a otro negocio." />;
+  }
+
+  // 🔥 si es vendedor, validar asignación
+  if (lead && role !== "admin" && lead.assigned_user_id !== user.id) {
+    return <ErrorBox text="No tienes acceso a este lead." />;
+  }
+
   if (!lead || error) {
     return (
       <div className="space-y-6">
-        <Link
-          href="/leads"
-          className="inline-flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-black"
-        >
-          <ArrowLeft size={16} />
-          Volver a leads
+        <Link href="/leads" className="text-sm text-slate-600">
+          ← Volver
         </Link>
 
-        <div className="rounded-3xl border border-gray-200 bg-white p-10 shadow-sm">
-          <h1 className="text-2xl font-bold text-gray-900">
-            Lead no encontrado
-          </h1>
-          <p className="mt-2 text-sm text-gray-600">
-            No se encontró un registro con ese ID dentro del CRM.
-          </p>
+        <div className="rounded-[28px] border p-10 bg-white">
+          <h1 className="text-2xl font-bold">Lead no encontrado</h1>
         </div>
       </div>
     );
   }
 
   const contacto = lead as Contacto;
-  const phone = String(contacto.whatsapp || "").trim();
-  const whatsappPhone = normalizeMexPhone(phone);
+  const phone = contacto.whatsapp;
 
-  const { data: mensajesData } = await supabaseServer
+  // 🔥 mensajes
+  const { data: mensajesData } = await supabase
     .from("mensajes_recibidos")
     .select("*")
     .eq("whatsapp", phone)
     .order("created_at", { ascending: true });
 
-  const mensajes: Mensaje[] = (mensajesData as Mensaje[]) ?? [];
+  const mensajes: Mensaje[] = mensajesData || [];
 
   return (
     <div className="space-y-8">
-      <section className="flex flex-col gap-4 rounded-3xl border border-gray-200 bg-white p-8 shadow-sm lg:flex-row lg:items-start lg:justify-between">
-        <div>
-          <Link
-            href="/leads"
-            className="inline-flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-black"
-          >
-            <ArrowLeft size={16} />
-            Volver a leads
-          </Link>
+      {/* HEADER */}
+      <div className="rounded-[28px] bg-gradient-to-r from-purple-500 to-pink-500 p-8 text-white">
+        <Link href="/leads" className="text-sm opacity-80">
+          ← Volver
+        </Link>
 
-          <p className="mt-5 text-sm uppercase text-gray-500">
-            Ficha del lead
-          </p>
+        <h1 className="text-3xl font-bold mt-2">
+          {contacto.nombre || "Sin nombre"}
+        </h1>
 
-          <h1 className="mt-2 text-3xl font-bold text-gray-900">
-            {contacto.nombre || "Sin nombre"}
-          </h1>
-
-          <div className="mt-4 flex flex-wrap gap-3">
-            <StatusBadge status={contacto.estado || "Sin estado"} />
-
-            <span className="inline-flex items-center gap-2 rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-700">
-              <Phone size={14} />
-              {phone || "Sin WhatsApp"}
-            </span>
-
-            <span className="inline-flex items-center gap-2 rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-700">
-              <User size={14} />
-              WhatsApp Lead
-            </span>
-          </div>
+        <div className="flex gap-3 mt-4 text-sm">
+          <span>{contacto.estado}</span>
+          <span>{phone}</span>
         </div>
+      </div>
 
-        <div className="flex gap-3">
-          {whatsappPhone ? (
-            <a
-              href={`https://wa.me/${whatsappPhone}`}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-2 rounded-2xl bg-gray-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-gray-800"
-            >
-              <MessageCircle size={16} />
-              WhatsApp
-            </a>
-          ) : null}
-        </div>
-      </section>
+      {/* GRID */}
+      <div className="grid lg:grid-cols-3 gap-6">
+        {/* LEFT */}
+        <div className="lg:col-span-2 space-y-6">
+          <Card title="Resumen">{contacto.resumen}</Card>
 
-      <section className="grid gap-6 xl:grid-cols-3">
-        <div className="xl:col-span-2 space-y-6">
-          <Card title="Resumen de conversación">
-            {contacto.resumen || "Sin resumen disponible"}
-          </Card>
-
-          <div className="grid gap-6 md:grid-cols-2">
-            <InfoCard title="Último tema" value={contacto.ultimo_tema || "-"} />
-            <InfoCard title="Necesidad" value={contacto.necesidad || "-"} />
+          <div className="grid grid-cols-2 gap-4">
+            <Card title="Tema">{contacto.ultimo_tema}</Card>
+            <Card title="Necesidad">{contacto.necesidad}</Card>
           </div>
 
-          <Card title="Última respuesta del bot">
-            {contacto.ultima_respuesta || "Sin respuesta"}
-          </Card>
+          {/* CHAT */}
+          <div className="bg-white p-6 rounded-2xl border">
+            <h2 className="font-semibold">Conversación</h2>
 
-          <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
-            <h2 className="text-xl font-semibold text-gray-900">
-              Conversación
-            </h2>
-            <p className="mt-1 text-sm text-gray-500">
-              Historial de mensajes entre el lead y el bot.
-            </p>
+            <div className="mt-4 space-y-3 max-h-[400px] overflow-y-auto">
+              {mensajes.map((msg) => {
+                const isBot = msg.tipo === "bot";
 
-            <div className="mt-5 max-h-[520px] space-y-3 overflow-y-auto rounded-2xl bg-gray-50 p-4">
-              {mensajes.length > 0 ? (
-                mensajes.map((msg) => {
-                  const isBot = msg.tipo === "bot";
-
-                  return (
+                return (
+                  <div
+                    key={msg.id}
+                    className={`flex ${
+                      isBot ? "justify-end" : "justify-start"
+                    }`}
+                  >
                     <div
-                      key={msg.id}
-                      className={`flex ${isBot ? "justify-end" : "justify-start"}`}
+                      className={`px-4 py-2 rounded-xl text-sm max-w-[70%] ${
+                        isBot
+                          ? "bg-purple-500 text-white"
+                          : "bg-gray-100 text-black"
+                      }`}
                     >
-                      <div
-                        className={`max-w-[82%] rounded-2xl px-4 py-3 text-sm shadow-sm ${
-                          isBot
-                            ? "bg-gray-900 text-white"
-                            : "bg-white text-gray-800 border border-gray-200"
-                        }`}
-                      >
-                        <div className="whitespace-pre-wrap leading-6">
-                          {msg.texto || "-"}
-                        </div>
-
-                        <div
-                          className={`mt-2 text-[11px] ${
-                            isBot ? "text-gray-300" : "text-gray-400"
-                          }`}
-                        >
-                          {formatMessageDate(msg.created_at)}
-                        </div>
-                      </div>
+                      {msg.texto}
                     </div>
-                  );
-                })
-              ) : (
-                <p className="text-sm text-gray-500">
-                  No hay mensajes registrados todavía.
-                </p>
-              )}
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
 
+        {/* RIGHT */}
         <div className="space-y-6">
-          <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
-            <h2 className="text-xl font-semibold text-gray-900">Información</h2>
-
-            <div className="mt-5 space-y-4">
-              <KeyValue label="Nombre" value={contacto.nombre || "-"} />
-              <KeyValue label="WhatsApp" value={phone || "-"} />
-              <KeyValue label="Estado" value={contacto.estado || "-"} />
-              <KeyValue
-                label="Contactos"
-                value={String(contacto.veces_contacto ?? 0)}
-              />
-            </div>
-          </div>
-
-          <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
-            <h2 className="text-xl font-semibold text-gray-900">Clasificación</h2>
-
-            <div className="mt-5 space-y-4">
-              <KeyValue label="Estado" value={contacto.estado || "-"} />
-              <KeyValue label="Necesidad" value={contacto.necesidad || "-"} />
-            </div>
-          </div>
+          <Card title="Información">
+            <p>WhatsApp: {phone}</p>
+            <p>Estado: {contacto.estado}</p>
+            <p>Contactos: {contacto.veces_contacto}</p>
+          </Card>
         </div>
-      </section>
+      </div>
     </div>
   );
 }
+
+/* COMPONENTES */
 
 function Card({
   title,
   children,
 }: {
   title: string;
-  children: React.ReactNode;
+  children: any;
 }) {
   return (
-    <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
-      <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
-      <p className="mt-3 text-sm leading-7 text-gray-800">{children}</p>
+    <div className="bg-white p-6 rounded-2xl border">
+      <h2 className="font-semibold">{title}</h2>
+      <div className="mt-3 text-sm">{children || "-"}</div>
     </div>
   );
 }
 
-function InfoCard({ title, value }: { title: string; value: string }) {
+function ErrorBox({ text }: { text: string }) {
   return (
-    <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
-      <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-500">
-        {title}
-      </h3>
-      <p className="mt-3 text-sm leading-7 text-gray-800">{value}</p>
+    <div className="p-10 bg-white rounded-2xl border">
+      <h1 className="text-xl font-bold text-red-500">{text}</h1>
     </div>
   );
-}
-
-function KeyValue({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex items-start justify-between gap-4 rounded-2xl bg-gray-50 px-4 py-3">
-      <span className="text-sm font-medium text-gray-500">{label}</span>
-      <span className="max-w-[60%] break-words text-right text-sm font-semibold text-gray-900">
-        {value}
-      </span>
-    </div>
-  );
-}
-
-function StatusBadge({ status }: { status: string }) {
-  const normalized = status.toLowerCase().trim();
-
-  let classes =
-    "inline-flex rounded-full px-3 py-1 text-xs font-semibold ring-1 ring-inset ";
-
-  if (["nuevo"].includes(normalized)) {
-    classes += "bg-blue-50 text-blue-700 ring-blue-200";
-  } else if (
-    ["seguimiento", "interesado", "evaluando"].includes(normalized)
-  ) {
-    classes += "bg-amber-50 text-amber-700 ring-amber-200";
-  } else if (["cerrado", "ganado", "cliente"].includes(normalized)) {
-    classes += "bg-emerald-50 text-emerald-700 ring-emerald-200";
-  } else if (["perdido", "llamar"].includes(normalized)) {
-    classes += "bg-red-50 text-red-700 ring-red-200";
-  } else {
-    classes += "bg-gray-100 text-gray-700 ring-gray-200";
-  }
-
-  return <span className={classes}>{status}</span>;
-}
-
-function normalizeMexPhone(phone: string) {
-  const cleaned = phone.replace(/\D/g, "");
-
-  if (!cleaned) return "";
-
-  if (cleaned.startsWith("52") && cleaned.length >= 12) {
-    return cleaned;
-  }
-
-  if (cleaned.length === 10) {
-    return `52${cleaned}`;
-  }
-
-  return cleaned;
-}
-
-function formatMessageDate(value: string | null) {
-  if (!value) return "-";
-
-  try {
-    return new Date(value).toLocaleString("es-MX", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  } catch {
-    return value;
-  }
 }

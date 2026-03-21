@@ -1,324 +1,299 @@
 import Link from "next/link";
-import type { ReactNode } from "react";
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
 import {
   Users,
-  UserPlus,
-  Clock3,
-  CheckCircle2,
+  PhoneCall,
   MessageSquare,
+  BadgeCheck,
+  XCircle,
   ArrowUpRight,
 } from "lucide-react";
-import { supabaseServer } from "@/lib/supabase/server";
 
 type Contacto = {
   id: string;
-  whatsapp: string;
   nombre: string | null;
+  whatsapp: string | null;
   resumen: string | null;
-  ultimo_tema: string | null;
   necesidad: string | null;
   estado: string | null;
-  veces_contacto: number | null;
-  created_at: string | null;
+  assigned_user_id: string | null;
   ultima_respuesta: string | null;
+  created_at: string | null;
 };
 
+type Profile = {
+  id: string;
+  user_id: string;
+  email: string | null;
+  role: "admin" | "vendedor" | null;
+};
+
+const STATUS_CONFIG = [
+  {
+    key: "interesado",
+    label: "Interesados",
+    icon: MessageSquare,
+    color:
+      "border-blue-200 bg-blue-50 text-blue-800 hover:border-blue-300 hover:bg-blue-100",
+  },
+  {
+    key: "llamar",
+    label: "Llamar",
+    icon: PhoneCall,
+    color:
+      "border-amber-200 bg-amber-50 text-amber-800 hover:border-amber-300 hover:bg-amber-100",
+  },
+  {
+    key: "contactado",
+    label: "Contactados",
+    icon: Users,
+    color:
+      "border-violet-200 bg-violet-50 text-violet-800 hover:border-violet-300 hover:bg-violet-100",
+  },
+  {
+    key: "cliente",
+    label: "Clientes",
+    icon: BadgeCheck,
+    color:
+      "border-emerald-200 bg-emerald-50 text-emerald-800 hover:border-emerald-300 hover:bg-emerald-100",
+  },
+  {
+    key: "perdido",
+    label: "Perdidos",
+    icon: XCircle,
+    color:
+      "border-rose-200 bg-rose-50 text-rose-800 hover:border-rose-300 hover:bg-rose-100",
+  },
+];
+
+function getStatusCount(contactos: Contacto[], status: string) {
+  return contactos.filter((c) => (c.estado || "").toLowerCase() === status).length;
+}
+
+function formatDate(dateString: string | null) {
+  if (!dateString) return "Sin fecha";
+
+  try {
+    return new Intl.DateTimeFormat("es-MX", {
+      dateStyle: "medium",
+      timeStyle: "short",
+    }).format(new Date(dateString));
+  } catch {
+    return "Sin fecha";
+  }
+}
+
 export default async function DashboardPage() {
-  const { data, error } = await supabaseServer
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
+const { data: userData, error: userError } = await supabase
+  .from("business_users")
+  .select("role")
+  .eq("user_id", user.id)
+  .maybeSingle();
+
+const role = String(userData?.role || "").toLowerCase().trim();
+const isAdmin = role === "admin";
+
+  let contactosQuery = supabase
     .from("contactos")
-    .select("*")
+    .select(
+      "id, nombre, whatsapp, resumen, necesidad, estado, assigned_user_id, ultima_respuesta, created_at"
+    )
     .order("created_at", { ascending: false });
 
-  if (error) {
+  if (!isAdmin) {
+    contactosQuery = contactosQuery.eq("assigned_user_id", user.id);
+  }
+
+  const { data: contactosData, error: contactosError } = await contactosQuery;
+
+  if (contactosError) {
     return (
-      <div className="rounded-3xl border border-red-200 bg-red-50 p-6 text-red-700">
-        Error cargando contactos: {error.message}
+      <div className="p-6">
+        <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-red-700">
+          Error cargando dashboard: {contactosError.message}
+        </div>
       </div>
     );
   }
 
-  const leads: Contacto[] = data ?? [];
-
-  const totalLeads = leads.length;
-
-  const nuevos = leads.filter(
-    (lead) => (lead.estado || "").toLowerCase() === "nuevo"
-  ).length;
-
-  const seguimiento = leads.filter((lead) =>
-    ["seguimiento", "interesado", "interesadoo", "evaluando"].includes(
-      (lead.estado || "").toLowerCase()
-    )
-  ).length;
-
-  const cerrados = leads.filter((lead) =>
-    ["cerrado", "ganado", "cliente"].includes((lead.estado || "").toLowerCase())
-  ).length;
-
-  const recientes = [...leads].slice(0, 5);
-
-  const necesidadesMap = leads.reduce<Record<string, number>>((acc, lead) => {
-    const key = lead.necesidad?.trim() || "Sin clasificar";
-    acc[key] = (acc[key] || 0) + 1;
-    return acc;
-  }, {});
-
-  const necesidadesTop = Object.entries(necesidadesMap)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 5);
-
-  const maxNecesidad = necesidadesTop.length
-    ? Math.max(...necesidadesTop.map((n) => n[1]))
-    : 1;
+  const contactos = (contactosData ?? []) as Contacto[];
+  const totalLeads = contactos.length;
+  const recientes = contactos.slice(0, 8);
 
   return (
-    <div className="space-y-8">
-      <section className="flex flex-col gap-4 rounded-3xl border border-gray-200 bg-white p-8 shadow-sm md:flex-row md:items-center md:justify-between">
-        <div>
-          <p className="text-sm font-medium uppercase tracking-wide text-gray-500">
-            CRM WhatsApp IA
-          </p>
-          <h1 className="mt-2 text-3xl font-bold tracking-tight text-gray-900">
-            Dashboard de leads
-          </h1>
-          <p className="mt-2 max-w-2xl text-sm text-gray-600">
-            Revisa el rendimiento del bot, identifica oportunidades y da
-            seguimiento a los leads captados desde WhatsApp.
-          </p>
-        </div>
+    <main className="min-h-screen bg-neutral-50">
+      <div className="mx-auto max-w-7xl px-4 py-6 md:px-6 lg:px-8">
+        <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p className="text-sm font-medium text-neutral-500">
+              {isAdmin ? "Vista administrador" : "Vista vendedor"}
+            </p>
 
-        <div className="flex gap-3">
-          <Link
-            href="/leads"
-            className="inline-flex items-center gap-2 rounded-2xl bg-gray-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-gray-800"
-          >
-            Ver leads
-            <ArrowUpRight size={16} />
-          </Link>
-        </div>
-      </section>
+            <h1 className="text-3xl font-bold tracking-tight text-neutral-900">
+              {isAdmin ? "Dashboard de leads" : "Mis leads"}
+            </h1>
 
-      <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-        <StatCard
-          title="Total leads"
-          value={totalLeads}
-          icon={<Users size={20} />}
-          helper="Todos los registros captados"
-        />
+            <p className="mt-1 text-sm text-neutral-600">
+              {isAdmin
+                ? "Resumen general del CRM y acceso rápido por estado."
+                : "Aquí ves únicamente tus leads y tus pendientes."}
+            </p>
 
-        <StatCard
-          title="Nuevos"
-          value={nuevos}
-          icon={<UserPlus size={20} />}
-          helper="Entradas recientes"
-        />
-
-        <StatCard
-          title="En seguimiento"
-          value={seguimiento}
-          icon={<Clock3 size={20} />}
-          helper="Leads activos"
-        />
-
-        <StatCard
-          title="Cerrados"
-          value={cerrados}
-          icon={<CheckCircle2 size={20} />}
-          helper="Conversión o cierre"
-        />
-      </section>
-
-      <section className="grid gap-6 xl:grid-cols-3">
-        <div className="xl:col-span-2 rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-xl font-semibold text-gray-900">
-                Leads recientes
-              </h2>
-              <p className="mt-1 text-sm text-gray-500">
-                Últimos contactos registrados en el CRM.
-              </p>
+            <div className="mt-3 space-y-1 text-sm text-neutral-600">
+              <p>Sesión activa: {user.email}</p>
+              <p>Rol: {role}</p>
             </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Link
+              href="/leads"
+              className="inline-flex items-center gap-2 rounded-xl border border-neutral-200 bg-white px-4 py-2 text-sm font-medium text-neutral-700 shadow-sm transition hover:bg-neutral-100"
+            >
+              Ver lista
+              <ArrowUpRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </div>
+
+        <div className="mb-6">
+          <div className="rounded-2xl border border-neutral-200 bg-white p-5 shadow-sm">
+            <p className="text-sm font-medium text-neutral-500">
+              {isAdmin ? "Total de leads" : "Mis leads totales"}
+            </p>
+
+            <div className="mt-2 flex items-end gap-3">
+              <span className="text-4xl font-bold tracking-tight text-neutral-900">
+                {totalLeads}
+              </span>
+
+              <span className="pb-1 text-sm text-neutral-500">
+                {isAdmin ? "en todo el sistema" : "asignados a ti"}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <section className="mb-8">
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-neutral-900">
+              {isAdmin ? "Leads por estado" : "Mis leads por estado"}
+            </h2>
+
+            <p className="text-sm text-neutral-500">
+              Da clic en una tarjeta para abrir la lista filtrada
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-5">
+            {STATUS_CONFIG.map((status) => {
+              const count = getStatusCount(contactos, status.key);
+              const Icon = status.icon;
+              const href = `/leads?estado=${encodeURIComponent(status.key)}`;
+
+              return (
+                <Link
+                  key={status.key}
+                  href={href}
+                  className={`group rounded-2xl border p-4 shadow-sm transition ${status.color}`}
+                >
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <p className="text-sm font-medium opacity-80">{status.label}</p>
+                      <p className="mt-2 text-3xl font-bold">{count}</p>
+                    </div>
+
+                    <Icon className="h-5 w-5 opacity-80 transition group-hover:scale-110" />
+                  </div>
+
+                  <div className="mt-4 flex items-center gap-1 text-sm font-medium opacity-80">
+                    Ver lista
+                    <ArrowUpRight className="h-4 w-4" />
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+
+        <section>
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-neutral-900">
+              {isAdmin ? "Leads recientes" : "Mis leads recientes"}
+            </h2>
 
             <Link
               href="/leads"
-              className="text-sm font-medium text-gray-700 hover:text-black"
+              className="text-sm font-medium text-neutral-600 transition hover:text-neutral-900"
             >
               Ver todos
             </Link>
           </div>
 
-          <div className="mt-6 overflow-hidden rounded-2xl border border-gray-100">
-            <table className="w-full text-sm">
-              <thead className="bg-gray-50 text-left text-gray-700">
-                <tr>
-                  <th className="px-4 py-3 font-semibold">Nombre</th>
-                  <th className="px-4 py-3 font-semibold">WhatsApp</th>
-                  <th className="px-4 py-3 font-semibold">Estado</th>
-                  <th className="px-4 py-3 font-semibold">Necesidad</th>
-                </tr>
-              </thead>
-              <tbody>
-                {recientes.length > 0 ? (
-                  recientes.map((lead) => (
-                    <tr
-                      key={lead.id}
-                      className="border-t border-gray-100 text-black"
-                    >
-                      <td className="px-4 py-3 font-medium">
-                        <Link
-                          href={`/leads/${lead.id}`}
-                          className="hover:underline"
-                        >
-                          {lead.nombre || "Sin nombre"}
-                        </Link>
-                      </td>
-                      <td className="px-4 py-3">{lead.whatsapp}</td>
-                      <td className="px-4 py-3">
-                        <StatusBadge status={lead.estado || "Sin estado"} />
-                      </td>
-                      <td className="px-4 py-3">
-                        {lead.necesidad || "Sin clasificar"}
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td
-                      colSpan={4}
-                      className="px-4 py-10 text-center text-gray-500"
-                    >
-                      No hay leads disponibles.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
+          <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-sm">
+            {recientes.length === 0 ? (
+              <div className="p-6 text-sm text-neutral-500">
+                No hay leads para mostrar.
+              </div>
+            ) : (
+              <div className="divide-y divide-neutral-100">
+                {recientes.map((lead) => (
+                  <Link
+                    key={lead.id}
+                    href={`/leads/${lead.id}`}
+                    className="block p-4 transition hover:bg-neutral-50"
+                  >
+                    <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                      <div className="min-w-0">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <h3 className="truncate font-semibold text-neutral-900">
+                            {lead.nombre || "Sin nombre"}
+                          </h3>
 
-        <div className="space-y-6">
-          <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
-            <h2 className="text-xl font-semibold text-gray-900">
-              Necesidades detectadas
-            </h2>
-            <p className="mt-1 text-sm text-gray-500">
-              Temas más repetidos en las conversaciones.
-            </p>
+                          <span className="rounded-full bg-neutral-100 px-2.5 py-1 text-xs font-medium text-neutral-700">
+                            {lead.estado || "sin estado"}
+                          </span>
+                        </div>
 
-            <div className="mt-5 space-y-4">
-              {necesidadesTop.length > 0 ? (
-                necesidadesTop.map(([name, count]) => (
-                  <div key={name}>
-                    <div className="mb-1 flex items-center justify-between text-sm">
-                      <span className="font-medium text-gray-800">{name}</span>
-                      <span className="text-gray-500">{count}</span>
+                        <p className="mt-1 text-sm text-neutral-600">
+                          {lead.whatsapp || "Sin WhatsApp"}
+                        </p>
+
+                        {lead.necesidad && (
+                          <p className="mt-1 line-clamp-1 text-sm text-neutral-500">
+                            Necesidad: {lead.necesidad}
+                          </p>
+                        )}
+
+                        {lead.resumen && (
+                          <p className="mt-1 line-clamp-2 text-sm text-neutral-500">
+                            {lead.resumen}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="shrink-0 text-sm text-neutral-500">
+                        {formatDate(lead.ultima_respuesta || lead.created_at)}
+                      </div>
                     </div>
-                    <div className="h-2 rounded-full bg-gray-100">
-                      <div
-                        className="h-2 rounded-full bg-gray-900"
-                        style={{
-                          width: `${Math.max(12, (count / maxNecesidad) * 100)}%`,
-                        }}
-                      />
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <p className="text-sm text-gray-500">
-                  Aún no hay necesidades clasificadas.
-                </p>
-              )}
-            </div>
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
-
-          <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
-            <div className="flex items-center gap-3">
-              <div className="rounded-2xl bg-gray-100 p-3 text-gray-800">
-                <MessageSquare size={20} />
-              </div>
-              <div>
-                <h2 className="text-xl font-semibold text-gray-900">
-                  Resumen rápido
-                </h2>
-                <p className="text-sm text-gray-500">
-                  Vista general del comportamiento del CRM.
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-5 space-y-4 text-sm text-gray-700">
-              <div className="flex items-center justify-between rounded-2xl bg-gray-50 px-4 py-3">
-                <span>Leads captados</span>
-                <strong className="text-black">{totalLeads}</strong>
-              </div>
-              <div className="flex items-center justify-between rounded-2xl bg-gray-50 px-4 py-3">
-                <span>Leads nuevos</span>
-                <strong className="text-black">{nuevos}</strong>
-              </div>
-              <div className="flex items-center justify-between rounded-2xl bg-gray-50 px-4 py-3">
-                <span>En seguimiento</span>
-                <strong className="text-black">{seguimiento}</strong>
-              </div>
-              <div className="flex items-center justify-between rounded-2xl bg-gray-50 px-4 py-3">
-                <span>Cerrados</span>
-                <strong className="text-black">{cerrados}</strong>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-    </div>
-  );
-}
-
-function StatCard({
-  title,
-  value,
-  helper,
-  icon,
-}: {
-  title: string;
-  value: number;
-  helper: string;
-  icon: ReactNode;
-}) {
-  return (
-    <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
-      <div className="flex items-start justify-between">
-        <div>
-          <p className="text-sm font-medium text-gray-500">{title}</p>
-          <h3 className="mt-3 text-4xl font-bold tracking-tight text-black">
-            {value}
-          </h3>
-          <p className="mt-2 text-sm text-gray-500">{helper}</p>
-        </div>
-
-        <div className="rounded-2xl bg-gray-100 p-3 text-gray-800">{icon}</div>
+        </section>
       </div>
-    </div>
+    </main>
   );
-}
-
-function StatusBadge({ status }: { status: string }) {
-  const normalized = status.toLowerCase();
-
-  let classes =
-    "inline-flex rounded-full px-3 py-1 text-xs font-semibold ring-1 ring-inset ";
-
-  if (["nuevo"].includes(normalized)) {
-    classes += "bg-blue-50 text-blue-700 ring-blue-200";
-  } else if (
-    ["seguimiento", "interesado", "interesadoo", "evaluando"].includes(normalized)
-  ) {
-    classes += "bg-amber-50 text-amber-700 ring-amber-200";
-  } else if (["cerrado", "ganado", "cliente"].includes(normalized)) {
-    classes += "bg-emerald-50 text-emerald-700 ring-emerald-200";
-  } else if (["perdido"].includes(normalized)) {
-    classes += "bg-red-50 text-red-700 ring-red-200";
-  } else {
-    classes += "bg-gray-100 text-gray-700 ring-gray-200";
-  }
-
-  return <span className={classes}>{status}</span>;
 }
