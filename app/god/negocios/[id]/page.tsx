@@ -72,7 +72,7 @@ export default async function GodNegocioDetailPage({ params }: { params: Promise
         </Link>
 
         {/* HEADER */}
-        <div className="bg-[linear-gradient(135deg,#1e1b4b_0%,#312e81_100%)] rounded-2xl p-6 text-white">
+        <div className="bg-[linear-gradient(135deg,#8c7ac6_0%,#c84f92_100%)] rounded-2xl p-6 text-white">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center">
@@ -80,7 +80,7 @@ export default async function GodNegocioDetailPage({ params }: { params: Promise
               </div>
               <div>
                 <p className="text-xs uppercase tracking-widest text-white/60">Super Admin</p>
-                <h1 className="text-xl font-bold">{business.name}</h1>
+                <h1 className="text-xl text-white font-bold">{business.name}</h1>
               </div>
             </div>
             <form action={toggleActive}>

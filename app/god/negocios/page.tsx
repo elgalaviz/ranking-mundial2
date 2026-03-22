@@ -53,7 +53,7 @@ export default async function GodNegociosPage() {
       <div className="max-w-5xl mx-auto p-4 md:p-6 space-y-6">
 
         {/* HEADER */}
-        <div className="bg-[linear-gradient(135deg,#1e1b4b_0%,#312e81_100%)] rounded-2xl p-6 text-white">
+        <div className="bg-[linear-gradient(135deg,#8c7ac6_0%,#c84f92_100%)] rounded-2xl p-6 text-white">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center">
