@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createClient as createAdminClient } from "@supabase/supabase-js";
 import { revalidatePath } from "next/cache";
-import { Bot, Sparkles, Package, MessageSquare, Settings } from "lucide-react";
+import { Bot, Sparkles, Package, MessageSquare, Settings, CheckCircle2 } from "lucide-react";
 
 type Business = {
   id: string;
@@ -33,11 +33,15 @@ async function saveConfig(formData: FormData) {
   }).eq("id", businessId);
 
   revalidatePath("/admin/bot");
+  redirect("/admin/bot?saved=true");
 }
 
-export default async function BotConfigPage() {
+export default async function BotConfigPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ saved?: string }>;
+}) {
   const supabase = await createClient();
-
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
@@ -57,6 +61,9 @@ export default async function BotConfigPage() {
     .maybeSingle();
 
   if (!business) redirect("/dashboard");
+
+  const resolved = await searchParams;
+  const saved = resolved?.saved === "true";
 
   const b = business as Business;
 
@@ -88,11 +95,18 @@ export default async function BotConfigPage() {
           </p>
         </div>
 
+        {/* CONFIRMACIÓN */}
+        {saved && (
+          <div className="flex items-center gap-3 bg-emerald-50 border border-emerald-200 text-emerald-700 px-5 py-4 rounded-2xl shadow-sm">
+            <CheckCircle2 className="w-5 h-5 flex-shrink-0" />
+            <p className="text-sm font-semibold">¡Configuración guardada! El bot ya usa los nuevos datos.</p>
+          </div>
+        )}
+
         {/* FORM */}
         <form action={saveConfig} className="space-y-5">
           <input type="hidden" name="businessId" value={b.id} />
 
-          {/* Slogan */}
           <Section icon={<Sparkles className="w-4 h-4" />} title="Slogan del negocio">
             <p className="text-xs text-slate-500 mb-3">Una frase corta que define tu negocio. El bot la usa para presentarse.</p>
             <input
@@ -103,7 +117,6 @@ export default async function BotConfigPage() {
             />
           </Section>
 
-          {/* Descripción */}
           <Section icon={<MessageSquare className="w-4 h-4" />} title="Descripción del negocio">
             <p className="text-xs text-slate-500 mb-3">Explica a qué se dedica tu negocio. El bot usará esto para responder preguntas generales.</p>
             <textarea
@@ -115,23 +128,17 @@ export default async function BotConfigPage() {
             />
           </Section>
 
-          {/* Servicios */}
           <Section icon={<Package className="w-4 h-4" />} title="Servicios y productos">
             <p className="text-xs text-slate-500 mb-3">Lista tus servicios o productos con precios si quieres. El bot los usará para responder cotizaciones.</p>
             <textarea
               name="servicios"
               defaultValue={b.servicios || ""}
               rows={6}
-              placeholder={`Ej:
-- Gestión de redes sociales: desde $3,500/mes
-- Publicidad en Meta Ads: desde $2,000/mes + presupuesto
-- Diseño de contenido: desde $1,500/mes
-- Consultoría de marketing: $800/hora`}
+              placeholder={`Ej:\n- Gestión de redes sociales: desde $3,500/mes\n- Publicidad en Meta Ads: desde $2,000/mes\n- Diseño de contenido: desde $1,500/mes`}
               className="w-full text-sm border border-slate-200 rounded-xl px-4 py-3 resize-none focus:outline-none focus:ring-2 focus:ring-purple-300 placeholder:text-slate-400 font-mono"
             />
           </Section>
 
-          {/* Tono */}
           <Section icon={<Settings className="w-4 h-4" />} title="Tono del bot">
             <p className="text-xs text-slate-500 mb-3">Define cómo habla el bot con los clientes.</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -150,7 +157,6 @@ export default async function BotConfigPage() {
             </div>
           </Section>
 
-          {/* Instrucciones especiales */}
           <Section icon={<Bot className="w-4 h-4" />} title="Instrucciones especiales">
             <p className="text-xs text-slate-500 mb-3">
               Reglas específicas para el bot. Por ejemplo: qué no debe decir, cómo manejar objeciones, frases clave, etc.
@@ -159,16 +165,11 @@ export default async function BotConfigPage() {
               name="instrucciones_bot"
               defaultValue={b.instrucciones_bot || ""}
               rows={5}
-              placeholder={`Ej:
-- Nunca menciones a la competencia
-- Si preguntan por precios, siempre invita a una llamada
-- Si el cliente dice que es urgente, prioriza agendar hoy
-- No ofrezcas descuentos sin autorización`}
+              placeholder={`Ej:\n- Nunca menciones a la competencia\n- Si preguntan por precios, siempre invita a una llamada\n- Si el cliente dice que es urgente, prioriza agendar hoy`}
               className="w-full text-sm border border-slate-200 rounded-xl px-4 py-3 resize-none focus:outline-none focus:ring-2 focus:ring-purple-300 placeholder:text-slate-400"
             />
           </Section>
 
-          {/* Guardar */}
           <button
             type="submit"
             className="w-full py-3 bg-[linear-gradient(135deg,#8c7ac6_0%,#c84f92_100%)] hover:opacity-90 text-white font-semibold rounded-xl transition-opacity shadow-lg"
@@ -182,15 +183,7 @@ export default async function BotConfigPage() {
   );
 }
 
-function Section({
-  icon,
-  title,
-  children,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  children: React.ReactNode;
-}) {
+function Section({ icon, title, children }: { icon: React.ReactNode; title: string; children: React.ReactNode }) {
   return (
     <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
       <h2 className="font-semibold text-slate-800 flex items-center gap-2 mb-4">
