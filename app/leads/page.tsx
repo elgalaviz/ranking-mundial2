@@ -5,6 +5,8 @@ import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import StatusDropdown from "@/components/StatusDropdown";
 import AssignLeadDropdown from "@/components/AssignLeadDropdown";
 import ExportLeadsButton from "@/components/ExportLeadsButton";
+import { RefreshButton } from "@/components/RefreshButton";
+import { AutoRefreshOnFocus } from "@/components/AutoRefreshOnFocus";
 
 type SearchParams = {
   estado?: string;
@@ -209,6 +211,9 @@ export default async function LeadsPage({
 
   return (
     <main className="min-h-screen bg-neutral-50">
+      {/* ✅ NUEVO: Auto-refresh al volver a la pestaña */}
+      <AutoRefreshOnFocus />
+      
       <div className="px-4 py-6 md:px-6 lg:px-8">
         <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
@@ -249,6 +254,9 @@ export default async function LeadsPage({
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
+            {/* ✅ NUEVO: Botón de actualización manual */}
+            <RefreshButton />
+            
             <ExportLeadsButton estado={estadoFiltro || undefined} />
             <div className="inline-flex rounded-xl border border-neutral-200 bg-white p-1 shadow-sm">
               <Link
