@@ -339,7 +339,7 @@ export default async function LeadsPage({
                 return (
                   <div
                     key={columna.key}
-                    className="w-[260px] shrink-0 rounded-2xl border border-neutral-200 bg-white shadow-sm"
+                    className="w-65 shrink-0 rounded-2xl border border-neutral-200 bg-white shadow-sm"
                   >
                     <div className="rounded-t-2xl border-b border-neutral-200 bg-neutral-50 px-4 py-3">
                       <div className="flex items-center justify-between gap-3">
