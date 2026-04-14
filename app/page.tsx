@@ -401,7 +401,7 @@ export default function LandingPage() {
       <nav className="nav-glass sticky top-0 z-50 w-full" style={{ position: "relative" }}>
         <div className="flex items-center justify-between px-6 mx-auto" style={{ maxWidth: 1100, height: 64 }}>
           <div className="flex items-center gap-2">
-            <Image src="/Prospekt-app.png" alt="Prospekto" width={32} height={32} className="rounded-lg" />
+            <Image src="/Prospekt-icono.png" alt="Prospekto" width={50} height={50} className="rounded-lg" />
             <span style={{ fontSize: 17, fontWeight: 700, color: "#1a2035", letterSpacing: "-0.01em" }}>Prospekto</span>
           </div>
 
