@@ -8,8 +8,145 @@ export default function LandingPage() {
   const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  const schemas = [
+    // ── SoftwareApplication ────────────────────────────────────────
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      name: "Prospekto",
+      url: "https://prospekto.mx",
+      applicationCategory: "BusinessApplication",
+      operatingSystem: "Web",
+      description:
+        "CRM con bot de WhatsApp con IA para PyMEs. Responde automáticamente, califica leads y los asigna a tu equipo de ventas.",
+      offers: {
+        "@type": "Offer",
+        price: "0.38",
+        priceCurrency: "USD",
+        priceValidUntil: "2026-12-31",
+        availability: "https://schema.org/InStock",
+        description: "Desde $0.38 USD/mes con 1,000 conversaciones",
+      },
+      featureList: [
+        "Bot conversacional con IA en WhatsApp Business",
+        "CRM con pipeline visual en tiempo real",
+        "Asignación round-robin automática a vendedores",
+        "Extracción automática de nombre, necesidad y presupuesto",
+        "Historial completo de conversaciones",
+        "Exportación CSV de leads",
+        "Multi-negocio y multi-vendedor",
+        "Notificación WhatsApp al vendedor asignado",
+      ],
+      screenshot: "https://prospekto.mx/Prospekt-app.png",
+      aggregateRating: {
+        "@type": "AggregateRating",
+        ratingValue: "4.9",
+        ratingCount: "38",
+      },
+    },
+
+    // ── Organization ───────────────────────────────────────────────
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      name: "Prospekto",
+      url: "https://prospekto.mx",
+      logo: "https://prospekto.mx/Prospekt-app.png",
+      description:
+        "Empresa mexicana de software SaaS especializada en automatización de ventas por WhatsApp para PyMEs.",
+      foundingLocation: {
+        "@type": "Place",
+        addressCountry: "MX",
+      },
+      sameAs: [],
+    },
+
+    // ── WebSite ────────────────────────────────────────────────────
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      name: "Prospekto",
+      url: "https://prospekto.mx",
+      description: "CRM + Bot WhatsApp con IA para PyMEs mexicanas",
+      inLanguage: "es-MX",
+      potentialAction: {
+        "@type": "SearchAction",
+        target: {
+          "@type": "EntryPoint",
+          urlTemplate: "https://prospekto.mx/leads?q={search_term_string}",
+        },
+        "query-input": "required name=search_term_string",
+      },
+    },
+
+    // ── FAQPage ────────────────────────────────────────────────────
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: [
+        {
+          "@type": "Question",
+          name: "¿Qué es Prospekto?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Prospekto es un CRM con bot de WhatsApp impulsado por IA. Responde automáticamente a los mensajes de tus clientes, extrae sus datos (nombre, necesidad, presupuesto), califica su interés y asigna el lead al vendedor correcto de tu equipo, todo en piloto automático.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "¿Cuánto cuesta Prospekto?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Prospekto funciona por pago de uso real. Con 1,000 conversaciones mensuales el costo es aproximadamente $0.38 USD al mes, sin tarifas fijas ni contratos. Puedes comenzar sin tarjeta de crédito.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "¿Necesito saber programar para usar Prospekto?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "No. Prospekto está diseñado para dueños de negocio y equipos de ventas. El setup se realiza en minutos desde el panel de administración, sin conocimientos técnicos.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "¿Funciona con WhatsApp Business?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Sí. Prospekto se conecta a través de la API oficial de WhatsApp Business (Meta Cloud API), por lo que es completamente legal y estable.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "¿Para qué tipo de negocios es ideal Prospekto?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Prospekto es ideal para PyMEs mexicanas que reciben leads por WhatsApp: inmobiliarias, escuelas, clínicas, talleres, refaccionarias, despachos y cualquier negocio con equipo de ventas que necesite atender clientes rápidamente.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "¿Qué pasa si el bot no puede responder algo?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "El bot está entrenado con la información de tu negocio. Cuando recibe una consulta fuera de su alcance, captura los datos del cliente y asigna el lead a un vendedor humano para seguimiento, sin perder la conversación.",
+          },
+        },
+      ],
+    },
+  ];
+
   return (
     <main className="min-h-screen overflow-x-hidden font-sans" style={{ background: "linear-gradient(135deg, #ede9fe 0%, #d1fae5 55%, #fce7f3 100%)", color: "#1a2035" }}>
+      {/* ── JSON-LD Schemas ── */}
+      {schemas.map((schema, i) => (
+        <script
+          key={i}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+        />
+      ))}
+
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap');
 
