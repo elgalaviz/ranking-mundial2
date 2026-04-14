@@ -2,7 +2,8 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createClient as createAdminClient } from "@supabase/supabase-js";
 import { revalidatePath } from "next/cache";
-import { Bot, Sparkles, Package, MessageSquare, Settings, CheckCircle2 } from "lucide-react";
+import { Bot, Sparkles, Package, MessageSquare, Settings, CheckCircle2, ShoppingBag } from "lucide-react";
+import UploadCatalogo from "@/components/UploadCatalogo";
 
 type Business = {
   id: string;
@@ -12,6 +13,8 @@ type Business = {
   servicios: string | null;
   instrucciones_bot: string | null;
   tono_bot: string | null;
+  catalogo: Record<string, unknown>[] | null;
+  catalogo_updated_at: string | null;
 };
 
 async function saveConfig(formData: FormData) {
@@ -56,7 +59,7 @@ export default async function BotConfigPage({
 
   const { data: business } = await supabase
     .from("businesses")
-    .select("id, name, slogan, descripcion, servicios, instrucciones_bot, tono_bot")
+    .select("id, name, slogan, descripcion, servicios, instrucciones_bot, tono_bot, catalogo, catalogo_updated_at")
     .eq("id", businessUser.business_id)
     .maybeSingle();
 
@@ -98,10 +101,34 @@ export default async function BotConfigPage({
         {/* CONFIRMACIÓN */}
         {saved && (
           <div className="flex items-center gap-3 bg-emerald-50 border border-emerald-200 text-emerald-700 px-5 py-4 rounded-2xl shadow-sm">
-            <CheckCircle2 className="w-5 h-5 flex-shrink-0" />
+            <CheckCircle2 className="w-5 h-5 shrink-0" />
             <p className="text-sm font-semibold">¡Configuración guardada! El bot ya usa los nuevos datos.</p>
           </div>
         )}
+
+        {/* CATÁLOGO DE PRODUCTOS — fuera del form, se guarda por su cuenta vía cliente */}
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+          <h2 className="font-semibold text-slate-800 flex items-center gap-2 mb-1">
+            <span className="text-slate-400"><ShoppingBag className="w-4 h-4" /></span>
+            Catálogo de productos
+          </h2>
+          <p className="text-xs text-slate-500 mb-4">
+            Sube tu catálogo en formato Excel (.xlsx) o CSV. El bot lo usará automáticamente para
+            responder preguntas sobre productos, precios y disponibilidad.{' '}
+            <a
+              href="/prospekto_catalogo_template.xlsx"
+              download
+              className="text-purple-600 hover:underline font-medium"
+            >
+              Descargar template
+            </a>
+          </p>
+          <UploadCatalogo
+            businessId={b.id}
+            updatedAt={b.catalogo_updated_at}
+            totalProductos={b.catalogo?.length ?? null}
+          />
+        </div>
 
         {/* FORM */}
         <form action={saveConfig} className="space-y-5">
@@ -129,7 +156,10 @@ export default async function BotConfigPage({
           </Section>
 
           <Section icon={<Package className="w-4 h-4" />} title="Servicios y productos">
-            <p className="text-xs text-slate-500 mb-3">Lista tus servicios o productos con precios si quieres. El bot los usará para responder cotizaciones.</p>
+            <p className="text-xs text-slate-500 mb-3">
+              Descripción general de tus servicios. Si subiste un catálogo Excel arriba, el bot
+              combinará ambas fuentes para responder mejor.
+            </p>
             <textarea
               name="servicios"
               defaultValue={b.servicios || ""}
@@ -143,7 +173,7 @@ export default async function BotConfigPage({
             <p className="text-xs text-slate-500 mb-3">Define cómo habla el bot con los clientes.</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {TONOS.map((tono) => (
-                <label key={tono} className="flex items-center gap-3 p-3 rounded-xl border border-slate-200 cursor-pointer hover:border-purple-300 hover:bg-purple-50 transition has-[:checked]:border-purple-400 has-[:checked]:bg-purple-50">
+                <label key={tono} className="flex items-center gap-3 p-3 rounded-xl border border-slate-200 cursor-pointer hover:border-purple-300 hover:bg-purple-50 transition has-checked:border-purple-400 has-checked:bg-purple-50">
                   <input
                     type="radio"
                     name="tono_bot"

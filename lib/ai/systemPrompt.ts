@@ -1,3 +1,7 @@
+import { buscarProductos } from '@/lib/ai/productos'
+
+type Producto = Record<string, string | number | boolean | null>
+
 type Business = {
   name?: string | null;
   slogan?: string | null;
@@ -5,6 +9,7 @@ type Business = {
   servicios?: string | null;
   instrucciones_bot?: string | null;
   tono_bot?: string | null;
+  catalogo?: Producto[] | null;           // ← nuevo
 };
 
 type Contacto = {
@@ -23,9 +28,11 @@ type Contacto = {
 export function getSystemPrompt({
   business,
   contacto,
+  mensajeUsuario = '',          // ← nuevo: para buscar productos relevantes
 }: {
   business?: Business | null;
   contacto: Contacto;
+  mensajeUsuario?: string;
 }) {
   const datosCliente = [
     contacto.nombre ? `Nombre: ${contacto.nombre}` : null,
@@ -38,8 +45,10 @@ export function getSystemPrompt({
     contacto.datos_extra ? `Otros datos: ${contacto.datos_extra}` : null,
   ].filter(Boolean).join("\n");
 
-  // Detectar si ya está en estado "llamar"
   const yaAgendoLlamada = contacto.estado === "llamar";
+
+  // Buscar productos relevantes al mensaje del cliente
+  const productosRelevantes = buscarProductos(business?.catalogo ?? null, mensajeUsuario)
 
   return `
 Eres un asistente comercial que atiende clientes por WhatsApp en nombre de ${business?.name || "este negocio"}.
@@ -53,6 +62,7 @@ Descripción: ${business?.descripcion || "Sin descripción"}
 
 📦 SERVICIOS Y PRODUCTOS
 ${business?.servicios || "No se han definido servicios. Responde de forma general."}
+${productosRelevantes}
 
 👤 LO QUE SABEMOS DEL CLIENTE
 ${datosCliente || "Sin datos aún"}
