@@ -402,7 +402,7 @@ export default function LandingPage() {
         <div className="flex items-center justify-between px-6 mx-auto" style={{ maxWidth: 1100, height: 64 }}>
           <div className="flex items-center gap-2">
             <Image src="/Prospekt-icono.png" alt="Prospekto" width={50} height={50} className="rounded-lg" />
-            <span style={{ fontSize: 17, fontWeight: 700, color: "#1a2035", letterSpacing: "-0.01em" }}>Prospekto</span>
+            <span style={{ fontSize: 17, fontWeight: 700, color: "#1a2035", letterSpacing: "-0.01em" }}>PROSPEKTO</span>
           </div>
 
           {/* Desktop */}
@@ -461,7 +461,7 @@ export default function LandingPage() {
           </div>
 
           <p className="fade-up delay-4" style={{ marginTop: 20, fontSize: 13, color: "#9ca3af" }}>
-            Sin tarjeta de crédito · Desde $0.38 USD/mes · Setup en minutos
+             Desde $699 MXN/mes · Setup en minutos (dependiendo de su perfil de meta)
           </p>
         </div>
       </section>
@@ -471,7 +471,7 @@ export default function LandingPage() {
         <div style={{ maxWidth: 900, margin: "0 auto", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 16 }}>
           {[
             { val: "78%", label: "compra con quien responde primero" },
-            { val: "400%", label: "más conversiones en 5 min" },
+            { val: "100%", label: "más conversiones en 5 min" },
             { val: "3 de 10", label: "clientes perdidos por tardanza" },
             { val: "24/7", label: "sin días libres ni fines de semana" },
           ].map((s) => (
@@ -564,6 +564,95 @@ export default function LandingPage() {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* ─── BOT CONFIG ─── */}
+      <section style={{ padding: "72px 24px", maxWidth: 1100, margin: "0 auto" }}>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+
+          {/* Mockup panel config */}
+          <div className="order-2 lg:order-1 glass-card" style={{ overflow: "hidden" }}>
+            <div style={{ background: "linear-gradient(135deg, #8c7ac6, #c84f92)", padding: "14px 20px", display: "flex", alignItems: "center", gap: 10 }}>
+              <span style={{ fontSize: 16 }}>⚙️</span>
+              <span style={{ fontSize: 14, fontWeight: 600, color: "#fff" }}>Configuración del Bot — Mi Negocio</span>
+            </div>
+            <div style={{ padding: "20px", display: "flex", flexDirection: "column", gap: 14, background: "rgba(248,250,252,0.7)" }}>
+
+              {/* Campo: nombre */}
+              <div>
+                <div style={{ fontSize: 11, fontWeight: 600, color: "#6b7280", marginBottom: 5, textTransform: "uppercase", letterSpacing: "0.06em" }}>¿Cómo se llama tu negocio?</div>
+                <div style={{ background: "#fff", border: "1px solid #e5e7eb", borderRadius: 10, padding: "9px 14px", fontSize: 13, color: "#1a2035" }}>Inmobiliaria Torres</div>
+              </div>
+
+              {/* Campo: qué vende */}
+              <div>
+                <div style={{ fontSize: 11, fontWeight: 600, color: "#6b7280", marginBottom: 5, textTransform: "uppercase", letterSpacing: "0.06em" }}>¿Qué vendes o qué servicio ofreces?</div>
+                <div style={{ background: "#fff", border: "1px solid #e5e7eb", borderRadius: 10, padding: "9px 14px", fontSize: 13, color: "#1a2035" }}>Venta y renta de propiedades en CDMX</div>
+              </div>
+
+              {/* Campo: tono */}
+              <div>
+                <div style={{ fontSize: 11, fontWeight: 600, color: "#6b7280", marginBottom: 5, textTransform: "uppercase", letterSpacing: "0.06em" }}>Tono del bot</div>
+                <div style={{ background: "#fff", border: "1px solid #e5e7eb", borderRadius: 10, padding: "9px 14px", fontSize: 13, color: "#1a2035", display: "flex", justifyContent: "space-between" }}>
+                  Profesional y amigable <span style={{ color: "#9ca3af" }}>▾</span>
+                </div>
+              </div>
+
+              {/* Upload Excel — destacado */}
+              <div style={{ background: "rgba(0,168,132,0.06)", border: "1.5px dashed rgba(0,168,132,0.4)", borderRadius: 12, padding: "14px 16px" }}>
+                <div style={{ fontSize: 11, fontWeight: 600, color: "#00875a", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.06em" }}>📊 Catálogo de productos / servicios</div>
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <div style={{ background: "#fff", border: "1px solid #e5e7eb", borderRadius: 8, padding: "7px 12px", fontSize: 12, color: "#374151", flex: 1 }}>
+                    productos_catalogo.xlsx
+                  </div>
+                  <div style={{ background: "#00a884", color: "#fff", borderRadius: 8, padding: "7px 12px", fontSize: 12, fontWeight: 600, whiteSpace: "nowrap" }}>
+                    ✓ Subido
+                  </div>
+                </div>
+                <div style={{ fontSize: 11, color: "#6b7280", marginTop: 6 }}>47 productos cargados · La IA ya los conoce todos</div>
+              </div>
+
+              {/* Status */}
+              <div style={{ background: "rgba(0,168,132,0.08)", border: "1px solid rgba(0,168,132,0.2)", borderRadius: 10, padding: "10px 14px", fontSize: 12, color: "#006b47", lineHeight: 1.7 }}>
+                <div style={{ fontWeight: 600, marginBottom: 2 }}>✅ Bot activo y respondiendo</div>
+                <div>Tu asistente ya conoce tu catálogo completo y habla con tu voz.</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Texto */}
+          <div className="order-1 lg:order-2">
+            <div className="sec-label" style={{ marginBottom: 16 }}>Configuración sin complicaciones</div>
+            <h2 className="serif" style={{ fontSize: "clamp(26px, 4vw, 44px)", fontWeight: 400, lineHeight: 1.2, marginBottom: 20, color: "#1a2035" }}>
+              Tú decides cómo habla<br />
+              <span style={{ fontStyle: "italic", color: "#00a884" }}>tu bot con IA</span>
+            </h2>
+            <p style={{ fontSize: 15, color: "#6b7280", lineHeight: 1.8, marginBottom: 28 }}>
+              Le dices a la IA quién eres, qué vendes y cómo quieres que hable con tus clientes. Desde ese momento ella responde, califica y organiza cada prospecto — automáticamente y con tu voz.
+            </p>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: 14, marginBottom: 28 }}>
+              {[
+                { icon: "🏢", title: "Tu negocio, tu tono", desc: "Configuras el nombre, descripción y estilo de comunicación. El bot adopta tu personalidad de marca." },
+                { icon: "📊", title: "Sube tu catálogo desde Excel", desc: "Importa tus productos o servicios en un archivo .xlsx y la IA los aprende al instante. Sin reescribir nada." },
+                { icon: "📝", title: "Instrucciones especiales", desc: "¿Quieres que pida zona antes de dar precios? ¿Que no hable de competidores? Tú mandas." },
+              ].map(f => (
+                <div key={f.title} style={{ display: "flex", gap: 14, alignItems: "flex-start" }}>
+                  <div style={{ fontSize: 22, marginTop: 2 }}>{f.icon}</div>
+                  <div>
+                    <div style={{ fontSize: 14, fontWeight: 600, color: "#1a2035", marginBottom: 3 }}>{f.title}</div>
+                    <div style={{ fontSize: 13, color: "#6b7280", lineHeight: 1.6 }}>{f.desc}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="dark-banner">
+              Tu negocio, tu voz <span>y tu tiempo.</span>
+            </div>
+          </div>
+
         </div>
       </section>
 
@@ -672,8 +761,8 @@ export default function LandingPage() {
       {/* ─── FOOTER ─── */}
       <footer style={{ borderTop: "1px solid rgba(0,0,0,0.07)", padding: "32px 24px", textAlign: "center", background: "rgba(255,255,255,0.4)" }}>
         <div className="flex items-center justify-center gap-2 mb-3">
-          <Image src="/Prospekt-app.png" alt="Prospekto" width={24} height={24} className="rounded-md" />
-          <span style={{ fontSize: 15, fontWeight: 700, color: "#1a2035" }}>Prospekto</span>
+          <Image src="/Prospekt-.png" alt="Prospekto" width={24} height={24} className="rounded-md" />
+          <span style={{ fontSize: 15, fontWeight: 700, color: "#1a2035" }}>PROSPEKTO</span>
         </div>
         <div style={{ fontSize: 13, color: "#9ca3af" }}>
           CRM + Bot WhatsApp para PyMEs mexicanas · {new Date().getFullYear()}
