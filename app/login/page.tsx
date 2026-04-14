@@ -41,7 +41,7 @@ export default function LoginPage() {
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-[linear-gradient(135deg,#8c7ac6_0%,#c84f92_100%)] px-6">
-      <div className="w-full max-w-md rounded-[32px] border border-white/30 bg-white/90 p-8 shadow-[0_25px_70px_rgba(51,32,77,0.28)] backdrop-blur">
+      <div className="w-full max-w-md rounded-4xl border border-white/30 bg-white/90 p-8 shadow-[0_25px_70px_rgba(51,32,77,0.28)] backdrop-blur">
         
         {/* ✅ Logo agregado */}
         <div className="mb-6 flex justify-center">

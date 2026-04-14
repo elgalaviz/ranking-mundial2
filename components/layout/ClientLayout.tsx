@@ -5,9 +5,14 @@ import Sidebar from "@/components/layout/sidebar";
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const hideSidebar = pathname === "/login";
+  
+  const showSidebar = 
+    pathname.startsWith("/dashboard") ||
+    pathname.startsWith("/leads") ||
+    pathname.startsWith("/admin") ||
+    pathname.startsWith("/god");
 
-  if (hideSidebar) {
+  if (!showSidebar) {
     return <>{children}</>;
   }
 
