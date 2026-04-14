@@ -12,13 +12,8 @@ import {
   Menu,
   X 
 } from "lucide-react";
-import { createClient } from "@supabase/supabase-js";
+import { createBrowserClient } from "@supabase/ssr";
 import Image from "next/image";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL || "",
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ""
-);
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -29,6 +24,10 @@ export default function Sidebar() {
 
   const handleLogout = async () => {
     try {
+      const supabase = createBrowserClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      );
       await supabase.auth.signOut();
       router.push("/login");
       router.refresh();
@@ -109,13 +108,9 @@ export default function Sidebar() {
                   : "text-white/75 hover:bg-white/10 hover:text-white"
               }`}
             >
-              <span
-                className={`flex h-9 w-9 items-center justify-center rounded-xl transition ${
-                  isActive("/dashboard")
-                    ? "bg-white/15 text-white"
-                    : "bg-white/5 text-white/75 group-hover:bg-white/10 group-hover:text-white"
-                }`}
-              >
+              <span className={`flex h-9 w-9 items-center justify-center rounded-xl transition ${
+                isActive("/dashboard") ? "bg-white/15 text-white" : "bg-white/5 text-white/75 group-hover:bg-white/10 group-hover:text-white"
+              }`}>
                 <LayoutDashboard size={18} />
               </span>
               <span>Dashboard</span>
@@ -130,13 +125,9 @@ export default function Sidebar() {
                   : "text-white/75 hover:bg-white/10 hover:text-white"
               }`}
             >
-              <span
-                className={`flex h-9 w-9 items-center justify-center rounded-xl transition ${
-                  isActive("/leads")
-                    ? "bg-white/15 text-white"
-                    : "bg-white/5 text-white/75 group-hover:bg-white/10 group-hover:text-white"
-                }`}
-              >
+              <span className={`flex h-9 w-9 items-center justify-center rounded-xl transition ${
+                isActive("/leads") ? "bg-white/15 text-white" : "bg-white/5 text-white/75 group-hover:bg-white/10 group-hover:text-white"
+              }`}>
                 <Users size={18} />
               </span>
               <span>Leads</span>
@@ -151,13 +142,9 @@ export default function Sidebar() {
                   : "text-white/75 hover:bg-white/10 hover:text-white"
               }`}
             >
-              <span
-                className={`flex h-9 w-9 items-center justify-center rounded-xl transition ${
-                  isActive("/admin/bot")
-                    ? "bg-white/15 text-white"
-                    : "bg-white/5 text-white/75 group-hover:bg-white/10 group-hover:text-white"
-                }`}
-              >
+              <span className={`flex h-9 w-9 items-center justify-center rounded-xl transition ${
+                isActive("/admin/bot") ? "bg-white/15 text-white" : "bg-white/5 text-white/75 group-hover:bg-white/10 group-hover:text-white"
+              }`}>
                 <Bot size={18} />
               </span>
               <span>Config Bot</span>
@@ -172,19 +159,13 @@ export default function Sidebar() {
                   : "text-white/75 hover:bg-white/10 hover:text-white"
               }`}
             >
-              <span
-                className={`flex h-9 w-9 items-center justify-center rounded-xl transition ${
-                  isActive("/god/negocios")
-                    ? "bg-white/15 text-white"
-                    : "bg-white/5 text-white/75 group-hover:bg-white/10 group-hover:text-white"
-                }`}
-              >
+              <span className={`flex h-9 w-9 items-center justify-center rounded-xl transition ${
+                isActive("/god/negocios") ? "bg-white/15 text-white" : "bg-white/5 text-white/75 group-hover:bg-white/10 group-hover:text-white"
+              }`}>
                 <Building2 size={18} />
               </span>
               <span>Negocios</span>
-              <span className="ml-auto text-[10px] bg-white/10 px-1.5 py-0.5 rounded-full text-white/60">
-                GOD
-              </span>
+              <span className="ml-auto text-[10px] bg-white/10 px-1.5 py-0.5 rounded-full text-white/60">GOD</span>
             </Link>
           </nav>
 
@@ -197,8 +178,7 @@ export default function Sidebar() {
                 Tu CRM está listo para revisar leads y conversaciones.
               </p>
             </div>
-
-            <button 
+            <button
               onClick={handleLogout}
               className="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-white/70 transition hover:bg-white/10 hover:text-white disabled:opacity-50"
             >
@@ -246,13 +226,9 @@ export default function Sidebar() {
                   : "text-white/75 hover:bg-white/10 hover:text-white"
               }`}
             >
-              <span
-                className={`flex h-9 w-9 items-center justify-center rounded-xl transition ${
-                  isActive("/dashboard")
-                    ? "bg-white/15 text-white"
-                    : "bg-white/5 text-white/75 group-hover:bg-white/10 group-hover:text-white"
-                }`}
-              >
+              <span className={`flex h-9 w-9 items-center justify-center rounded-xl transition ${
+                isActive("/dashboard") ? "bg-white/15 text-white" : "bg-white/5 text-white/75 group-hover:bg-white/10 group-hover:text-white"
+              }`}>
                 <LayoutDashboard size={18} />
               </span>
               <span>Dashboard</span>
@@ -266,13 +242,9 @@ export default function Sidebar() {
                   : "text-white/75 hover:bg-white/10 hover:text-white"
               }`}
             >
-              <span
-                className={`flex h-9 w-9 items-center justify-center rounded-xl transition ${
-                  isActive("/leads")
-                    ? "bg-white/15 text-white"
-                    : "bg-white/5 text-white/75 group-hover:bg-white/10 group-hover:text-white"
-                }`}
-              >
+              <span className={`flex h-9 w-9 items-center justify-center rounded-xl transition ${
+                isActive("/leads") ? "bg-white/15 text-white" : "bg-white/5 text-white/75 group-hover:bg-white/10 group-hover:text-white"
+              }`}>
                 <Users size={18} />
               </span>
               <span>Leads</span>
@@ -286,13 +258,9 @@ export default function Sidebar() {
                   : "text-white/75 hover:bg-white/10 hover:text-white"
               }`}
             >
-              <span
-                className={`flex h-9 w-9 items-center justify-center rounded-xl transition ${
-                  isActive("/admin/bot")
-                    ? "bg-white/15 text-white"
-                    : "bg-white/5 text-white/75 group-hover:bg-white/10 group-hover:text-white"
-                }`}
-              >
+              <span className={`flex h-9 w-9 items-center justify-center rounded-xl transition ${
+                isActive("/admin/bot") ? "bg-white/15 text-white" : "bg-white/5 text-white/75 group-hover:bg-white/10 group-hover:text-white"
+              }`}>
                 <Bot size={18} />
               </span>
               <span>Config Bot</span>
@@ -306,19 +274,13 @@ export default function Sidebar() {
                   : "text-white/75 hover:bg-white/10 hover:text-white"
               }`}
             >
-              <span
-                className={`flex h-9 w-9 items-center justify-center rounded-xl transition ${
-                  isActive("/god/negocios")
-                    ? "bg-white/15 text-white"
-                    : "bg-white/5 text-white/75 group-hover:bg-white/10 group-hover:text-white"
-                }`}
-              >
+              <span className={`flex h-9 w-9 items-center justify-center rounded-xl transition ${
+                isActive("/god/negocios") ? "bg-white/15 text-white" : "bg-white/5 text-white/75 group-hover:bg-white/10 group-hover:text-white"
+              }`}>
                 <Building2 size={18} />
               </span>
               <span>Negocios</span>
-              <span className="ml-auto text-[10px] bg-white/10 px-1.5 py-0.5 rounded-full text-white/60">
-                GOD
-              </span>
+              <span className="ml-auto text-[10px] bg-white/10 px-1.5 py-0.5 rounded-full text-white/60">GOD</span>
             </Link>
           </nav>
 
@@ -331,8 +293,7 @@ export default function Sidebar() {
                 Tu CRM está listo para revisar leads y conversaciones.
               </p>
             </div>
-
-            <button 
+            <button
               onClick={handleLogout}
               className="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-white/70 transition hover:bg-white/10 hover:text-white disabled:opacity-50"
             >

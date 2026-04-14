@@ -1,20 +1,35 @@
 import { type NextRequest, NextResponse } from "next/server";
+import { createServerClient } from "@supabase/ssr";
 import { updateSession } from "./lib/supabase/proxy";
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Obtener sesión actualizada
+  // Refrescar sesión (mantiene cookies sincronizadas)
   const response = await updateSession(request);
 
-  // Leer cookie de sesión para saber si hay usuario autenticado
-  // Supabase SSR guarda el token en sb-*-auth-token
-  const hasSession = request.cookies.getAll().some(
-    (c) => c.name.includes("-auth-token") && c.value.length > 0
+  // Verificar sesión con getUser() — la forma correcta y robusta
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll();
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) =>
+            response.cookies.set(name, value, options)
+          );
+        },
+      },
+    }
   );
 
+  const { data: { user } } = await supabase.auth.getUser();
+
   // ── Rutas protegidas ──────────────────────────────────────────────
-  if (!hasSession && pathname.startsWith("/dashboard")) {
+  if (!user && pathname.startsWith("/dashboard")) {
     const loginUrl = request.nextUrl.clone();
     loginUrl.pathname = "/login";
     loginUrl.searchParams.set("redirect", pathname);
@@ -22,7 +37,7 @@ export async function proxy(request: NextRequest) {
   }
 
   // ── Redirigir si ya está autenticado ─────────────────────────────
-  if (hasSession && (pathname === "/login" || pathname === "/")) {
+  if (user && (pathname === "/login" || pathname === "/")) {
     const dashboardUrl = request.nextUrl.clone();
     dashboardUrl.pathname = "/dashboard";
     return NextResponse.redirect(dashboardUrl);
