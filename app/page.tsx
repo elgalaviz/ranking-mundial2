@@ -620,16 +620,16 @@ export default function LandingPage() {
 
             <div style={{ marginTop: 12 }}>
               {/* Precio tachado */}
-              <div style={{ fontSize: 13, color: "#9ca3af", marginBottom: 4 }}>
-                Precio regular: <span style={{ textDecoration: "line-through" }}>$29 USD/mes</span>
+              <div style={{ fontSize: 14, color: "#9ca3af", marginBottom: 6 }}>
+                Precio regular: <span style={{ textDecoration: "line-through", fontWeight: 600 }}>$1,200 MXN/mes</span>
               </div>
 
               {/* Precio actual */}
               <div style={{ display: "flex", alignItems: "baseline", justifyContent: "center", gap: 6, marginBottom: 4 }}>
-                <span className="serif" style={{ fontSize: "clamp(40px, 10vw, 62px)", color: "#1a2035", fontWeight: 400 }}>$0.38</span>
-                <span style={{ fontSize: 16, color: "#9ca3af" }}>USD / mes</span>
+                <span className="serif" style={{ fontSize: "clamp(40px, 10vw, 62px)", color: "#1a2035", fontWeight: 400 }}>$699</span>
+                <span style={{ fontSize: 16, color: "#9ca3af" }}>MXN / mes</span>
               </div>
-              <div style={{ fontSize: 13, color: "#9ca3af", marginBottom: 8 }}>Con 1,000 conversaciones · pago por uso real</div>
+              <div style={{ fontSize: 13, color: "#9ca3af", marginBottom: 8 }}>Precio de lanzamiento · todo incluido</div>
 
               {/* Urgencia */}
               <div style={{
