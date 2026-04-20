@@ -31,7 +31,7 @@ export default async function LandingPage() {
   const partidos = await getProximosPartidos();
 
   return (
-    <main className="min-h-screen bg-[#05080f] text-white overflow-x-hidden">
+    <main className="min-h-screen bg-white text-gray-900 overflow-x-hidden">
 
       {/* ── NAV ───────────────────────────────────────── */}
       <nav className="flex items-center justify-between px-6 py-4 max-w-6xl mx-auto">
@@ -40,7 +40,7 @@ export default async function LandingPage() {
           href={`https://wa.me/${WA_NUMBER}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-sm border border-[#00e5a0] text-[#00e5a0] px-4 py-2 rounded-full hover:bg-[#00e5a0] hover:text-black transition-all font-medium"
+          className="text-sm border border-[#006847] text-[#006847] px-4 py-2 rounded-full hover:bg-[#006847] hover:text-white transition-all font-medium"
         >
           Unirme gratis
         </a>
@@ -49,19 +49,19 @@ export default async function LandingPage() {
       {/* ── HERO ──────────────────────────────────────── */}
       <section className="max-w-6xl mx-auto px-6 pt-10 pb-20 grid lg:grid-cols-2 gap-12 items-center">
         <div>
-          <div className="inline-flex items-center gap-2 bg-[#006847]/30 border border-[#006847] text-[#00e5a0] text-xs px-3 py-1.5 rounded-full mb-6">
-            <span className="w-2 h-2 bg-[#00e5a0] rounded-full animate-pulse" />
+          <div className="inline-flex items-center gap-2 bg-[#006847]/10 border border-[#006847]/50 text-[#006847] text-xs px-3 py-1.5 rounded-full mb-6">
+            <span className="w-2 h-2 bg-[#006847] rounded-full animate-pulse" />
             Mundial 2026 · 11 Jun – 19 Jul · USA · CAN · MEX
           </div>
 
-          <h1 className="text-4xl sm:text-5xl font-black leading-tight mb-4">
+          <h1 className="text-4xl sm:text-5xl font-black leading-tight mb-4 text-gray-900">
             Tu guía del{" "}
-            <span className="text-[#00e5a0]">Mundial 2026</span>
+            <span className="text-[#006847]">Mundial 2026</span>
             <br />por WhatsApp
           </h1>
 
-          <p className="text-gray-200 text-lg mb-8 leading-relaxed">
-            Recibe alertas <strong className="text-white">15 minutos antes</strong> de cada partido,
+          <p className="text-gray-700 text-lg mb-8 leading-relaxed">
+            Recibe alertas <strong className="text-gray-900">15 minutos antes</strong> de cada partido,
             info de los jugadores a seguir y respuestas a todo lo que quieras saber del mundial.
             Gratis. Sin app. Solo WhatsApp.
           </p>
@@ -76,7 +76,7 @@ export default async function LandingPage() {
             Activar mis alertas gratis
           </a>
 
-          <p className="text-gray-200 text-sm">Sin registros. Sin contraseña. Solo escríbenos.</p>
+          <p className="text-gray-500 text-sm">Sin registros. Sin contraseña. Solo escríbenos.</p>
 
           {/* Stats */}
           <div className="flex gap-8 mt-10">
@@ -86,8 +86,8 @@ export default async function LandingPage() {
               { n: "16", label: "Ciudades sede" },
             ].map(s => (
               <div key={s.label}>
-                <div className="text-2xl font-black text-[#00e5a0]">{s.n}</div>
-                <div className="text-xs text-gray-300">{s.label}</div>
+                <div className="text-2xl font-black text-[#006847]">{s.n}</div>
+                <div className="text-xs text-gray-500">{s.label}</div>
               </div>
             ))}
           </div>
@@ -101,23 +101,23 @@ export default async function LandingPage() {
 
       {/* ── PRÓXIMOS PARTIDOS ─────────────────────────── */}
       {partidos.length > 0 && (
-        <section className="bg-[#0c1220] py-16">
+        <section className="bg-gray-50 py-16 border-y border-gray-100">
           <div className="max-w-6xl mx-auto px-6">
-            <h2 className="text-2xl font-bold mb-2">Próximos partidos</h2>
-            <p className="text-gray-200 text-sm mb-8">Horarios en tiempo de Ciudad de México</p>
+            <h2 className="text-2xl font-bold mb-2 text-gray-900">Próximos partidos</h2>
+            <p className="text-gray-500 text-sm mb-8">Horarios en tiempo de Ciudad de México</p>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {partidos.map((p: Record<string, string>) => (
-                <div key={p.id} className="bg-[#111827] border border-gray-800 rounded-xl p-4 hover:border-[#00e5a0]/40 transition-colors">
-                  <div className="text-xs text-[#00e5a0] mb-2 font-medium">
+                <div key={p.id} className="bg-white border border-gray-200 rounded-xl p-4 hover:border-[#006847]/40 hover:shadow-md transition-all">
+                  <div className="text-xs text-[#006847] mb-2 font-semibold">
                     {p.fase}{p.grupo ? ` · Grupo ${p.grupo}` : ""}
                   </div>
                   <div className="flex items-center justify-between mb-3">
-                    <span className="font-bold text-white">{p.equipo_local}</span>
-                    <span className="text-gray-200 text-sm font-medium px-2">vs</span>
-                    <span className="font-bold text-white text-right">{p.equipo_visitante}</span>
+                    <span className="font-bold text-gray-900">{p.equipo_local}</span>
+                    <span className="text-gray-400 text-sm font-medium px-2">vs</span>
+                    <span className="font-bold text-gray-900 text-right">{p.equipo_visitante}</span>
                   </div>
-                  <div className="text-xs text-gray-300">{formatFecha(p.fecha_utc)}</div>
-                  {p.estadio && <div className="text-xs text-gray-300 mt-1">{p.estadio} · {p.ciudad}</div>}
+                  <div className="text-xs text-gray-500">{formatFecha(p.fecha_utc)}</div>
+                  {p.estadio && <div className="text-xs text-gray-400 mt-1">{p.estadio} · {p.ciudad}</div>}
                 </div>
               ))}
             </div>
@@ -127,8 +127,8 @@ export default async function LandingPage() {
 
       {/* ── CÓMO FUNCIONA ─────────────────────────────── */}
       <section className="max-w-6xl mx-auto px-6 py-20">
-        <h2 className="text-2xl font-bold text-center mb-2">Así de fácil</h2>
-        <p className="text-gray-200 text-center text-sm mb-12">Sin apps, sin registros, sin complicaciones</p>
+        <h2 className="text-2xl font-bold text-center mb-2 text-gray-900">Así de fácil</h2>
+        <p className="text-gray-500 text-center text-sm mb-12">Sin apps, sin registros, sin complicaciones</p>
         <div className="grid sm:grid-cols-3 gap-8">
           {[
             { n: "1", icon: "💬", title: "Escríbenos", desc: "Manda un mensaje al número de FanBot. En segundos quedas registrado." },
@@ -136,25 +136,25 @@ export default async function LandingPage() {
             { n: "3", icon: "🤖", title: "Pregunta lo que quieras", desc: "Nuestro chatbot responde todo sobre el Mundial 2026 y la historia del fútbol." },
           ].map(s => (
             <div key={s.n} className="text-center">
-              <div className="w-14 h-14 bg-[#006847]/20 border border-[#006847]/40 rounded-2xl flex items-center justify-center text-2xl mx-auto mb-4">
+              <div className="w-14 h-14 bg-[#006847]/10 border border-[#006847]/30 rounded-2xl flex items-center justify-center text-2xl mx-auto mb-4">
                 {s.icon}
               </div>
-              <div className="text-xs text-[#00e5a0] font-bold mb-2">PASO {s.n}</div>
-              <h3 className="font-bold text-lg mb-2">{s.title}</h3>
-              <p className="text-gray-200 text-sm leading-relaxed">{s.desc}</p>
+              <div className="text-xs text-[#006847] font-bold mb-2">PASO {s.n}</div>
+              <h3 className="font-bold text-lg mb-2 text-gray-900">{s.title}</h3>
+              <p className="text-gray-600 text-sm leading-relaxed">{s.desc}</p>
             </div>
           ))}
         </div>
       </section>
 
       {/* ── PRÓXIMAMENTE ──────────────────────────────── */}
-      <section className="bg-[#0c1220] py-20">
+      <section className="bg-gray-50 py-20 border-y border-gray-100">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-12">
-            <div className="inline-block bg-[#CE1126]/20 border border-[#CE1126]/40 text-[#ff6b6b] text-xs px-3 py-1.5 rounded-full mb-4">
+            <div className="inline-block bg-[#CE1126]/10 border border-[#CE1126]/30 text-[#CE1126] text-xs px-3 py-1.5 rounded-full mb-4">
               Próximamente
             </div>
-            <h2 className="text-2xl font-bold">Mucho más en camino</h2>
+            <h2 className="text-2xl font-bold text-gray-900">Mucho más en camino</h2>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
@@ -163,11 +163,11 @@ export default async function LandingPage() {
               { icon: "⭐", title: "Estrellas por selección", desc: "Conoce a los jugadores clave de cada equipo en el mundial." },
               { icon: "🎯", title: "Fantasy", desc: "Arma tu equipo ideal, acumula puntos con cada partido." },
             ].map(f => (
-              <div key={f.title} className="bg-[#111827] border border-gray-800 rounded-xl p-5 opacity-75">
+              <div key={f.title} className="bg-white border border-gray-200 rounded-xl p-5">
                 <div className="text-3xl mb-3">{f.icon}</div>
-                <h3 className="font-bold mb-2 text-sm">{f.title}</h3>
-                <p className="text-gray-200 text-xs leading-relaxed">{f.desc}</p>
-                <div className="mt-3 text-xs text-[#CE1126]">Muy pronto</div>
+                <h3 className="font-bold mb-2 text-sm text-gray-900">{f.title}</h3>
+                <p className="text-gray-500 text-xs leading-relaxed">{f.desc}</p>
+                <div className="mt-3 text-xs text-[#CE1126] font-medium">Muy pronto</div>
               </div>
             ))}
           </div>
@@ -178,10 +178,10 @@ export default async function LandingPage() {
       <section className="py-20 px-6 text-center">
         <div className="max-w-xl mx-auto">
           <div className="text-5xl mb-6">🏆</div>
-          <h2 className="text-3xl font-black mb-4">
-            El Mundial arranca el <span className="text-[#00e5a0]">11 de junio</span>
+          <h2 className="text-3xl font-black mb-4 text-gray-900">
+            El Mundial arranca el <span className="text-[#006847]">11 de junio</span>
           </h2>
-          <p className="text-gray-200 mb-8">
+          <p className="text-gray-600 mb-8">
             Más de 100 partidos. 48 selecciones. Sé el primero en saberlo todo.
           </p>
           <a
@@ -197,13 +197,13 @@ export default async function LandingPage() {
       </section>
 
       {/* ── FOOTER ────────────────────────────────────── */}
-      <footer className="border-t border-gray-900 py-8 px-6">
+      <footer className="border-t border-gray-200 bg-gray-50 py-8 px-6">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <Logo small />
-          <div className="flex gap-6 text-xs text-gray-300">
-            <a href="/privacidad" className="hover:text-white">Privacidad</a>
-            <a href="/condiciones" className="hover:text-white">Condiciones</a>
-            <a href="/eliminacion-datos" className="hover:text-white">Eliminar datos</a>
+          <div className="flex gap-6 text-xs text-gray-500">
+            <a href="/privacidad" className="hover:text-gray-900">Privacidad</a>
+            <a href="/condiciones" className="hover:text-gray-900">Condiciones</a>
+            <a href="/eliminacion-datos" className="hover:text-gray-900">Eliminar datos</a>
           </div>
           <p className="text-xs text-gray-400">© 2026 Ranking Mundial 26</p>
         </div>
