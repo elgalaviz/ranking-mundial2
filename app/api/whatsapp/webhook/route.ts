@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import Anthropic from "@anthropic-ai/sdk";
+import OpenAI from "openai";
 import { sendWhatsAppText } from "@/lib/ai/sendWhatsAppText";
 import { getFanbotSystemPrompt } from "@/lib/fanbot/systemPrompt";
 import { welcomeMessage, limitReachedMessage, unknownMessage } from "@/lib/fanbot/messages";
@@ -19,8 +19,8 @@ function getSupabase() {
   );
 }
 
-function getAnthropic() {
-  return new Anthropic({ apiKey: process.env.CLAUDE_API_KEY! });
+function getOpenAI() {
+  return new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
 }
 
 function inferCountry(phone: string): { country_code: string; city_hint: string } {
@@ -134,16 +134,18 @@ export async function POST(req: NextRequest) {
       return new NextResponse("ok", { status: 200 });
     }
 
-    // Llamar a Claude
-    const anthropic = getAnthropic();
-    const response = await anthropic.messages.create({
-      model: "claude-haiku-4-5-20251001",
+    // Llamar a OpenAI
+    const openai = getOpenAI();
+    const response = await openai.chat.completions.create({
+      model: process.env.OPENAI_MODEL || "gpt-4o-mini",
       max_tokens: 400,
-      system: getFanbotSystemPrompt(),
-      messages: [{ role: "user", content: text }],
+      messages: [
+        { role: "system", content: getFanbotSystemPrompt() },
+        { role: "user", content: text },
+      ],
     });
 
-    const reply = (response.content[0] as { type: string; text: string }).text || unknownMessage();
+    const reply = response.choices[0]?.message?.content || unknownMessage();
 
     await sendWhatsAppText({
       accessToken: WHATSAPP_TOKEN,
