@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import {
@@ -37,8 +38,8 @@ export default function Sidebar({ user }: { user: any }) {
   return (
     <div className="flex flex-col w-64 bg-white border-r border-gray-200 shadow-sm">
       <div className="flex items-center justify-center h-20 border-b border-gray-200">
-        <Link href="/" className="text-xl font-bold text-gray-800">
-          Mundial26 <span className="text-[#006847]">Admin</span>
+        <Link href="/">
+          <Image src="/mifanbot-h.svg" alt="MiFanBot" width={130} height={34} priority />
         </Link>
       </div>
       <nav className="flex-1 px-4 py-6 space-y-2">

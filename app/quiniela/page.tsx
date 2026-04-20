@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { jwtVerify } from "jose";
 import { createClient } from "@supabase/supabase-js";
 import Link from "next/link";
+import Image from "next/image";
 import QuinielaPartidos from "./QuinielaPartidos";
 
 const JWT_SECRET = new TextEncoder().encode(
@@ -57,8 +58,8 @@ export default async function QuinielaPage() {
     <main className="min-h-screen bg-gray-50">
       <nav className="bg-white border-b border-gray-200 shadow-sm">
         <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
-          <Link href="/" className="text-xl font-black text-[#006847]">
-            RANKING <span className="text-[#CE1126]">MUNDIAL</span> 26
+          <Link href="/">
+            <Image src="/mifanbot-h.svg" alt="MiFanBot" width={140} height={36} priority />
           </Link>
           <div className="flex items-center gap-4">
             <span className="text-sm text-gray-500 hidden sm:block">
