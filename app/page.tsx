@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
 
-const WA_NUMBER = "5214421234567"; // TODO: reemplazar con número real
+const WA_NUMBER = "5218112993097";
 
 async function getProximosPartidos() {
   try {

@@ -88,7 +88,7 @@ export default async function GodNegociosPage() {
               const s = stats.find((x) => x.business_id === b.id);
               return (
                 <div key={b.id} className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 flex items-center gap-4 flex-wrap">
-                  <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center flex-shrink-0">
+                  <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center shrink-0">
                     <Building2 className="w-5 h-5 text-indigo-500" />
                   </div>
                   <div className="flex-1 min-w-0">
