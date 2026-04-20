@@ -1,0 +1,68 @@
+import { NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
+import { sendWhatsAppText } from "@/lib/ai/sendWhatsAppText";
+
+const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN || "";
+const PHONE_NUMBER_ID = process.env.WHATSAPP_PHONE_NUMBER_ID || "";
+
+function getSupabaseAdmin() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
+
+export async function POST(req: Request) {
+  try {
+    const { phone } = await req.json();
+
+    if (!phone || phone.length < 10) {
+      return NextResponse.json(
+        { error: "Número de teléfono inválido." },
+        { status: 400 }
+      );
+    }
+
+    const supabase = getSupabaseAdmin();
+
+    // 1. Buscar al usuario por su número de teléfono
+    const { data: user, error: userError } = await supabase
+      .from("users")
+      .select("id, phone")
+      .eq("phone", phone)
+      .single();
+
+    if (userError || !user) {
+      return NextResponse.json(
+        { error: "Este número no está registrado. Por favor, envía 'Hola' a nuestro bot de WhatsApp primero." },
+        { status: 404 }
+      );
+    }
+
+    // 2. Generar código y fecha de expiración (10 minutos)
+    const otp_code = Math.floor(100000 + Math.random() * 900000).toString();
+    const otp_expires_at = new Date(Date.now() + 10 * 60 * 1000).toISOString();
+
+    // 3. Guardar el código en la base de datos
+    const { error: updateError } = await supabase
+      .from("users")
+      .update({ otp_code, otp_expires_at })
+      .eq("id", user.id);
+
+    if (updateError) throw updateError;
+
+    // 4. Enviar el código por WhatsApp
+    await sendWhatsAppText({
+      accessToken: WHATSAPP_TOKEN,
+      phoneNumberId: PHONE_NUMBER_ID,
+      to: user.phone!,
+      body: `⚽ Tu código de acceso para la Quiniela de Ranking Mundial 26 es: *${otp_code}*\n\nEste código expira en 10 minutos.`,
+    });
+
+    return NextResponse.json({ success: true });
+
+  } catch (error: any) {
+    console.error("Error al enviar código OTP:", error);
+    return NextResponse.json({ error: "No se pudo enviar el código. Intenta de nuevo." }, { status: 500 });
+  }
+}
