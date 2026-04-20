@@ -2,41 +2,39 @@ import "./globals.css";
 import { Metadata } from "next";
 import ClientLayout from "@/components/layout/ClientLayout";
 
-const BASE_URL = "https://prospekto.mx";
+const BASE_URL = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000";
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
 
   // ── Títulos ──────────────────────────────────────────────────────
   title: {
-    default: "Prospekto — CRM + Bot WhatsApp con IA para PyMEs",
-    template: "%s | Prospekto",
+    default: "Ranking Mundial 26 — Alertas y Chatbot de WhatsApp",
+    template: "%s | Ranking Mundial 26",
   },
 
   // ── Descripción ──────────────────────────────────────────────────
   description:
-    "Prospekto responde automáticamente cada mensaje de WhatsApp, califica el interés del cliente, organiza tus leads y los asigna a tu equipo de ventas. CRM con IA para PyMEs mexicanas. Desde $0.38 USD/mes.",
+    "Recibe alertas de partidos del Mundial 2026 15 minutos antes de que empiecen, y pregunta lo que quieras a nuestro FanBot de IA. Todo por WhatsApp, gratis y sin apps.",
 
   // ── Keywords ─────────────────────────────────────────────────────
   keywords: [
-    "CRM WhatsApp",
-    "bot WhatsApp con IA",
-    "automatizar WhatsApp ventas",
-    "CRM para PyMEs México",
-    "respuestas automáticas WhatsApp",
-    "asistente ventas WhatsApp",
-    "gestión de leads WhatsApp",
-    "software CRM México",
-    "bot ventas WhatsApp Business",
-    "automatización ventas pymes",
-    "CRM leads WhatsApp",
-    "prospekto",
+    "Mundial 2026",
+    "alertas WhatsApp",
+    "bot WhatsApp",
+    "chatbot Mundial",
+    "calendario Mundial 2026",
+    "partidos Mundial 2026",
+    "Copa del Mundo 2026",
+    "FanBot",
+    "notificaciones fútbol",
+    "WhatsApp API",
   ],
 
   // ── Autores / Categoría ──────────────────────────────────────────
-  authors: [{ name: "Prospekto", url: BASE_URL }],
-  category: "software",
-  applicationName: "Prospekto",
+  authors: [{ name: "Ranking Agencia", url: "https://rankingagencia.com" }],
+  category: "sports",
+  applicationName: "Ranking Mundial 26",
 
   // ── Canonical ────────────────────────────────────────────────────
   alternates: {
@@ -49,16 +47,16 @@ export const metadata: Metadata = {
     type: "website",
     locale: "es_MX",
     url: BASE_URL,
-    siteName: "Prospekto",
-    title: "Prospekto — CRM + Bot WhatsApp con IA para PyMEs",
+    siteName: "Ranking Mundial 26",
+    title: "Ranking Mundial 26 — Alertas y Chatbot de WhatsApp",
     description:
-      "Responde cada mensaje de WhatsApp al instante con IA, califica leads y los asigna automáticamente a tu equipo de ventas. Empieza gratis.",
+      "Recibe alertas de partidos 15 minutos antes, y pregunta lo que quieras a nuestro FanBot de IA. Todo por WhatsApp.",
     images: [
       {
-        url: "/Prospekt-app.png",
+        url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Prospekto — CRM con bot WhatsApp para PyMEs",
+        alt: "Ranking Mundial 26 — Alertas de WhatsApp",
       },
     ],
   },
@@ -66,46 +64,31 @@ export const metadata: Metadata = {
   // ── Twitter / X ──────────────────────────────────────────────────
   twitter: {
     card: "summary_large_image",
-    title: "Prospekto — CRM + Bot WhatsApp con IA para PyMEs",
+    title: "Ranking Mundial 26 — Alertas y Chatbot de WhatsApp",
     description:
-      "Responde cada mensaje de WhatsApp al instante con IA. Califica leads, asígnalos a tu equipo y cierra más ventas. Desde $0.38 USD/mes.",
-    images: ["/Prospekt-app.png"],
+      "Recibe alertas de partidos 15 minutos antes, y pregunta lo que quieras a nuestro FanBot de IA. Todo por WhatsApp.",
+    images: ["/og-image.png"],
   },
 
   // ── Robots ───────────────────────────────────────────────────────
   robots: {
     index: true,
     follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-    },
   },
 
   // ── PWA / Icons ──────────────────────────────────────────────────
-  manifest: "/manifest.json",
+  // manifest: "/manifest.json",
   icons: {
-    icon: "/Prospekt-icono.ico",
-    shortcut: "/Prospekt-icono.ico",
-    apple: "/Prospekt-app.png",
-  },
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: "default",
-    title: "Prospekto",
+    icon: "/favicon.ico",
+    // shortcut: "/shortcut-icon.png",
+    // apple: "/apple-icon.png",
   },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="es">
-      <head>
-        <meta name="theme-color" content="#8c7ac6" />
-      </head>
-      <body className="bg-[#f7f5fb] text-slate-900 antialiased">
+      <body className="bg-white text-gray-900 antialiased">
         <ClientLayout>{children}</ClientLayout>
       </body>
     </html>
