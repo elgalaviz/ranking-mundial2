@@ -78,6 +78,13 @@ export default async function LandingPage() {
 
           <p className="text-gray-500 text-sm">Sin registros. Sin contraseña. Solo escríbenos.</p>
 
+          <a
+            href="/api/calendario"
+            className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-[#006847] mt-3 transition-colors"
+          >
+            📅 Descargar todos los partidos para Google Calendar / iPhone
+          </a>
+
           {/* Stats */}
           <div className="flex gap-8 mt-10">
             {[
