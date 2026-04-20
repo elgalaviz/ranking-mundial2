@@ -9,10 +9,13 @@ import { sendWhatsAppText } from "@/lib/ai/sendWhatsAppText";
 export const runtime = "nodejs";
 
 const VERIFY_TOKEN = process.env.META_VERIFY_TOKEN || "";
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+function getSupabase() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 export async function GET(req: NextRequest) {
   const url = new URL(req.url);
@@ -27,6 +30,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  const supabase = getSupabase();
   try {
     console.log("🔥 WEBHOOK HIT");
 
