@@ -1,790 +1,341 @@
-"use client";
+import { createClient } from "@/lib/supabase/server";
 
-import { useRouter } from "next/navigation";
-import Image from "next/image";
-import { useState } from "react";
+export const dynamic = "force-dynamic";
 
-export default function LandingPage() {
-  const router = useRouter();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+const WA_NUMBER = "5214421234567"; // TODO: reemplazar con número real
 
-  const schemas = [
-    // ── SoftwareApplication ────────────────────────────────────────
-    {
-      "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
-      name: "Prospekto",
-      url: "https://prospekto.mx",
-      applicationCategory: "BusinessApplication",
-      operatingSystem: "Web",
-      description:
-        "CRM con bot de WhatsApp con IA para PyMEs. Responde automáticamente, califica leads y los asigna a tu equipo de ventas.",
-      offers: {
-        "@type": "Offer",
-        price: "0.38",
-        priceCurrency: "USD",
-        priceValidUntil: "2026-12-31",
-        availability: "https://schema.org/InStock",
-        description: "Desde $0.38 USD/mes con 1,000 conversaciones",
-      },
-      featureList: [
-        "Bot conversacional con IA en WhatsApp Business",
-        "CRM con pipeline visual en tiempo real",
-        "Asignación round-robin automática a vendedores",
-        "Extracción automática de nombre, necesidad y presupuesto",
-        "Historial completo de conversaciones",
-        "Exportación CSV de leads",
-        "Multi-negocio y multi-vendedor",
-        "Notificación WhatsApp al vendedor asignado",
-      ],
-      screenshot: "https://prospekto.mx/Prospekt-app.png",
-      aggregateRating: {
-        "@type": "AggregateRating",
-        ratingValue: "4.9",
-        ratingCount: "38",
-      },
-    },
+async function getProximosPartidos() {
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("partidos")
+      .select("*")
+      .gte("fecha_utc", new Date().toISOString())
+      .order("fecha_utc", { ascending: true })
+      .limit(5);
+    return data || [];
+  } catch {
+    return [];
+  }
+}
 
-    // ── Organization ───────────────────────────────────────────────
-    {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      name: "Prospekto",
-      url: "https://prospekto.mx",
-      logo: "https://prospekto.mx/Prospekt-app.png",
-      description:
-        "Empresa mexicana de software SaaS especializada en automatización de ventas por WhatsApp para PyMEs.",
-      foundingLocation: {
-        "@type": "Place",
-        addressCountry: "MX",
-      },
-      sameAs: [],
-    },
+function formatFecha(utc: string) {
+  return new Date(utc).toLocaleString("es-MX", {
+    timeZone: "America/Mexico_City",
+    weekday: "short", day: "numeric", month: "short",
+    hour: "2-digit", minute: "2-digit",
+  });
+}
 
-    // ── WebSite ────────────────────────────────────────────────────
-    {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      name: "Prospekto",
-      url: "https://prospekto.mx",
-      description: "CRM + Bot WhatsApp con IA para PyMEs mexicanas",
-      inLanguage: "es-MX",
-      potentialAction: {
-        "@type": "SearchAction",
-        target: {
-          "@type": "EntryPoint",
-          urlTemplate: "https://prospekto.mx/leads?q={search_term_string}",
-        },
-        "query-input": "required name=search_term_string",
-      },
-    },
-
-    // ── FAQPage ────────────────────────────────────────────────────
-    {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      mainEntity: [
-        {
-          "@type": "Question",
-          name: "¿Qué es Prospekto?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "Prospekto es un CRM con bot de WhatsApp impulsado por IA. Responde automáticamente a los mensajes de tus clientes, extrae sus datos (nombre, necesidad, presupuesto), califica su interés y asigna el lead al vendedor correcto de tu equipo, todo en piloto automático.",
-          },
-        },
-        {
-          "@type": "Question",
-          name: "¿Cuánto cuesta Prospekto?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "Prospekto funciona por pago de uso real. Con 1,000 conversaciones mensuales el costo es aproximadamente $0.38 USD al mes, sin tarifas fijas ni contratos. Puedes comenzar sin tarjeta de crédito.",
-          },
-        },
-        {
-          "@type": "Question",
-          name: "¿Necesito saber programar para usar Prospekto?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "No. Prospekto está diseñado para dueños de negocio y equipos de ventas. El setup se realiza en minutos desde el panel de administración, sin conocimientos técnicos.",
-          },
-        },
-        {
-          "@type": "Question",
-          name: "¿Funciona con WhatsApp Business?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "Sí. Prospekto se conecta a través de la API oficial de WhatsApp Business (Meta Cloud API), por lo que es completamente legal y estable.",
-          },
-        },
-        {
-          "@type": "Question",
-          name: "¿Para qué tipo de negocios es ideal Prospekto?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "Prospekto es ideal para PyMEs mexicanas que reciben leads por WhatsApp: inmobiliarias, escuelas, clínicas, talleres, refaccionarias, despachos y cualquier negocio con equipo de ventas que necesite atender clientes rápidamente.",
-          },
-        },
-        {
-          "@type": "Question",
-          name: "¿Qué pasa si el bot no puede responder algo?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "El bot está entrenado con la información de tu negocio. Cuando recibe una consulta fuera de su alcance, captura los datos del cliente y asigna el lead a un vendedor humano para seguimiento, sin perder la conversación.",
-          },
-        },
-      ],
-    },
-  ];
+export default async function LandingPage() {
+  const partidos = await getProximosPartidos();
 
   return (
-    <main className="min-h-screen overflow-x-hidden font-sans" style={{ background: "linear-gradient(135deg, #ede9fe 0%, #d1fae5 55%, #fce7f3 100%)", color: "#1a2035" }}>
-      {/* ── JSON-LD Schemas ── */}
-      {schemas.map((schema, i) => (
-        <script
-          key={i}
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
-        />
-      ))}
+    <main className="min-h-screen bg-[#05080f] text-white overflow-x-hidden">
 
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap');
+      {/* ── NAV ───────────────────────────────────────── */}
+      <nav className="flex items-center justify-between px-6 py-4 max-w-6xl mx-auto">
+        <Logo />
+        <a
+          href={`https://wa.me/${WA_NUMBER}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sm border border-[#00e5a0] text-[#00e5a0] px-4 py-2 rounded-full hover:bg-[#00e5a0] hover:text-black transition-all font-medium"
+        >
+          Unirme gratis
+        </a>
+      </nav>
 
-        * { box-sizing: border-box; }
-        body { font-family: 'DM Sans', sans-serif; }
-        .serif { font-family: 'Instrument Serif', serif; }
-
-        /* Fondo fijo para toda la página */
-        body { background: linear-gradient(135deg, #ede9fe 0%, #d1fae5 55%, #fce7f3 100%); min-height: 100vh; }
-
-        /* Nav glass */
-        .nav-glass {
-          backdrop-filter: blur(20px);
-          -webkit-backdrop-filter: blur(20px);
-          background: rgba(255,255,255,0.75);
-          border-bottom: 1px solid rgba(255,255,255,0.9);
-          box-shadow: 0 1px 20px rgba(0,0,0,0.06);
-        }
-
-        /* Pill badge */
-        .pill {
-          display: inline-flex;
-          align-items: center;
-          gap: 6px;
-          background: rgba(0,168,132,0.12);
-          border: 1px solid rgba(0,168,132,0.3);
-          color: #00875a;
-          border-radius: 99px;
-          padding: 6px 16px;
-          font-size: 13px;
-          font-weight: 500;
-          letter-spacing: 0.01em;
-        }
-
-        .pill-dot {
-          width: 6px; height: 6px;
-          background: #00a884;
-          border-radius: 50%;
-          animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-          0%, 100% { opacity: 1; transform: scale(1); }
-          50% { opacity: 0.5; transform: scale(1.3); }
-        }
-
-        /* Botón primario */
-        .btn-primary {
-          background: #00a884;
-          color: #fff;
-          border: none;
-          border-radius: 12px;
-          padding: 14px 28px;
-          font-size: 15px;
-          font-weight: 600;
-          cursor: pointer;
-          transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
-          font-family: 'DM Sans', sans-serif;
-          white-space: nowrap;
-          box-shadow: 0 4px 20px rgba(0,168,132,0.3);
-        }
-        .btn-primary:hover { background: #008f70; transform: translateY(-1px); box-shadow: 0 6px 24px rgba(0,168,132,0.4); }
-
-        /* Botón secundario */
-        .btn-secondary {
-          background: rgba(255,255,255,0.7);
-          color: #1a2035;
-          border: 1.5px solid rgba(0,168,132,0.35);
-          border-radius: 12px;
-          padding: 14px 28px;
-          font-size: 15px;
-          font-weight: 500;
-          cursor: pointer;
-          transition: all 0.2s;
-          font-family: 'DM Sans', sans-serif;
-          white-space: nowrap;
-        }
-        .btn-secondary:hover { background: rgba(0,168,132,0.08); border-color: #00a884; }
-
-        /* Botón login nav */
-        .btn-login {
-          background: #00a884;
-          color: #fff;
-          border: none;
-          border-radius: 10px;
-          padding: 8px 20px;
-          font-size: 14px;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.2s;
-          font-family: 'DM Sans', sans-serif;
-          box-shadow: 0 2px 12px rgba(0,168,132,0.25);
-        }
-        .btn-login:hover { background: #008f70; transform: translateY(-1px); }
-
-        /* Card glassmorphism */
-        .glass-card {
-          background: rgba(255,255,255,0.65);
-          border: 1px solid rgba(255,255,255,0.9);
-          border-radius: 20px;
-          backdrop-filter: blur(12px);
-          -webkit-backdrop-filter: blur(12px);
-          box-shadow: 0 4px 24px rgba(100,80,180,0.08);
-        }
-
-        /* Pill card (pain points / benefits) */
-        .pill-card {
-          background: rgba(255,255,255,0.7);
-          border: 1px solid rgba(255,255,255,0.9);
-          border-radius: 50px;
-          padding: 16px 24px;
-          backdrop-filter: blur(8px);
-          box-shadow: 0 2px 12px rgba(100,80,180,0.07);
-          display: flex;
-          align-items: center;
-          gap: 14px;
-          font-size: 15px;
-          color: #1a2035;
-        }
-
-        /* Feature card */
-        .feat-card {
-          background: rgba(255,255,255,0.6);
-          border: 1px solid rgba(255,255,255,0.9);
-          border-radius: 20px;
-          padding: 28px;
-          transition: all 0.25s;
-          backdrop-filter: blur(8px);
-          box-shadow: 0 2px 16px rgba(100,80,180,0.07);
-        }
-        .feat-card:hover {
-          background: rgba(255,255,255,0.85);
-          box-shadow: 0 8px 32px rgba(0,168,132,0.12);
-          transform: translateY(-2px);
-        }
-
-        /* Stats card */
-        .stat-card {
-          background: rgba(255,255,255,0.65);
-          border: 1px solid rgba(255,255,255,0.9);
-          border-radius: 20px;
-          padding: 28px 20px;
-          text-align: center;
-          backdrop-filter: blur(8px);
-          box-shadow: 0 2px 16px rgba(100,80,180,0.07);
-        }
-
-        /* Step card */
-        .step-card {
-          background: rgba(255,255,255,0.6);
-          border: 1px solid rgba(255,255,255,0.9);
-          border-radius: 20px;
-          padding: 28px 20px;
-          text-align: center;
-          backdrop-filter: blur(8px);
-          box-shadow: 0 2px 12px rgba(100,80,180,0.06);
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 10px;
-        }
-
-        /* Pricing card */
-        .price-card {
-          background: rgba(255,255,255,0.75);
-          border: 1.5px solid rgba(0,168,132,0.25);
-          border-radius: 24px;
-          padding: 40px 36px;
-          backdrop-filter: blur(12px);
-          box-shadow: 0 8px 40px rgba(0,168,132,0.12);
-        }
-        @media (max-width: 640px) { .price-card { padding: 28px 20px; } }
-
-        /* Dark banner */
-        .dark-banner {
-          background: #1e2d3d;
-          color: #fff;
-          border-radius: 12px;
-          padding: 14px 24px;
-          font-size: 15px;
-          font-weight: 500;
-          display: inline-block;
-        }
-        .dark-banner span { color: #00a884; font-style: italic; }
-
-        /* Chat bubble */
-        .bubble-in {
-          background: rgba(255,255,255,0.85);
-          border-radius: 16px 16px 16px 4px;
-          padding: 10px 14px;
-          font-size: 13px;
-          color: #1a2035;
-          max-width: 240px;
-          line-height: 1.5;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-        }
-        .bubble-out {
-          background: #00a884;
-          border-radius: 16px 16px 4px 16px;
-          padding: 10px 14px;
-          font-size: 13px;
-          color: #fff;
-          max-width: 260px;
-          line-height: 1.5;
-          align-self: flex-end;
-        }
-        .bubble-meta { font-size: 11px; color: #9ca3af; margin-top: 3px; }
-
-        /* Animations */
-        @keyframes fadeUp {
-          from { opacity: 0; transform: translateY(20px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-        .fade-up { animation: fadeUp 0.65s ease both; }
-        .delay-1 { animation-delay: 0.1s; }
-        .delay-2 { animation-delay: 0.2s; }
-        .delay-3 { animation-delay: 0.3s; }
-        .delay-4 { animation-delay: 0.4s; }
-
-        .check { color: #00a884; font-weight: 600; margin-right: 8px; }
-
-        .sec-label {
-          font-size: 12px;
-          font-weight: 600;
-          letter-spacing: 0.12em;
-          text-transform: uppercase;
-          color: #00a884;
-        }
-
-        /* Mobile menu */
-        .mobile-menu {
-          position: absolute;
-          top: 64px; left: 0; right: 0;
-          background: rgba(255,255,255,0.96);
-          border-bottom: 1px solid rgba(0,168,132,0.15);
-          padding: 20px 24px;
-          display: flex;
-          flex-direction: column;
-          gap: 16px;
-          box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-        }
-        .mobile-menu a {
-          font-size: 16px;
-          color: #4b5563;
-          text-decoration: none;
-          padding: 8px 0;
-          border-bottom: 1px solid rgba(0,0,0,0.05);
-        }
-      `}</style>
-
-      {/* ─── NAVBAR ─── */}
-      <nav className="nav-glass sticky top-0 z-50 w-full" style={{ position: "relative" }}>
-        <div className="flex items-center justify-between px-6 mx-auto" style={{ maxWidth: 1100, height: 64 }}>
-          <div className="flex items-center gap-2">
-            <Image src="/Prospekt-icono.png" alt="Prospekto" width={50} height={50} className="rounded-lg" />
-            <span style={{ fontSize: 17, fontWeight: 700, color: "#1a2035", letterSpacing: "-0.01em" }}>PROSPEKTO</span>
+      {/* ── HERO ──────────────────────────────────────── */}
+      <section className="max-w-6xl mx-auto px-6 pt-10 pb-20 grid lg:grid-cols-2 gap-12 items-center">
+        <div>
+          <div className="inline-flex items-center gap-2 bg-[#006847]/30 border border-[#006847] text-[#00e5a0] text-xs px-3 py-1.5 rounded-full mb-6">
+            <span className="w-2 h-2 bg-[#00e5a0] rounded-full animate-pulse" />
+            Mundial 2026 · 11 Jun – 19 Jul · USA · CAN · MEX
           </div>
 
-          {/* Desktop */}
-          <div className="hidden sm:flex items-center gap-7">
-            {["#pain", "#features", "#pricing"].map((href, i) => (
-              <a key={href} href={href} style={{ fontSize: 14, color: "#6b7280", textDecoration: "none", fontWeight: 500, transition: "color 0.2s" }}
-                onMouseEnter={e => (e.currentTarget.style.color = "#1a2035")}
-                onMouseLeave={e => (e.currentTarget.style.color = "#6b7280")}>
-                {["El problema", "Funciones", "Precio"][i]}
-              </a>
+          <h1 className="text-4xl sm:text-5xl font-black leading-tight mb-4">
+            Tu guía del{" "}
+            <span className="text-[#00e5a0]">Mundial 2026</span>
+            <br />por WhatsApp
+          </h1>
+
+          <p className="text-gray-400 text-lg mb-8 leading-relaxed">
+            Recibe alertas <strong className="text-white">15 minutos antes</strong> de cada partido,
+            info de los jugadores a seguir y respuestas a todo lo que quieras saber del mundial.
+            Gratis. Sin app. Solo WhatsApp.
+          </p>
+
+          <a
+            href={`https://wa.me/${WA_NUMBER}?text=Hola%20FanBot%2C%20quiero%20mis%20alertas%20del%20Mundial%202026`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-3 bg-[#25D366] hover:bg-[#20c05c] text-black font-bold text-lg px-8 py-4 rounded-2xl transition-all shadow-lg shadow-[#25D366]/20 mb-4"
+          >
+            <WhatsAppIcon />
+            Activar mis alertas gratis
+          </a>
+
+          <p className="text-gray-600 text-sm">Sin registros. Sin contraseña. Solo escríbenos.</p>
+
+          {/* Stats */}
+          <div className="flex gap-8 mt-10">
+            {[
+              { n: "104", label: "Partidos" },
+              { n: "48", label: "Selecciones" },
+              { n: "16", label: "Ciudades sede" },
+            ].map(s => (
+              <div key={s.label}>
+                <div className="text-2xl font-black text-[#00e5a0]">{s.n}</div>
+                <div className="text-xs text-gray-500">{s.label}</div>
+              </div>
             ))}
-            <button className="btn-login" onClick={() => router.push("/login")}>Acceder →</button>
-          </div>
-
-          {/* Mobile */}
-          <div className="flex sm:hidden items-center gap-3">
-            <button className="btn-login" style={{ padding: "7px 14px", fontSize: 13 }} onClick={() => router.push("/login")}>Acceder</button>
-            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              style={{ background: "transparent", border: "none", color: "#1a2035", cursor: "pointer", padding: 4 }}>
-              {mobileMenuOpen
-                ? <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
-                : <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" /></svg>
-              }
-            </button>
           </div>
         </div>
 
-        {mobileMenuOpen && (
-          <div className="mobile-menu sm:hidden">
-            <a href="#pain" onClick={() => setMobileMenuOpen(false)}>El problema</a>
-            <a href="#features" onClick={() => setMobileMenuOpen(false)}>Funciones</a>
-            <a href="#pricing" onClick={() => setMobileMenuOpen(false)}>Precio</a>
-          </div>
-        )}
-      </nav>
-
-      {/* ─── HERO ─── */}
-      <section style={{ padding: "80px 24px 96px", textAlign: "center", position: "relative" }}>
-        <div style={{ maxWidth: 740, margin: "0 auto" }}>
-          <div className="fade-up" style={{ marginBottom: 24 }}>
-            <span className="pill"><span className="pill-dot" /> CRM + Bot WhatsApp con IA para PyMEs</span>
-          </div>
-
-          <h1 className="serif fade-up delay-1" style={{ fontSize: "clamp(38px, 6vw, 70px)", fontWeight: 400, lineHeight: 1.1, marginBottom: 24, color: "#1a2035" }}>
-            Tu próximo cliente ya<br />
-            <span style={{ color: "#00a884", fontStyle: "italic" }}>te escribió</span> por WhatsApp.
-          </h1>
-
-          <p className="fade-up delay-2" style={{ fontSize: "clamp(15px, 2vw, 18px)", color: "#6b7280", lineHeight: 1.7, maxWidth: 520, margin: "0 auto 40px" }}>
-            Prospekto responde, clasifica y asigna cada lead automáticamente — mientras tú duermes, vendes o haces otra cosa.
-          </p>
-
-          <div className="fade-up delay-3 flex flex-wrap justify-center gap-3">
-            <button className="btn-primary" onClick={() => router.push("/login")}>Activar mi bot gratis →</button>
-            <button className="btn-secondary" onClick={() => document.getElementById("demo")?.scrollIntoView({ behavior: "smooth" })}>Ver cómo funciona</button>
-          </div>
-
-          <p className="fade-up delay-4" style={{ marginTop: 20, fontSize: 13, color: "#9ca3af" }}>
-             Desde $699 MXN/mes · Setup en minutos (dependiendo de su perfil de meta)
-          </p>
+        {/* Phone mockup */}
+        <div className="flex justify-center lg:justify-end">
+          <PhoneMockup />
         </div>
       </section>
 
-      {/* ─── STATS ─── */}
-      <section style={{ padding: "8px 24px 64px" }}>
-        <div style={{ maxWidth: 900, margin: "0 auto", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 16 }}>
+      {/* ── PRÓXIMOS PARTIDOS ─────────────────────────── */}
+      {partidos.length > 0 && (
+        <section className="bg-[#0c1220] py-16">
+          <div className="max-w-6xl mx-auto px-6">
+            <h2 className="text-2xl font-bold mb-2">Próximos partidos</h2>
+            <p className="text-gray-500 text-sm mb-8">Horarios en tiempo de Ciudad de México</p>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {partidos.map((p: Record<string, string>) => (
+                <div key={p.id} className="bg-[#111827] border border-gray-800 rounded-xl p-4 hover:border-[#00e5a0]/40 transition-colors">
+                  <div className="text-xs text-[#00e5a0] mb-2 font-medium">
+                    {p.fase}{p.grupo ? ` · Grupo ${p.grupo}` : ""}
+                  </div>
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="font-bold text-white">{p.equipo_local}</span>
+                    <span className="text-gray-600 text-sm font-medium px-2">vs</span>
+                    <span className="font-bold text-white text-right">{p.equipo_visitante}</span>
+                  </div>
+                  <div className="text-xs text-gray-500">{formatFecha(p.fecha_utc)}</div>
+                  {p.estadio && <div className="text-xs text-gray-600 mt-1">{p.estadio} · {p.ciudad}</div>}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ── CÓMO FUNCIONA ─────────────────────────────── */}
+      <section className="max-w-6xl mx-auto px-6 py-20">
+        <h2 className="text-2xl font-bold text-center mb-2">Así de fácil</h2>
+        <p className="text-gray-500 text-center text-sm mb-12">Sin apps, sin registros, sin complicaciones</p>
+        <div className="grid sm:grid-cols-3 gap-8">
           {[
-            { val: "78%", label: "compra con quien responde primero" },
-            { val: "100%", label: "más conversiones en 5 min" },
-            { val: "3 de 10", label: "clientes perdidos por tardanza" },
-            { val: "24/7", label: "sin días libres ni fines de semana" },
-          ].map((s) => (
-            <div key={s.label} className="stat-card">
-              <div className="serif" style={{ fontSize: "clamp(26px, 4vw, 36px)", color: "#00a884", fontWeight: 400, marginBottom: 6 }}>{s.val}</div>
-              <div style={{ fontSize: 13, color: "#6b7280", lineHeight: 1.5 }}>{s.label}</div>
+            { n: "1", icon: "💬", title: "Escríbenos", desc: "Manda un mensaje al número de FanBot. En segundos quedas registrado." },
+            { n: "2", icon: "⚽", title: "Recibe alertas", desc: "15 minutos antes de cada partido te mandamos info del juego y jugadores a seguir." },
+            { n: "3", icon: "🤖", title: "Pregunta lo que quieras", desc: "Nuestro chatbot responde todo sobre el Mundial 2026 y la historia del fútbol." },
+          ].map(s => (
+            <div key={s.n} className="text-center">
+              <div className="w-14 h-14 bg-[#006847]/20 border border-[#006847]/40 rounded-2xl flex items-center justify-center text-2xl mx-auto mb-4">
+                {s.icon}
+              </div>
+              <div className="text-xs text-[#00e5a0] font-bold mb-2">PASO {s.n}</div>
+              <h3 className="font-bold text-lg mb-2">{s.title}</h3>
+              <p className="text-gray-500 text-sm leading-relaxed">{s.desc}</p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* ─── PAIN ─── */}
-      <section id="pain" style={{ padding: "72px 24px" }}>
-        <div style={{ maxWidth: 720, margin: "0 auto" }}>
-          <div style={{ textAlign: "center", marginBottom: 48 }}>
-            <div className="sec-label" style={{ marginBottom: 12 }}>El problema</div>
-            <h2 className="serif" style={{ fontSize: "clamp(28px, 4vw, 46px)", fontWeight: 400, color: "#1a2035", marginBottom: 16 }}>
-              ¿Te suena familiar?
-            </h2>
-            <div className="dark-banner">Cada mensaje sin respuesta = <span>dinero que se va</span></div>
+      {/* ── PRÓXIMAMENTE ──────────────────────────────── */}
+      <section className="bg-[#0c1220] py-20">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="text-center mb-12">
+            <div className="inline-block bg-[#CE1126]/20 border border-[#CE1126]/40 text-[#ff6b6b] text-xs px-3 py-1.5 rounded-full mb-4">
+              Próximamente
+            </div>
+            <h2 className="text-2xl font-bold">Mucho más en camino</h2>
           </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
-              { icon: "💬", text: "Recibes 50+ mensajes al día de clientes potenciales" },
-              { icon: "🗓️", text: "Para cuando contestas, ya se fueron con la competencia" },
-              { icon: "😓", text: "Tus vendedores no dan abasto" },
-              { icon: "👎", text: "Los mensajes de noche y fines de semana quedan sin respuesta" },
-              { icon: "📉", text: "Estás perdiendo ventas sin darte cuenta" },
-            ].map((p) => (
-              <div key={p.text} className="pill-card">
-                <span style={{ fontSize: 22 }}>{p.icon}</span>
-                <span>{p.text}</span>
+              { icon: "📅", title: "Calendario .ics", desc: "Descarga todos los partidos directo a tu Google Calendar o iPhone." },
+              { icon: "🏆", title: "Quiniela", desc: "Participa con tus amigos. Predice resultados y sube al ranking." },
+              { icon: "⭐", title: "Estrellas por selección", desc: "Conoce a los jugadores clave de cada equipo en el mundial." },
+              { icon: "🎯", title: "Fantasy", desc: "Arma tu equipo ideal, acumula puntos con cada partido." },
+            ].map(f => (
+              <div key={f.title} className="bg-[#111827] border border-gray-800 rounded-xl p-5 opacity-75">
+                <div className="text-3xl mb-3">{f.icon}</div>
+                <h3 className="font-bold mb-2 text-sm">{f.title}</h3>
+                <p className="text-gray-600 text-xs leading-relaxed">{f.desc}</p>
+                <div className="mt-3 text-xs text-[#CE1126]">Muy pronto</div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ─── DEMO CHAT ─── */}
-      <section id="demo" style={{ padding: "72px 24px", maxWidth: 1100, margin: "0 auto" }}>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          <div>
-            <div className="sec-label" style={{ marginBottom: 16 }}>Así funciona</div>
-            <h2 className="serif" style={{ fontSize: "clamp(26px, 4vw, 44px)", fontWeight: 400, lineHeight: 1.2, marginBottom: 20, color: "#1a2035" }}>
-              De lead a oportunidad<br />
-              <span style={{ fontStyle: "italic", color: "#00a884" }}>en segundos</span>
-            </h2>
-            <p style={{ fontSize: 15, color: "#6b7280", lineHeight: 1.8, marginBottom: 28 }}>
-              El cliente escribe a tu WhatsApp. La IA responde al instante, extrae nombre, necesidad y presupuesto, y asigna el lead al vendedor correcto — sin que toques nada.
-            </p>
-            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              {["Respuesta en menos de 3 segundos", "Extracción automática de datos con IA", "Asignación round-robin a tu equipo", "Dashboard en tiempo real"].map(f => (
-                <div key={f} style={{ fontSize: 14, color: "#374151" }}>
-                  <span className="check">✓</span>{f}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Chat mockup */}
-          <div className="glass-card" style={{ overflow: "hidden" }}>
-            <div style={{ background: "rgba(0,168,132,0.12)", padding: "14px 20px", borderBottom: "1px solid rgba(0,168,132,0.12)", display: "flex", alignItems: "center", gap: 10 }}>
-              <Image src="/Prospekt-app.png" alt="Bot" width={36} height={36} className="rounded-full" />
-              <div>
-                <div style={{ fontSize: 14, fontWeight: 600, color: "#1a2035" }}>Mi Negocio</div>
-                <div style={{ fontSize: 11, color: "#00a884" }}>● en línea</div>
-              </div>
-            </div>
-            <div style={{ padding: "20px", display: "flex", flexDirection: "column", gap: 14, minHeight: 300, background: "rgba(248,250,252,0.6)" }}>
-              <div>
-                <div className="bubble-in">Hola! quería info sobre sus servicios de diseño, ¿cuánto cobran?</div>
-                <div className="bubble-meta" style={{ marginLeft: 4 }}>2:17 am</div>
-              </div>
-              <div style={{ alignSelf: "flex-end" }}>
-                <div className="bubble-out">¡Hola! Soy el asistente de Mi Negocio 👋 ¿Me puedes contar un poco más? ¿Es para logo, web o branding completo?</div>
-                <div className="bubble-meta" style={{ textAlign: "right", marginRight: 4 }}>2:17 am · Bot ✓✓</div>
-              </div>
-              <div>
-                <div className="bubble-in">Para una web completa, somos startup y tenemos como $30k de presupuesto</div>
-                <div className="bubble-meta" style={{ marginLeft: 4 }}>2:18 am</div>
-              </div>
-              <div style={{ alignSelf: "flex-end" }}>
-                <div className="bubble-out">Perfecto, con ese presupuesto podemos hacer algo increíble 🚀 ¿Cuándo tienes 20 min para una llamada?</div>
-                <div className="bubble-meta" style={{ textAlign: "right", marginRight: 4 }}>2:18 am · Bot ✓✓</div>
-              </div>
-              <div style={{ background: "rgba(0,168,132,0.1)", border: "1px solid rgba(0,168,132,0.2)", borderRadius: 12, padding: "10px 14px", fontSize: 12, color: "#00875a", lineHeight: 1.7 }}>
-                <div style={{ fontWeight: 600, marginBottom: 4, color: "#006b47" }}>🤖 Lead capturado automáticamente</div>
-                <div>Necesidad: Web completa · Presupuesto: $30k</div>
-                <div>Asignado a: Carlos V.</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ─── BOT CONFIG ─── */}
-      <section style={{ padding: "72px 24px", maxWidth: 1100, margin: "0 auto" }}>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-
-          {/* Mockup panel config */}
-          <div className="order-2 lg:order-1 glass-card" style={{ overflow: "hidden" }}>
-            <div style={{ background: "linear-gradient(135deg, #8c7ac6, #c84f92)", padding: "14px 20px", display: "flex", alignItems: "center", gap: 10 }}>
-              <span style={{ fontSize: 16 }}>⚙️</span>
-              <span style={{ fontSize: 14, fontWeight: 600, color: "#fff" }}>Configuración del Bot — Mi Negocio</span>
-            </div>
-            <div style={{ padding: "20px", display: "flex", flexDirection: "column", gap: 14, background: "rgba(248,250,252,0.7)" }}>
-
-              {/* Campo: nombre */}
-              <div>
-                <div style={{ fontSize: 11, fontWeight: 600, color: "#6b7280", marginBottom: 5, textTransform: "uppercase", letterSpacing: "0.06em" }}>¿Cómo se llama tu negocio?</div>
-                <div style={{ background: "#fff", border: "1px solid #e5e7eb", borderRadius: 10, padding: "9px 14px", fontSize: 13, color: "#1a2035" }}>Inmobiliaria Torres</div>
-              </div>
-
-              {/* Campo: qué vende */}
-              <div>
-                <div style={{ fontSize: 11, fontWeight: 600, color: "#6b7280", marginBottom: 5, textTransform: "uppercase", letterSpacing: "0.06em" }}>¿Qué vendes o qué servicio ofreces?</div>
-                <div style={{ background: "#fff", border: "1px solid #e5e7eb", borderRadius: 10, padding: "9px 14px", fontSize: 13, color: "#1a2035" }}>Venta y renta de propiedades en CDMX</div>
-              </div>
-
-              {/* Campo: tono */}
-              <div>
-                <div style={{ fontSize: 11, fontWeight: 600, color: "#6b7280", marginBottom: 5, textTransform: "uppercase", letterSpacing: "0.06em" }}>Tono del bot</div>
-                <div style={{ background: "#fff", border: "1px solid #e5e7eb", borderRadius: 10, padding: "9px 14px", fontSize: 13, color: "#1a2035", display: "flex", justifyContent: "space-between" }}>
-                  Profesional y amigable <span style={{ color: "#9ca3af" }}>▾</span>
-                </div>
-              </div>
-
-              {/* Upload Excel — destacado */}
-              <div style={{ background: "rgba(0,168,132,0.06)", border: "1.5px dashed rgba(0,168,132,0.4)", borderRadius: 12, padding: "14px 16px" }}>
-                <div style={{ fontSize: 11, fontWeight: 600, color: "#00875a", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.06em" }}>📊 Catálogo de productos / servicios</div>
-                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                  <div style={{ background: "#fff", border: "1px solid #e5e7eb", borderRadius: 8, padding: "7px 12px", fontSize: 12, color: "#374151", flex: 1 }}>
-                    productos_catalogo.xlsx
-                  </div>
-                  <div style={{ background: "#00a884", color: "#fff", borderRadius: 8, padding: "7px 12px", fontSize: 12, fontWeight: 600, whiteSpace: "nowrap" }}>
-                    ✓ Subido
-                  </div>
-                </div>
-                <div style={{ fontSize: 11, color: "#6b7280", marginTop: 6 }}>47 productos cargados · La IA ya los conoce todos</div>
-              </div>
-
-              {/* Status */}
-              <div style={{ background: "rgba(0,168,132,0.08)", border: "1px solid rgba(0,168,132,0.2)", borderRadius: 10, padding: "10px 14px", fontSize: 12, color: "#006b47", lineHeight: 1.7 }}>
-                <div style={{ fontWeight: 600, marginBottom: 2 }}>✅ Bot activo y respondiendo</div>
-                <div>Tu asistente ya conoce tu catálogo completo y habla con tu voz.</div>
-              </div>
-            </div>
-          </div>
-
-          {/* Texto */}
-          <div className="order-1 lg:order-2">
-            <div className="sec-label" style={{ marginBottom: 16 }}>Configuración sin complicaciones</div>
-            <h2 className="serif" style={{ fontSize: "clamp(26px, 4vw, 44px)", fontWeight: 400, lineHeight: 1.2, marginBottom: 20, color: "#1a2035" }}>
-              Tú decides cómo habla<br />
-              <span style={{ fontStyle: "italic", color: "#00a884" }}>tu bot con IA</span>
-            </h2>
-            <p style={{ fontSize: 15, color: "#6b7280", lineHeight: 1.8, marginBottom: 28 }}>
-              Le dices a la IA quién eres, qué vendes y cómo quieres que hable con tus clientes. Desde ese momento ella responde, califica y organiza cada prospecto — automáticamente y con tu voz.
-            </p>
-
-            <div style={{ display: "flex", flexDirection: "column", gap: 14, marginBottom: 28 }}>
-              {[
-                { icon: "🏢", title: "Tu negocio, tu tono", desc: "Configuras el nombre, descripción y estilo de comunicación. El bot adopta tu personalidad de marca." },
-                { icon: "📊", title: "Sube tu catálogo desde Excel", desc: "Importa tus productos o servicios en un archivo .xlsx y la IA los aprende al instante. Sin reescribir nada." },
-                { icon: "📝", title: "Instrucciones especiales", desc: "¿Quieres que pida zona antes de dar precios? ¿Que no hable de competidores? Tú mandas." },
-              ].map(f => (
-                <div key={f.title} style={{ display: "flex", gap: 14, alignItems: "flex-start" }}>
-                  <div style={{ fontSize: 22, marginTop: 2 }}>{f.icon}</div>
-                  <div>
-                    <div style={{ fontSize: 14, fontWeight: 600, color: "#1a2035", marginBottom: 3 }}>{f.title}</div>
-                    <div style={{ fontSize: 13, color: "#6b7280", lineHeight: 1.6 }}>{f.desc}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="dark-banner">
-              Tu negocio, tu voz <span>y tu tiempo.</span>
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-      {/* ─── FEATURES ─── */}
-      <section id="features" style={{ padding: "72px 24px" }}>
-        <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-          <div style={{ textAlign: "center", marginBottom: 48 }}>
-            <div className="sec-label" style={{ marginBottom: 12 }}>Todo incluido</div>
-            <h2 className="serif" style={{ fontSize: "clamp(26px, 4vw, 44px)", fontWeight: 400, color: "#1a2035" }}>
-              Un solo sistema, cero fricciones
-            </h2>
-          </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16 }}>
-            {[
-              { icon: "💬", title: "Bot conversacional con IA", desc: "Responde en lenguaje natural con el tono de tu negocio. GPT-4o-mini integrado, sin configuración compleja." },
-              { icon: "🎯", title: "Extracción automática de datos", desc: "Nombre, necesidad, presupuesto y estado — extraídos de la conversación sin formularios." },
-              { icon: "⚡", title: "Asignación round-robin", desc: "Cada lead se asigna al siguiente vendedor disponible. Justo, automático y sin conflictos internos." },
-              { icon: "📊", title: "CRM visual en tiempo real", desc: "Pipeline, lista y detalle de cada lead. Filtros por estado, historial completo y exportación CSV." },
-              { icon: "👥", title: "1 admin + hasta 5 vendedores", desc: "Un admin configura el sistema y hasta 5 vendedores reciben y gestionan sus leads asignados, cada uno con su propio acceso." },
-              { icon: "💰", title: "Costo ridículamente bajo", desc: "~$699 MXN al mes con 1,000 conversaciones. Sin planes de $2999/MXN/mes que nadie usa al 100%." },
-            ].map((f) => (
-              <div key={f.title} className="feat-card">
-                <div style={{ fontSize: 28, marginBottom: 14 }}>{f.icon}</div>
-                <div style={{ fontSize: 16, fontWeight: 600, color: "#1a2035", marginBottom: 8 }}>{f.title}</div>
-                <div style={{ fontSize: 14, color: "#6b7280", lineHeight: 1.7 }}>{f.desc}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ─── PRICING ─── */}
-      <section id="pricing" style={{ padding: "72px 24px 96px" }}>
-        <div style={{ maxWidth: 520, margin: "0 auto", textAlign: "center" }}>
-          <div className="sec-label" style={{ marginBottom: 12 }}>Precio</div>
-          <h2 className="serif" style={{ fontSize: "clamp(26px, 4vw, 44px)", fontWeight: 400, color: "#1a2035", marginBottom: 8 }}>
-            Precio de lanzamiento
+      {/* ── CTA FINAL ─────────────────────────────────── */}
+      <section className="py-20 px-6 text-center">
+        <div className="max-w-xl mx-auto">
+          <div className="text-5xl mb-6">🏆</div>
+          <h2 className="text-3xl font-black mb-4">
+            El Mundial arranca el <span className="text-[#00e5a0]">11 de junio</span>
           </h2>
-          <p style={{ fontSize: 15, color: "#6b7280", marginBottom: 32 }}>
-            Sé de los primeros en probar Prospekto y bloquea este precio para siempre.
+          <p className="text-gray-400 mb-8">
+            Más de 100 partidos. 48 selecciones. Sé el primero en saberlo todo.
           </p>
-
-          <div className="price-card" style={{ position: "relative" }}>
-            {/* Badge lanzamiento */}
-            <div style={{
-              position: "absolute", top: -14, left: "50%", transform: "translateX(-50%)",
-              background: "linear-gradient(135deg, #7c3aed, #00a884)",
-              color: "#fff", borderRadius: 99, padding: "5px 18px",
-              fontSize: 12, fontWeight: 700, letterSpacing: "0.05em",
-              whiteSpace: "nowrap", boxShadow: "0 4px 14px rgba(124,58,237,0.35)"
-            }}>
-              🚀 EARLY ACCESS — PRECIO BLOQUEADO
-            </div>
-
-            <div style={{ marginTop: 12 }}>
-              {/* Precio tachado */}
-              <div style={{ fontSize: 14, color: "#9ca3af", marginBottom: 6 }}>
-                Precio regular: <span style={{ textDecoration: "line-through", fontWeight: 600 }}>$1,200 MXN/mes</span>
-              </div>
-
-              {/* Precio actual */}
-              <div style={{ display: "flex", alignItems: "baseline", justifyContent: "center", gap: 6, marginBottom: 4 }}>
-                <span className="serif" style={{ fontSize: "clamp(40px, 10vw, 62px)", color: "#1a2035", fontWeight: 400 }}>$699</span>
-                <span style={{ fontSize: 16, color: "#9ca3af" }}>MXN / mes</span>
-              </div>
-              <div style={{ fontSize: 13, color: "#9ca3af", marginBottom: 8 }}>Precio de lanzamiento · todo incluido</div>
-
-              {/* Urgencia */}
-              <div style={{
-                background: "rgba(124,58,237,0.07)", border: "1px solid rgba(124,58,237,0.15)",
-                borderRadius: 10, padding: "10px 16px", fontSize: 13, color: "#7c3aed",
-                fontWeight: 500, marginBottom: 28
-              }}>
-                ⏳ Solo para los primeros negocios que se registren — precio fijo para siempre
-              </div>
-            </div>
-
-            <div style={{ display: "flex", flexDirection: "column", gap: 12, textAlign: "left", marginBottom: 28 }}>
-              {[
-                "Bot de WhatsApp con IA incluido",
-                "CRM completo con pipeline visual",
-                "1 admin + hasta 5 vendedores",
-                "1 número de WhatsApp Business",
-                "Exportación CSV de leads",
-                "Historial completo de conversaciones",
-                "Dashboard en tiempo real",
-                "Notificación WhatsApp al vendedor asignado",
-                "Soporte directo con el equipo fundador",
-              ].map(f => (
-                <div key={f} style={{ fontSize: 14, color: "#374151" }}>
-                  <span className="check">✓</span>{f}
-                </div>
-              ))}
-            </div>
-
-            <button className="btn-primary" style={{ width: "100%", fontSize: 16, padding: "16px", borderRadius: 14 }} onClick={() => router.push("/login")}>
-              Quiero este precio — entrar gratis →
-            </button>
-            <div style={{ marginTop: 12, fontSize: 12, color: "#9ca3af" }}>
-              Sin tarjeta de crédito · Cancela cuando quieras
-            </div>
-          </div>
+          <a
+            href={`https://wa.me/${WA_NUMBER}?text=Hola%20FanBot%2C%20quiero%20mis%20alertas%20del%20Mundial%202026`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-3 bg-[#25D366] hover:bg-[#20c05c] text-black font-bold text-lg px-8 py-4 rounded-2xl transition-all"
+          >
+            <WhatsAppIcon />
+            Activar alertas gratis
+          </a>
         </div>
       </section>
 
-      {/* ─── FOOTER ─── */}
-      <footer style={{ borderTop: "1px solid rgba(0,0,0,0.07)", padding: "32px 24px", textAlign: "center", background: "rgba(255,255,255,0.4)" }}>
-        <div className="flex items-center justify-center gap-2 mb-3">
-          <Image src="/Prospekt-icono.png" alt="Prospekto" width={24} height={24} className="rounded-md" />
-          <span style={{ fontSize: 15, fontWeight: 700, color: "#1a2035" }}>PROSPEKTO</span>
-        </div>
-        <div style={{ fontSize: 13, color: "#9ca3af", marginBottom: 12 }}>
-          CRM + Bot WhatsApp para PyMEs mexicanas · {new Date().getFullYear()}
-        </div>
-        <div style={{ display: "flex", justifyContent: "center", gap: 24, flexWrap: "wrap" }}>
-          <a href="/condiciones" style={{ fontSize: 13, color: "#9ca3af", textDecoration: "none" }}
-            onMouseEnter={e => (e.currentTarget.style.color = "#00a884")}
-            onMouseLeave={e => (e.currentTarget.style.color = "#9ca3af")}>
-            Condiciones del Servicio
-          </a>
-          <a href="/privacidad" style={{ fontSize: 13, color: "#9ca3af", textDecoration: "none" }}
-            onMouseEnter={e => (e.currentTarget.style.color = "#00a884")}
-            onMouseLeave={e => (e.currentTarget.style.color = "#9ca3af")}>
-            Política de Privacidad
-          </a>
-          <a href="/eliminacion-datos" style={{ fontSize: 13, color: "#9ca3af", textDecoration: "none" }}
-            onMouseEnter={e => (e.currentTarget.style.color = "#00a884")}
-            onMouseLeave={e => (e.currentTarget.style.color = "#9ca3af")}>
-            Eliminación de Datos
-          </a>
+      {/* ── FOOTER ────────────────────────────────────── */}
+      <footer className="border-t border-gray-900 py-8 px-6">
+        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+          <Logo small />
+          <div className="flex gap-6 text-xs text-gray-600">
+            <a href="/privacidad" className="hover:text-gray-400">Privacidad</a>
+            <a href="/condiciones" className="hover:text-gray-400">Condiciones</a>
+            <a href="/eliminacion-datos" className="hover:text-gray-400">Eliminar datos</a>
+          </div>
+          <p className="text-xs text-gray-700">© 2026 Ranking Mundial 26</p>
         </div>
       </footer>
     </main>
+  );
+}
+
+function Logo({ small }: { small?: boolean }) {
+  return (
+    <div className={`flex items-center gap-1 ${small ? "scale-75 origin-left" : ""}`}>
+      <div className="flex flex-col gap-0.5 mr-1">
+        {[12, 10, 8, 6, 4].map((w, i) => (
+          <div key={i} style={{ width: w }} className="h-0.5 bg-[#00e5a0] rounded-full" />
+        ))}
+      </div>
+      <div>
+        <div className="text-[10px] font-black text-white tracking-[0.3em] leading-none">RANKING</div>
+        <div className="text-xl font-black text-[#00e5a0] tracking-wider leading-none" style={{ fontFamily: "monospace" }}>
+          MUNDIAL26
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function WhatsAppIcon() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+    </svg>
+  );
+}
+
+function PhoneMockup() {
+  return (
+    <div className="relative">
+      {/* Glow */}
+      <div className="absolute inset-0 bg-[#25D366]/10 blur-3xl rounded-full scale-75" />
+
+      {/* Phone frame */}
+      <div className="relative w-72 bg-[#111] rounded-[3rem] border-4 border-gray-700 shadow-2xl overflow-hidden">
+        {/* Notch */}
+        <div className="bg-[#111] flex justify-center pt-3 pb-1">
+          <div className="w-24 h-6 bg-black rounded-full" />
+        </div>
+
+        {/* WhatsApp header */}
+        <div className="bg-[#075E54] px-4 py-3 flex items-center gap-3">
+          <div className="w-9 h-9 rounded-full bg-[#25D366] flex items-center justify-center text-lg">⚽</div>
+          <div>
+            <div className="font-bold text-white text-sm">FanBot Mundial 26</div>
+            <div className="text-[#b2dfdb] text-xs">en línea</div>
+          </div>
+        </div>
+
+        {/* Chat */}
+        <div className="bg-[#0d1117] px-3 py-4 space-y-3 min-h-105"
+          style={{ backgroundImage: "radial-gradient(circle at 1px 1px, #1a2332 1px, transparent 0)", backgroundSize: "20px 20px" }}
+        >
+          {/* Bot bienvenida */}
+          <ChatBubble from="bot">
+            ¡Hola Carlos! 👋 Soy <strong>FanBot</strong>, tu guía del Mundial 2026 🏆<br /><br />
+            Ya quedaste inscrito a las alertas. Te aviso 15 min antes de cada partido.
+          </ChatBubble>
+
+          {/* Bot alerta partido */}
+          <ChatBubble from="bot">
+            ⚽ <strong>¡En 15 minutos arranca!</strong><br /><br />
+            🇲🇽 <strong>México</strong> vs 🇿🇦 <strong>Sudáfrica</strong><br />
+            🏟 Estadio Azteca · CDMX<br />
+            🕐 19:00 hrs CDMX<br /><br />
+            👀 <strong>A seguir:</strong> Hirving Lozano, Santiago Giménez
+          </ChatBubble>
+
+          {/* Usuario pregunta */}
+          <ChatBubble from="user">
+            ¿Cuántos mundiales ha ganado México?
+          </ChatBubble>
+
+          {/* Bot responde */}
+          <ChatBubble from="bot">
+            México nunca ha ganado un Mundial, pero ha llegado a Cuartos de Final en 1970 y 1986 🇲🇽<br /><br />
+            ¡El 2026 puede ser histórico siendo co-anfitrión! 🏆
+          </ChatBubble>
+
+          <div className="text-center text-[10px] text-gray-600 pt-2">FanBot · 3 consultas gratis/día</div>
+        </div>
+
+        {/* Input bar */}
+        <div className="bg-[#1a1a1a] px-3 py-2 flex items-center gap-2">
+          <div className="flex-1 bg-[#2a2a2a] rounded-full px-4 py-2 text-xs text-gray-600">
+            Escribe un mensaje...
+          </div>
+          <div className="w-8 h-8 bg-[#25D366] rounded-full flex items-center justify-center text-sm">🎤</div>
+        </div>
+
+        {/* Home indicator */}
+        <div className="bg-[#111] flex justify-center py-2">
+          <div className="w-24 h-1 bg-gray-600 rounded-full" />
+        </div>
+      </div>
+
+      {/* Floating badges */}
+      <div className="absolute -right-4 top-16 bg-[#CE1126] text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg rotate-3">
+        48 selecciones
+      </div>
+      <div className="absolute -left-6 bottom-24 bg-[#006847] text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg -rotate-2">
+        104 partidos
+      </div>
+    </div>
+  );
+}
+
+function ChatBubble({ from, children }: { from: "bot" | "user"; children: React.ReactNode }) {
+  if (from === "bot") {
+    return (
+      <div className="flex gap-2 max-w-[85%]">
+        <div className="w-7 h-7 rounded-full bg-[#25D366] flex items-center justify-center text-sm shrink-0 mt-1">⚽</div>
+        <div className="bg-[#1e2d3d] text-white text-xs rounded-2xl rounded-tl-none px-3 py-2.5 leading-relaxed shadow">
+          {children}
+          <div className="text-[10px] text-gray-500 mt-1 text-right">ahora ✓✓</div>
+        </div>
+      </div>
+    );
+  }
+  return (
+    <div className="flex justify-end">
+      <div className="bg-[#005c4b] text-white text-xs rounded-2xl rounded-tr-none px-3 py-2.5 max-w-[75%] leading-relaxed shadow">
+        {children}
+        <div className="text-[10px] text-[#00e5a0] mt-1 text-right">ahora ✓✓</div>
+      </div>
+    </div>
   );
 }
