@@ -245,65 +245,59 @@ function PhoneMockup() {
       <div className="absolute inset-0 bg-[#25D366]/10 blur-3xl rounded-full scale-75" />
 
       {/* Phone frame */}
-      <div className="relative w-72 bg-[#111] rounded-[3rem] border-4 border-gray-700 shadow-2xl overflow-hidden">
+      <div className="relative w-64 bg-gray-200 rounded-[2.5rem] border-4 border-gray-300 shadow-2xl overflow-hidden">
         {/* Notch */}
-        <div className="bg-[#111] flex justify-center pt-3 pb-1">
-          <div className="w-24 h-6 bg-black rounded-full" />
+        <div className="bg-gray-200 flex justify-center pt-2 pb-1">
+          <div className="w-20 h-5 bg-gray-400 rounded-full" />
         </div>
 
         {/* WhatsApp header */}
-        <div className="bg-[#075E54] px-4 py-3 flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-[#25D366] flex items-center justify-center text-lg">⚽</div>
+        <div className="bg-[#075E54] px-3 py-2.5 flex items-center gap-2">
+          <div className="w-8 h-8 rounded-full bg-[#25D366] flex items-center justify-center text-base">⚽</div>
           <div>
-            <div className="font-bold text-white text-sm">FanBot Mundial 26</div>
-            <div className="text-[#b2dfdb] text-xs">en línea</div>
+            <div className="font-bold text-white text-xs">FanBot Mundial 26</div>
+            <div className="text-[#b2dfdb] text-[10px]">en línea</div>
           </div>
         </div>
 
         {/* Chat */}
-        <div className="bg-[#0d1117] px-3 py-4 space-y-3 min-h-105"
-          style={{ backgroundImage: "radial-gradient(circle at 1px 1px, #1a2332 1px, transparent 0)", backgroundSize: "20px 20px" }}
+        <div className="bg-[#e5ddd5] px-2.5 py-3 space-y-2.5"
+          style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c8b8a2' fill-opacity='0.3'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")" }}
         >
-          {/* Bot bienvenida */}
           <ChatBubble from="bot">
-            ¡Hola Carlos! 👋 Soy <strong>FanBot</strong>, tu guía del Mundial 2026 🏆<br /><br />
-            Ya quedaste inscrito a las alertas. Te aviso 15 min antes de cada partido.
+            ¡Hola Carlos! 👋 Soy <strong>FanBot</strong>, tu guía del Mundial 2026 🏆<br />
+            Ya quedaste inscrito. Te aviso 15 min antes de cada partido.
           </ChatBubble>
 
-          {/* Bot alerta partido */}
           <ChatBubble from="bot">
-            ⚽ <strong>¡En 15 minutos arranca!</strong><br /><br />
+            ⚽ <strong>¡En 15 minutos arranca!</strong><br />
             🇲🇽 <strong>México</strong> vs 🇿🇦 <strong>Sudáfrica</strong><br />
-            🏟 Estadio Azteca · CDMX<br />
-            🕐 19:00 hrs CDMX<br /><br />
-            👀 <strong>A seguir:</strong> Hirving Lozano, Santiago Giménez
+            🏟 Estadio Azteca · 19:00 CDMX<br />
+            👀 <strong>A seguir:</strong> Lozano, Giménez
           </ChatBubble>
 
-          {/* Usuario pregunta */}
           <ChatBubble from="user">
             ¿Cuántos mundiales ha ganado México?
           </ChatBubble>
 
-          {/* Bot responde */}
           <ChatBubble from="bot">
-            México nunca ha ganado un Mundial, pero ha llegado a Cuartos de Final en 1970 y 1986 🇲🇽<br /><br />
-            ¡El 2026 puede ser histórico siendo co-anfitrión! 🏆
+            Ninguno aún, pero llegó a Cuartos en 1970 y 1986 🇲🇽 ¡El 2026 puede ser histórico! 🏆
           </ChatBubble>
 
-          <div className="text-center text-[10px] text-gray-600 pt-2">FanBot · 3 consultas gratis/día</div>
+          <div className="text-center text-[9px] text-gray-500 pt-1">FanBot · 3 consultas gratis/día</div>
         </div>
 
         {/* Input bar */}
-        <div className="bg-[#1a1a1a] px-3 py-2 flex items-center gap-2">
-          <div className="flex-1 bg-[#2a2a2a] rounded-full px-4 py-2 text-xs text-gray-600">
+        <div className="bg-gray-100 px-2.5 py-2 flex items-center gap-2">
+          <div className="flex-1 bg-white rounded-full px-3 py-1.5 text-[11px] text-gray-400 border border-gray-200">
             Escribe un mensaje...
           </div>
-          <div className="w-8 h-8 bg-[#25D366] rounded-full flex items-center justify-center text-sm">🎤</div>
+          <div className="w-7 h-7 bg-[#25D366] rounded-full flex items-center justify-center text-xs">🎤</div>
         </div>
 
         {/* Home indicator */}
-        <div className="bg-[#111] flex justify-center py-2">
-          <div className="w-24 h-1 bg-gray-600 rounded-full" />
+        <div className="bg-gray-100 flex justify-center py-1.5">
+          <div className="w-16 h-1 bg-gray-400 rounded-full" />
         </div>
       </div>
 
@@ -323,18 +317,18 @@ function ChatBubble({ from, children }: { from: "bot" | "user"; children: React.
     return (
       <div className="flex gap-2 max-w-[85%]">
         <div className="w-7 h-7 rounded-full bg-[#25D366] flex items-center justify-center text-sm shrink-0 mt-1">⚽</div>
-        <div className="bg-[#1e2d3d] text-white text-xs rounded-2xl rounded-tl-none px-3 py-2.5 leading-relaxed shadow">
+        <div className="bg-white text-gray-800 text-xs rounded-2xl rounded-tl-none px-3 py-2 leading-relaxed shadow-sm">
           {children}
-          <div className="text-[10px] text-gray-500 mt-1 text-right">ahora ✓✓</div>
+          <div className="text-[9px] text-gray-400 mt-1 text-right">ahora ✓✓</div>
         </div>
       </div>
     );
   }
   return (
     <div className="flex justify-end">
-      <div className="bg-[#005c4b] text-white text-xs rounded-2xl rounded-tr-none px-3 py-2.5 max-w-[75%] leading-relaxed shadow">
+      <div className="bg-[#dcf8c6] text-gray-800 text-xs rounded-2xl rounded-tr-none px-3 py-2 max-w-[75%] leading-relaxed shadow-sm">
         {children}
-        <div className="text-[10px] text-[#00e5a0] mt-1 text-right">ahora ✓✓</div>
+        <div className="text-[9px] text-gray-500 mt-1 text-right">ahora ✓✓</div>
       </div>
     </div>
   );
