@@ -69,10 +69,9 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (ownerUser) {
-      await supabase.from("liga_miembros").insert({
-        liga_id: ligaId,
-        user_id: ownerUser.id,
-      }).catch(() => null);
+      try {
+        await supabase.from("liga_miembros").insert({ liga_id: ligaId, user_id: ownerUser.id });
+      } catch { /* ignorar duplicado */ }
     }
 
     if (liga.owner_phone) {
