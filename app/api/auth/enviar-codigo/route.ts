@@ -25,7 +25,6 @@ export async function POST(req: Request) {
 
     const supabase = getSupabaseAdmin();
 
-    // 1. Buscar al usuario por su número de teléfono
     const { data: user, error: userError } = await supabase
       .from("users")
       .select("id, phone")
@@ -39,11 +38,9 @@ export async function POST(req: Request) {
       );
     }
 
-    // 2. Generar código y fecha de expiración (10 minutos)
     const otp_code = Math.floor(100000 + Math.random() * 900000).toString();
     const otp_expires_at = new Date(Date.now() + 10 * 60 * 1000).toISOString();
 
-    // 3. Guardar el código en la base de datos
     const { error: updateError } = await supabase
       .from("users")
       .update({ otp_code, otp_expires_at })
@@ -51,7 +48,6 @@ export async function POST(req: Request) {
 
     if (updateError) throw updateError;
 
-    // 4. Enviar el código por WhatsApp
     await sendWhatsAppText({
       accessToken: WHATSAPP_TOKEN,
       phoneNumberId: PHONE_NUMBER_ID,

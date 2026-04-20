@@ -1,153 +1,90 @@
-"use client";
-
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import { jwtVerify } from "jose";
+import { createClient } from "@supabase/supabase-js";
 import Link from "next/link";
+import QuinielaPartidos from "./QuinielaPartidos";
 
-export default function LoginPage() {
-  const [step, setStep] = useState<"phone" | "code">("phone");
-  const [phone, setPhone] = useState("");
-  const [fullPhone, setFullPhone] = useState("");
-  const [code, setCode] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
-  const router = useRouter();
+const JWT_SECRET = new TextEncoder().encode(
+  process.env.JWT_SECRET || "ranking-mundial-26-secret-key-change-in-production"
+);
 
-  const handleSendCode = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError("");
-    const completePhone = `52${phone}`;
+type Partido = {
+  id: string;
+  equipo_local: string;
+  equipo_visitante: string;
+  fecha_utc: string;
+  estadio: string | null;
+  ciudad: string | null;
+  fase: string | null;
+  grupo: string | null;
+};
 
-    try {
-      const res = await fetch("/api/auth/enviar-codigo", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone: completePhone }),
-      });
+async function getSession() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("quiniela_session")?.value;
+  if (!token) return null;
+  try {
+    const { payload } = await jwtVerify(token, JWT_SECRET);
+    return payload as { userId: string; phone: string };
+  } catch {
+    return null;
+  }
+}
 
-      const data = await res.json();
+async function getPartidos(): Promise<Partido[]> {
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+  const { data } = await supabase
+    .from("partidos")
+    .select("id, equipo_local, equipo_visitante, fecha_utc, estadio, ciudad, fase, grupo")
+    .gte("fecha_utc", new Date().toISOString())
+    .order("fecha_utc", { ascending: true })
+    .limit(64);
 
-      if (!res.ok) {
-        throw new Error(data.error || "Ocurrió un error.");
-      }
+  return data ?? [];
+}
 
-      setFullPhone(completePhone);
-      setStep("code");
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+export default async function QuinielaPage() {
+  const session = await getSession();
+  if (!session) redirect("/quiniela/login");
 
-  const handleVerifyCode = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError("");
-
-    try {
-      const res = await fetch("/api/auth/verificar-codigo", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone: fullPhone, code }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || "Ocurrió un error.");
-      }
-
-      router.push("/quiniela");
-      router.refresh(); // Asegura que la página de quiniela recargue y reconozca la sesión
-
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const partidos = await getPartidos();
 
   return (
-    <main className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <Link href="/" className="inline-block">
-            <span className="text-3xl font-black text-[#006847]">
-              RANKING <span className="text-[#CE1126]">MUNDIAL</span> 26
-            </span>
+    <main className="min-h-screen bg-gray-50">
+      <nav className="bg-white border-b border-gray-200 shadow-sm">
+        <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
+          <Link href="/" className="text-xl font-black text-[#006847]">
+            RANKING <span className="text-[#CE1126]">MUNDIAL</span> 26
           </Link>
-          <h1 className="text-2xl font-bold text-gray-800 mt-4">Inicia Sesión en la Quiniela</h1>
-          <p className="text-gray-500">
-            {step === "phone"
-              ? "Ingresa tu número de WhatsApp para recibir un código de acceso."
-              : `Te enviamos un código a +${fullPhone}. Ingrésalo abajo.`}
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-gray-500 hidden sm:block">
+              +{session.phone}
+            </span>
+            <form action="/api/auth/logout" method="POST">
+              <button
+                type="submit"
+                className="text-sm text-gray-500 hover:text-gray-800 transition-colors"
+              >
+                Cerrar sesión
+              </button>
+            </form>
+          </div>
+        </div>
+      </nav>
+
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-black text-gray-900">Quiniela Mundial 2026</h1>
+          <p className="text-gray-500 mt-1">
+            Pronostica los resultados. Los partidos se bloquean 5 minutos antes de iniciar.
           </p>
         </div>
 
-        <div className="bg-white p-8 rounded-2xl shadow-md border border-gray-200">
-          {step === "phone" ? (
-            <form onSubmit={handleSendCode} className="space-y-6">
-              <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
-                  Tu número de WhatsApp
-                </label>
-                <div className="mt-1 flex rounded-md shadow-sm">
-                  <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 sm:text-sm">
-                    +52
-                  </span>
-                  <input
-                    type="tel"
-                    name="phone"
-                    id="phone"
-                    className="block w-full flex-1 rounded-none rounded-r-md border-gray-300 focus:border-[#006847] focus:ring-[#006847] sm:text-sm"
-                    placeholder="81 1234 5678"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
-                    required
-                    disabled={isLoading}
-                  />
-                </div>
-                 <p className="mt-2 text-xs text-gray-500">Debes estar registrado en el bot primero.</p>
-              </div>
-
-              <button type="submit" disabled={isLoading || phone.length < 10} className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-medium text-white bg-[#006847] hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:bg-gray-400 disabled:cursor-not-allowed">
-                {isLoading ? "Enviando..." : "Enviar Código"}
-              </button>
-            </form>
-          ) : (
-            <form onSubmit={handleVerifyCode} className="space-y-6">
-              <div>
-                <label htmlFor="code" className="block text-sm font-medium text-gray-700">
-                  Código de 6 dígitos
-                </label>
-                <div className="mt-1">
-                  <input
-                    type="text"
-                    name="code"
-                    id="code"
-                    maxLength={6}
-                    className="block w-full text-center tracking-[1em] font-mono text-xl border-gray-300 rounded-md shadow-sm focus:border-[#006847] focus:ring-[#006847]"
-                    value={code}
-                    onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
-                    required
-                    disabled={isLoading}
-                  />
-                </div>
-              </div>
-
-              <button type="submit" disabled={isLoading || code.length < 6} className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-medium text-white bg-[#006847] hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:bg-gray-400 disabled:cursor-not-allowed">
-                {isLoading ? "Verificando..." : "Verificar e Ingresar"}
-              </button>
-              <button type="button" onClick={() => { setStep("phone"); setError(""); }} className="w-full text-center text-xs text-gray-500 hover:text-gray-700" disabled={isLoading}>
-                ¿Número incorrecto? Volver
-              </button>
-            </form>
-          )}
-
-          {error && <p className="mt-4 text-center text-sm text-red-600">{error}</p>}
-        </div>
+        <QuinielaPartidos partidos={partidos} userId={session.userId} />
       </div>
     </main>
   );
