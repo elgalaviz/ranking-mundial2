@@ -768,6 +768,11 @@ export default function LandingPage() {
           CRM + Bot WhatsApp para PyMEs mexicanas · {new Date().getFullYear()}
         </div>
         <div style={{ display: "flex", justifyContent: "center", gap: 24, flexWrap: "wrap" }}>
+          <a href="/condiciones" style={{ fontSize: 13, color: "#9ca3af", textDecoration: "none" }}
+            onMouseEnter={e => (e.currentTarget.style.color = "#00a884")}
+            onMouseLeave={e => (e.currentTarget.style.color = "#9ca3af")}>
+            Condiciones del Servicio
+          </a>
           <a href="/privacidad" style={{ fontSize: 13, color: "#9ca3af", textDecoration: "none" }}
             onMouseEnter={e => (e.currentTarget.style.color = "#00a884")}
             onMouseLeave={e => (e.currentTarget.style.color = "#9ca3af")}>

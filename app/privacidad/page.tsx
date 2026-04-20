@@ -146,6 +146,7 @@ export default function PrivacidadPage() {
       <footer style={{ borderTop: "1px solid rgba(0,0,0,0.07)", padding: "28px 24px", textAlign: "center", background: "rgba(255,255,255,0.4)" }}>
         <div style={{ fontSize: 13, color: "#9ca3af", display: "flex", justifyContent: "center", gap: 20, flexWrap: "wrap" }}>
           <Link href="/" style={{ color: "#9ca3af", textDecoration: "none" }}>Inicio</Link>
+          <Link href="/condiciones" style={{ color: "#9ca3af", textDecoration: "none" }}>Condiciones del Servicio</Link>
           <Link href="/privacidad" style={{ color: "#00a884", textDecoration: "none" }}>Política de Privacidad</Link>
           <Link href="/eliminacion-datos" style={{ color: "#9ca3af", textDecoration: "none" }}>Eliminación de Datos</Link>
         </div>
