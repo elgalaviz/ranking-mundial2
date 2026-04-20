@@ -34,16 +34,20 @@ export default async function LandingPage() {
     <main className="min-h-screen bg-white text-gray-900 overflow-x-hidden">
 
       {/* ── NAV ───────────────────────────────────────── */}
-      <nav className="flex items-center justify-between px-6 py-4 max-w-6xl mx-auto">
-        <Logo />
-        <a
-          href={`https://wa.me/${WA_NUMBER}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-sm border border-[#006847] text-[#006847] px-4 py-2 rounded-full hover:bg-[#006847] hover:text-white transition-all font-medium"
-        >
-          Unirme gratis
-        </a>
+      <nav className="bg-[#006847] shadow-md">
+        <div className="flex items-center justify-between px-6 py-4 max-w-6xl mx-auto">
+          <a href="/">
+            <img src="/mifanbot-h.svg" alt="MiFanBot" width={140} height={36} />
+          </a>
+          <a
+            href={`https://wa.me/${WA_NUMBER}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm border border-white text-white px-4 py-2 rounded-full hover:bg-white hover:text-[#006847] transition-all font-medium"
+          >
+            Unirme gratis
+          </a>
+        </div>
       </nav>
 
       {/* ── HERO ──────────────────────────────────────── */}
@@ -154,25 +158,101 @@ export default async function LandingPage() {
         </div>
       </section>
 
-      {/* ── PRÓXIMAMENTE ──────────────────────────────── */}
+      {/* ── QUINIELA ──────────────────────────────────── */}
       <section className="bg-gray-50 py-20 border-y border-gray-100">
         <div className="max-w-6xl mx-auto px-6">
+
           <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 bg-[#006847]/10 border border-[#006847]/30 text-[#006847] text-xs px-3 py-1.5 rounded-full mb-4">
+              <span className="w-2 h-2 bg-[#006847] rounded-full animate-pulse" />
+              Ya disponible
+            </div>
+            <h2 className="text-3xl font-black text-gray-900">Quiniela Mundial 2026</h2>
+            <p className="text-gray-500 mt-2 text-sm">Predice resultados, gana puntos y compite con todos</p>
+          </div>
+
+          <div className="grid lg:grid-cols-2 gap-8 items-start">
+
+            {/* Quiniela pública */}
+            <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm">
+              <div className="text-4xl mb-4">🏆</div>
+              <div className="inline-block bg-[#006847]/10 text-[#006847] text-xs font-bold px-2 py-1 rounded-full mb-3">GRATIS</div>
+              <h3 className="text-xl font-black text-gray-900 mb-2">Quiniela Global</h3>
+              <p className="text-gray-500 text-sm mb-6 leading-relaxed">
+                Ingresa con tu número de WhatsApp, predice los marcadores de cada partido y compite contra todos los participantes en el ranking general.
+              </p>
+              <ul className="space-y-2 mb-8">
+                {[
+                  "6 pts por marcador exacto",
+                  "3 pts por resultado correcto",
+                  "Ranking en tiempo real",
+                  "Notificaciones por WhatsApp",
+                ].map(item => (
+                  <li key={item} className="flex items-center gap-2 text-sm text-gray-700">
+                    <span className="text-[#006847] font-bold">✓</span> {item}
+                  </li>
+                ))}
+              </ul>
+              <a
+                href="/quiniela"
+                className="block w-full py-3 bg-[#006847] hover:bg-green-800 text-white font-bold text-center rounded-xl transition-colors"
+              >
+                Entrar a la Quiniela →
+              </a>
+            </div>
+
+            {/* Ligas privadas */}
+            <div className="bg-white border-2 border-[#006847] rounded-2xl p-8 shadow-md relative overflow-hidden">
+              <div className="absolute top-4 right-4 bg-[#006847] text-white text-xs font-bold px-3 py-1 rounded-full">NUEVO</div>
+              <div className="text-4xl mb-4">⚽</div>
+              <h3 className="text-xl font-black text-gray-900 mb-2">Liga Privada</h3>
+              <p className="text-gray-500 text-sm mb-6 leading-relaxed">
+                Crea tu propia quiniela con familia o amigos. Código exclusivo, ranking privado y resultados por WhatsApp después de cada partido.
+              </p>
+
+              <div className="grid grid-cols-2 gap-3 mb-8">
+                {[
+                  { price: "Gratis", limit: "Hasta 10 personas", tag: "Grupos chicos" },
+                  { price: "$150 MXN", limit: "Hasta 50 personas", tag: "Grupos grandes" },
+                ].map(plan => (
+                  <div key={plan.price} className="border border-gray-200 rounded-xl p-4 text-center">
+                    <div className="text-xs text-gray-400 mb-1">{plan.tag}</div>
+                    <div className="text-lg font-black text-gray-900">{plan.price}</div>
+                    <div className="text-xs text-gray-500 mt-1">{plan.limit}</div>
+                  </div>
+                ))}
+              </div>
+
+              <a
+                href="/quiniela/ligas/nueva"
+                className="block w-full py-3 bg-[#006847] hover:bg-green-800 text-white font-bold text-center rounded-xl transition-colors"
+              >
+                Crear mi Liga Privada →
+              </a>
+              <p className="text-center text-xs text-gray-400 mt-3">Pago único · Válido todo el Mundial</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── PRÓXIMAMENTE ──────────────────────────────── */}
+      <section className="bg-white py-16">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="text-center mb-10">
             <div className="inline-block bg-[#CE1126]/10 border border-[#CE1126]/30 text-[#CE1126] text-xs px-3 py-1.5 rounded-full mb-4">
               Próximamente
             </div>
-            <h2 className="text-2xl font-bold text-gray-900">Mucho más en camino</h2>
+            <h2 className="text-2xl font-bold text-gray-900">Más funciones en camino</h2>
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid sm:grid-cols-3 gap-4 max-w-2xl mx-auto">
             {[
-              { icon: "📅", title: "Calendario .ics", desc: "Descarga todos los partidos directo a tu Google Calendar o iPhone." },
-              { icon: "🏆", title: "Quiniela", desc: "Participa con tus amigos. Predice resultados y sube al ranking." },
-              { icon: "⭐", title: "Estrellas por selección", desc: "Conoce a los jugadores clave de cada equipo en el mundial." },
-              { icon: "🎯", title: "Fantasy", desc: "Arma tu equipo ideal, acumula puntos con cada partido." },
+              { icon: "⭐", title: "Estrellas por selección", desc: "Jugadores clave de cada equipo." },
+              { icon: "🎯", title: "Fantasy", desc: "Arma tu equipo ideal y acumula puntos." },
+              { icon: "📊", title: "Estadísticas en vivo", desc: "Datos y análisis de cada partido." },
             ].map(f => (
-              <div key={f.title} className="bg-white border border-gray-200 rounded-xl p-5">
-                <div className="text-3xl mb-3">{f.icon}</div>
-                <h3 className="font-bold mb-2 text-sm text-gray-900">{f.title}</h3>
+              <div key={f.title} className="bg-gray-50 border border-gray-200 rounded-xl p-5">
+                <div className="text-2xl mb-2">{f.icon}</div>
+                <h3 className="font-bold mb-1 text-sm text-gray-900">{f.title}</h3>
                 <p className="text-gray-500 text-xs leading-relaxed">{f.desc}</p>
                 <div className="mt-3 text-xs text-[#CE1126] font-medium">Muy pronto</div>
               </div>

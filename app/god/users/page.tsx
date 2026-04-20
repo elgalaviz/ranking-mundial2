@@ -1,8 +1,16 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { createClient as createAdmin } from "@supabase/supabase-js";
 import { Users, Globe, Hash, Calendar, MessageCircle } from "lucide-react";
 import { Suspense } from "react";
 import UsersFilters from "./UsersFilters";
+
+function getSupabaseAdmin() {
+  return createAdmin(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 const GOD_EMAIL = process.env.ADMIN_EMAIL || "rene.galaviz@gmail.com";
 
@@ -39,7 +47,9 @@ export default async function GodUsersPage({
 
   const { plan, country, q } = await searchParams;
 
-  let query = supabase
+  const db = getSupabaseAdmin();
+
+  let query = db
     .from("users")
     .select("id, created_at, name, phone, country_code, consultas_hoy, plan")
     .order("created_at", { ascending: false });
@@ -50,8 +60,7 @@ export default async function GodUsersPage({
 
   const { data: users } = await query;
 
-  // Para los contadores del selector de países siempre traemos todos
-  const { data: allUsers } = await supabase
+  const { data: allUsers } = await db
     .from("users")
     .select("country_code");
 
@@ -98,8 +107,15 @@ export default async function GodUsersPage({
           </thead>
           <tbody>
             {(users as FanBotUser[] || []).map((u) => (
-              <tr key={u.id} className="bg-white border-b border-gray-200 hover:bg-gray-50">
-                <td className="px-6 py-4 font-semibold text-gray-800">{u.name || "Fan"}</td>
+              <tr key={u.id} className={`border-b border-gray-200 ${u.plan === "premium" ? "bg-amber-50 hover:bg-amber-100" : "bg-white hover:bg-gray-50"}`}>
+                <td className="px-6 py-4 font-semibold text-gray-800">
+                  <div className="flex items-center gap-2">
+                    {u.name || "Fan"}
+                    {u.plan === "premium" && (
+                      <span className="text-xs bg-amber-200 text-amber-800 font-bold px-1.5 py-0.5 rounded">PRO</span>
+                    )}
+                  </div>
+                </td>
                 <td className="px-6 py-4">
                   <span className="bg-gray-100 text-gray-600 text-xs font-bold px-2 py-1 rounded-md">
                     {u.country_code || "XX"}

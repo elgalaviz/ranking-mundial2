@@ -11,7 +11,51 @@ type Partido = {
   ciudad: string | null;
   fase: string | null;
   grupo: string | null;
+  jornada: number | null;
 };
+
+// Mapa de nombre de equipo → código ISO 2 letras (para flagcdn.com)
+const FLAG_CODES: Record<string, string> = {
+  "México": "mx", "Estados Unidos": "us", "USA": "us", "Canadá": "ca",
+  "Brasil": "br", "Argentina": "ar", "Colombia": "co", "Uruguay": "uy",
+  "Ecuador": "ec", "Chile": "cl", "Paraguay": "py", "Bolivia": "bo",
+  "Perú": "pe", "Venezuela": "ve",
+  "Costa Rica": "cr", "Honduras": "hn", "Guatemala": "gt", "Panamá": "pa",
+  "El Salvador": "sv", "Jamaica": "jm", "Trinidad y Tobago": "tt", "Cuba": "cu",
+  "España": "es", "Francia": "fr", "Alemania": "de", "Portugal": "pt",
+  "Inglaterra": "gb-eng", "Italia": "it", "Países Bajos": "nl", "Bélgica": "be",
+  "Croacia": "hr", "Serbia": "rs", "Suiza": "ch", "Dinamarca": "dk",
+  "Austria": "at", "Escocia": "gb-sct", "Gales": "gb-wls", "Polonia": "pl",
+  "Ucrania": "ua", "Turquía": "tr", "Hungría": "hu",
+  "República Checa": "cz", "Chequia": "cz",
+  "Eslovenia": "si", "Eslovaquia": "sk", "Albania": "al", "Rumania": "ro",
+  "Grecia": "gr", "Noruega": "no", "Suecia": "se", "Finlandia": "fi",
+  "Bosnia-Herzegovina": "ba", "Bosnia y Herzegovina": "ba",
+  "Marruecos": "ma", "Senegal": "sn", "Nigeria": "ng", "Ghana": "gh",
+  "Camerún": "cm", "Egipto": "eg", "Costa de Marfil": "ci", "Mali": "ml",
+  "Argelia": "dz", "Túnez": "tn", "Sudáfrica": "za", "Angola": "ao",
+  "Zambia": "zm", "República Democrática del Congo": "cd",
+  "Japón": "jp", "Corea del Sur": "kr", "Australia": "au",
+  "Arabia Saudita": "sa", "Irán": "ir", "Irak": "iq", "Qatar": "qa",
+  "China": "cn", "Uzbekistán": "uz", "Jordania": "jo", "Omán": "om",
+  "Emiratos Árabes": "ae", "Indonesia": "id", "Nueva Zelanda": "nz",
+  "Catar": "qa", "Haití": "ht", "Haiti": "ht", "Curazao": "cw",
+};
+
+function FlagImg({ equipo, className = "" }: { equipo: string; className?: string }) {
+  const code = FLAG_CODES[equipo];
+  if (!code) return null;
+  return (
+    <img
+      src={`https://flagcdn.com/w20/${code}.png`}
+      srcSet={`https://flagcdn.com/w40/${code}.png 2x`}
+      width={20}
+      height={14}
+      alt={equipo}
+      className={`inline-block rounded-sm object-cover ${className}`}
+    />
+  );
+}
 
 type Pick = { local: string; visitante: string };
 type PicksMap = Record<string, Pick>;
@@ -57,14 +101,14 @@ export default function QuinielaPartidos({
   useEffect(() => {
     fetch("/api/quiniela/picks")
       .then((r) => r.json())
-      .then((data: { partido_id: string; goles_local: number; goles_visitante: number }[]) => {
+      .then((data: { partido_id: string; pick_local: number; pick_visit: number }[]) => {
         if (!Array.isArray(data)) return;
         const loaded: PicksMap = {};
         const savedInit: SavedMap = {};
         data.forEach((p) => {
           loaded[p.partido_id] = {
-            local: String(p.goles_local),
-            visitante: String(p.goles_visitante),
+            local: String(p.pick_local),
+            visitante: String(p.pick_visit),
           };
           savedInit[p.partido_id] = true;
         });
@@ -123,7 +167,7 @@ export default function QuinielaPartidos({
   }
 
   const grouped = partidos.reduce<Record<string, Partido[]>>((acc, p) => {
-    const key = getDayKey(p.fecha_utc);
+    const key = p.jornada ? `Jornada ${p.jornada}` : getDayKey(p.fecha_utc);
     if (!acc[key]) acc[key] = [];
     acc[key].push(p);
     return acc;
@@ -133,10 +177,10 @@ export default function QuinielaPartidos({
     <div className="space-y-8">
       {Object.entries(grouped).map(([day, dayPartidos]) => (
         <div key={day}>
-          <h2 className="text-sm font-semibold text-gray-500 tracking-wider mb-3 capitalize">
+          <h2 className="text-sm font-semibold text-gray-500 tracking-wider mb-3">
             {day}
           </h2>
-          <div className="space-y-3">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
             {dayPartidos.map((partido) => {
               const locked = isLocked(partido.fecha_utc);
               const pick = picks[partido.id] ?? { local: "", visitante: "" };
@@ -171,12 +215,13 @@ export default function QuinielaPartidos({
                     )}
                   </div>
 
-                  <div className="flex items-center gap-3">
-                    <span className="flex-1 text-right font-semibold text-gray-800 text-sm sm:text-base">
-                      {partido.equipo_local}
+                  <div className="flex items-center gap-2">
+                    <span className="flex-1 text-right font-semibold text-gray-800 text-sm flex items-center justify-end gap-1.5 min-w-0">
+                      <span className="truncate">{partido.equipo_local}</span>
+                      <FlagImg equipo={partido.equipo_local} />
                     </span>
 
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-1 shrink-0">
                       <input
                         type="text"
                         inputMode="numeric"
@@ -198,21 +243,10 @@ export default function QuinielaPartidos({
                       />
                     </div>
 
-                    <span className="flex-1 font-semibold text-gray-800 text-sm sm:text-base">
-                      {partido.equipo_visitante}
+                    <span className="flex-1 font-semibold text-gray-800 text-sm flex items-center gap-1.5 min-w-0">
+                      <FlagImg equipo={partido.equipo_visitante} />
+                      <span className="truncate">{partido.equipo_visitante}</span>
                     </span>
-
-                    <button
-                      onClick={() => handleSave(partido)}
-                      disabled={!canSave || isSaving}
-                      className={`text-xs font-medium px-3 py-1.5 rounded-lg transition-colors ${
-                        isSaved
-                          ? "bg-green-100 text-green-700 cursor-default"
-                          : "bg-[#006847] text-white hover:bg-green-800 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed"
-                      }`}
-                    >
-                      {isSaving ? "..." : isSaved ? "Guardado" : "Guardar"}
-                    </button>
                   </div>
 
                   {pickError && (
@@ -221,6 +255,20 @@ export default function QuinielaPartidos({
                   {partido.ciudad && (
                     <p className="mt-2 text-xs text-gray-400 text-center">{partido.ciudad}</p>
                   )}
+
+                  <div className="flex justify-center mt-2">
+                    <button
+                      onClick={() => handleSave(partido)}
+                      disabled={!canSave || isSaving}
+                      className={`text-xs font-medium px-4 py-1.5 rounded-lg transition-colors ${
+                        isSaved
+                          ? "bg-green-100 text-green-700 cursor-default"
+                          : "bg-[#006847] text-white hover:bg-green-800 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed"
+                      }`}
+                    >
+                      {isSaving ? "..." : isSaved ? "Guardado" : "Guardar"}
+                    </button>
+                  </div>
                 </div>
               );
             })}

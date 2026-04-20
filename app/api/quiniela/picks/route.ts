@@ -44,7 +44,6 @@ export async function POST(req: NextRequest) {
 
   const supabase = getSupabaseAdmin();
 
-  // Verificar que el partido existe y no está bloqueado (faltan más de 5 min)
   const { data: partido, error: partidoError } = await supabase
     .from("partidos")
     .select("id, fecha_utc")
@@ -63,20 +62,25 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const { error } = await supabase.from("quiniela_picks").upsert(
-    {
-      user_id: userId,
-      partido_id,
-      goles_local,
-      goles_visitante,
-      updated_at: new Date().toISOString(),
-    },
-    { onConflict: "user_id,partido_id" }
-  );
+  const { data: existing } = await supabase
+    .from("quiniela_picks")
+    .select("id")
+    .eq("user_id", userId)
+    .eq("partido_id", partido_id)
+    .single();
+
+  const { error } = existing
+    ? await supabase
+        .from("quiniela_picks")
+        .update({ pick_local: goles_local, pick_visit: goles_visitante })
+        .eq("id", existing.id)
+    : await supabase
+        .from("quiniela_picks")
+        .insert({ user_id: userId, partido_id, pick_local: goles_local, pick_visit: goles_visitante });
 
   if (error) {
     console.error("Error guardando pick:", error);
-    return NextResponse.json({ error: "No se pudo guardar el pronóstico." }, { status: 500 });
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
   return NextResponse.json({ success: true });
@@ -92,7 +96,7 @@ export async function GET(req: NextRequest) {
 
   const { data, error } = await supabase
     .from("quiniela_picks")
-    .select("partido_id, goles_local, goles_visitante")
+    .select("partido_id, pick_local, pick_visit")
     .eq("user_id", userId);
 
   if (error) {

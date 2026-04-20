@@ -20,7 +20,7 @@ export default function LoginPage() {
     setErrorMessage("");
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
@@ -31,7 +31,8 @@ export default function LoginPage() {
         return;
       }
 
-      router.push("/dashboard");
+      const dest = data.user?.email === "rene.galaviz@gmail.com" ? "/god/users" : "/dashboard";
+      router.push(dest);
       router.refresh();
     } catch {
       setErrorMessage("Ocurrió un error inesperado al iniciar sesión.");

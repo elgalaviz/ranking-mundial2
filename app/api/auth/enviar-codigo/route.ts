@@ -25,10 +25,16 @@ export async function POST(req: Request) {
 
     const supabase = getSupabaseAdmin();
 
+    // México: WhatsApp a veces guarda 521XXXXXXXXXX en vez de 52XXXXXXXXXX
+    const altPhone = phone.startsWith("52") && !phone.startsWith("521")
+      ? phone.replace(/^52/, "521")
+      : phone.replace(/^521/, "52");
+
     const { data: user, error: userError } = await supabase
       .from("users")
       .select("id, phone")
-      .eq("phone", phone)
+      .in("phone", [phone, altPhone])
+      .limit(1)
       .single();
 
     if (userError || !user) {

@@ -6,11 +6,10 @@ import Sidebar from "@/components/layout/sidebar";
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   
-  const showSidebar = 
+  const showSidebar =
     pathname.startsWith("/dashboard") ||
     pathname.startsWith("/leads") ||
-    pathname.startsWith("/admin") ||
-    pathname.startsWith("/god");
+    pathname.startsWith("/admin");
 
   if (!showSidebar) {
     return <>{children}</>;

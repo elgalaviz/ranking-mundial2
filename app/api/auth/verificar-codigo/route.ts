@@ -23,10 +23,15 @@ export async function POST(req: Request) {
 
     const supabase = getSupabaseAdmin();
 
+    const altPhone = phone.startsWith("52") && !phone.startsWith("521")
+      ? phone.replace(/^52/, "521")
+      : phone.replace(/^521/, "52");
+
     const { data: user, error } = await supabase
       .from("users")
       .select("id, phone, otp_code, otp_expires_at")
-      .eq("phone", phone)
+      .in("phone", [phone, altPhone])
+      .limit(1)
       .single();
 
     if (error || !user) {

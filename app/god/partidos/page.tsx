@@ -11,6 +11,9 @@ type Partido = {
   ciudad: string | null;
   fase: string | null;
   grupo: string | null;
+  jornada: number | null;
+  goles_local: number | null;
+  goles_visitante: number | null;
   alerta_enviada: boolean;
 };
 
@@ -39,7 +42,7 @@ export default function PartidosAdminPage() {
   const [filterFase, setFilterFase] = useState<string>("Todos");
   const [saving, setSaving] = useState(false);
   const [showNew, setShowNew] = useState(false);
-  const [newForm, setNewForm] = useState<Partial<Partido>>({ fase: "Grupos", alerta_enviada: false });
+  const [newForm, setNewForm] = useState<Partial<Partido>>({ fase: "Grupos", jornada: 1, alerta_enviada: false });
   const [openDays, setOpenDays] = useState<Set<string>>(new Set());
 
   useEffect(() => { fetchPartidos(); }, []);
@@ -86,6 +89,16 @@ export default function PartidosAdminPage() {
       body: JSON.stringify({ id }),
     });
     fetchPartidos();
+  }
+
+  async function calcularPuntos(partidoId: string) {
+    const res = await fetch("/api/admin/calcular-puntos", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ partido_id: partidoId }),
+    });
+    const data = await res.json();
+    alert(res.ok ? `✓ Puntos calculados: ${data.actualizados} picks actualizados` : `Error: ${data.error}`);
   }
 
   async function createPartido() {
@@ -197,6 +210,18 @@ export default function PartidosAdminPage() {
                                 {FASES.map(f => <option key={f}>{f}</option>)}
                               </select>
                             </div>
+                            <div>
+                              <label className="text-xs text-gray-500 block mb-1">Jornada</label>
+                              <input type="number" min={1} value={editForm.jornada ?? ""} onChange={e => setEditForm(f => ({ ...f, jornada: parseInt(e.target.value) || null }))} className="border border-gray-300 rounded px-2 py-1 text-sm w-full" placeholder="1" />
+                            </div>
+                            <div>
+                              <label className="text-xs text-gray-500 block mb-1">Resultado local</label>
+                              <input type="number" min={0} value={editForm.goles_local ?? ""} onChange={e => setEditForm(f => ({ ...f, goles_local: e.target.value === "" ? null : parseInt(e.target.value) }))} className="border border-gray-300 rounded px-2 py-1 text-sm w-full" placeholder="–" />
+                            </div>
+                            <div>
+                              <label className="text-xs text-gray-500 block mb-1">Resultado visitante</label>
+                              <input type="number" min={0} value={editForm.goles_visitante ?? ""} onChange={e => setEditForm(f => ({ ...f, goles_visitante: e.target.value === "" ? null : parseInt(e.target.value) }))} className="border border-gray-300 rounded px-2 py-1 text-sm w-full" placeholder="–" />
+                            </div>
                             <div className="col-span-2 flex gap-2 pt-1">
                               <button onClick={saveEdit} disabled={saving} className="bg-green-600 hover:bg-green-700 text-white px-4 py-1.5 rounded text-sm">Guardar</button>
                               <button onClick={() => setEditingId(null)} className="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-1.5 rounded text-sm">Cancelar</button>
@@ -213,10 +238,16 @@ export default function PartidosAdminPage() {
                               <span className="text-xs text-gray-400 truncate hidden sm:block">{p.ciudad}</span>
                             </div>
                             <div className="flex items-center gap-2 shrink-0">
+                              {p.goles_local !== null && p.goles_visitante !== null && (
+                                <span className="text-xs font-bold bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">
+                                  {p.goles_local} – {p.goles_visitante}
+                                </span>
+                              )}
                               <span className={`text-xs px-2 py-0.5 rounded-full ${p.alerta_enviada ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"}`}>
                                 {p.alerta_enviada ? "✓ Alerta" : "Pendiente"}
                               </span>
                               <button onClick={() => startEdit(p)} className="text-xs border border-gray-300 hover:bg-gray-100 px-3 py-1 rounded text-gray-600">Editar</button>
+                              <button onClick={() => calcularPuntos(p.id)} className="text-xs border border-blue-200 hover:bg-blue-50 px-3 py-1 rounded text-blue-600">Pts</button>
                               <button onClick={() => deletePartido(p.id)} className="text-xs border border-red-200 hover:bg-red-50 px-3 py-1 rounded text-red-500">✕</button>
                             </div>
                           </div>
@@ -260,6 +291,10 @@ export default function PartidosAdminPage() {
                   <div>
                     <label className="text-xs text-gray-500 block mb-1">Grupo</label>
                     <input value={newForm.grupo || ""} onChange={e => setNewForm(f => ({ ...f, grupo: e.target.value }))} className="border border-gray-300 rounded px-3 py-2 text-sm w-full" placeholder="A" maxLength={1} />
+                  </div>
+                  <div>
+                    <label className="text-xs text-gray-500 block mb-1">Jornada</label>
+                    <input type="number" min={1} value={newForm.jornada ?? ""} onChange={e => setNewForm(f => ({ ...f, jornada: parseInt(e.target.value) || null }))} className="border border-gray-300 rounded px-3 py-2 text-sm w-full" placeholder="1" />
                   </div>
                 </div>
                 <div>

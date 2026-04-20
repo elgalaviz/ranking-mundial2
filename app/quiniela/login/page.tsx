@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
+import { Suspense } from "react";
 
-export default function QuinielaLoginPage() {
+function LoginForm() {
   const [step, setStep] = useState<"phone" | "code">("phone");
   const [phone, setPhone] = useState("");
   const [fullPhone, setFullPhone] = useState("");
@@ -12,6 +14,8 @@ export default function QuinielaLoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const next = searchParams.get("next") || "/quiniela";
 
   const handleSendCode = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,7 +59,7 @@ export default function QuinielaLoginPage() {
 
       if (!res.ok) throw new Error(data.error || "Ocurrió un error.");
 
-      router.push("/quiniela");
+      router.push(next);
       router.refresh();
     } catch (err: any) {
       setError(err.message);
@@ -69,9 +73,7 @@ export default function QuinielaLoginPage() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <Link href="/" className="inline-block">
-            <span className="text-3xl font-black text-[#006847]">
-              RANKING <span className="text-[#CE1126]">MUNDIAL</span> 26
-            </span>
+            <Image src="/mifanbot-h.svg" alt="MiFanBot" width={160} height={40} className="mx-auto" />
           </Link>
           <h1 className="text-2xl font-bold text-gray-800 mt-4">Inicia Sesión en la Quiniela</h1>
           <p className="text-gray-500 mt-2">
@@ -157,5 +159,13 @@ export default function QuinielaLoginPage() {
         </div>
       </div>
     </main>
+  );
+}
+
+export default function QuinielaLoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
   );
 }

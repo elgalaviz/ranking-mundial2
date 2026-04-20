@@ -5,7 +5,10 @@
       "Bash(git config *)",
       "Bash(git add *)",
       "Bash(git commit *)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "Bash(npm run *)",
+      "Bash(mkdir -p \"c:\\\\Users\\\\rene\\\\Documents\\\\ranking-mundial26\\\\app\\\\quiniela\\\\unirse\\\\[codigo]\")",
+      "Bash(mkdir -p \"c:\\\\Users\\\\rene\\\\Documents\\\\ranking-mundial26\\\\app\\\\quiniela\\\\ligas\\\\[codigo]\")"
     ]
   }
 }
