@@ -63,20 +63,48 @@ export async function POST(req: NextRequest) {
   const supabase = getSupabase();
 
   try {
+    console.log("🔔 Webhook invocado /api/whatsapp/webhook");
     const body = await req.json();
+    console.log("📦 Body recibido:", JSON.stringify(body, null, 2));
+
     const entry = body.entry?.[0];
     const change = entry?.changes?.[0];
     const value = change?.value;
     const message = value?.messages?.[0];
 
-    if (!message) return new NextResponse("ok", { status: 200 });
+    if (!message) {
+      console.log("⚠️ No se encontró ningún mensaje en el payload.");
+      return new NextResponse("ok", { status: 200 });
+    }
 
     const from: string = message.from;
     const waId: string = value?.contacts?.[0]?.wa_id || from;
     const profileName: string = value?.contacts?.[0]?.profile?.name || "Fan";
     const text: string = (message.text?.body || "").trim();
 
+    console.log(`📩 Mensaje de ${from} (${profileName}): ${text}`);
+
     if (!text) return new NextResponse("ok", { status: 200 });
+
+    const incomingText = text.toLowerCase();
+
+    // Detectar intención de baja
+    if (incomingText === "stop" || incomingText === "baja") {
+      const { error } = await supabase
+        .from("users")
+        .delete()
+        .eq("whatsapp_id", waId);
+
+      if (!error) {
+        await sendWhatsAppText({
+          accessToken: WHATSAPP_TOKEN,
+          phoneNumberId: PHONE_NUMBER_ID,
+          to: from,
+          body: "⚽ *Ranking Mundial 26*\n\nTu registro ha sido cancelado exitosamente y tus datos han sido eliminados de nuestro sistema.\n\nYa no recibirás más alertas ni mensajes de nuestra parte. ¡Gracias por habernos acompañado! 👋",
+        });
+      }
+      return new NextResponse("ok", { status: 200 });
+    }
 
     const { country_code, city_hint } = inferCountry(from);
 
@@ -88,6 +116,7 @@ export async function POST(req: NextRequest) {
       .single();
 
     const isNew = !user;
+    console.log(`👤 Usuario nuevo: ${isNew}`);
 
     if (isNew) {
       const { data: created } = await supabase
@@ -104,12 +133,14 @@ export async function POST(req: NextRequest) {
 
       user = created;
 
-      await sendWhatsAppText({
+      console.log("👋 Enviando mensaje de bienvenida...");
+      const sendResult = await sendWhatsAppText({
         accessToken: WHATSAPP_TOKEN,
         phoneNumberId: PHONE_NUMBER_ID,
         to: from,
         body: welcomeMessage(profileName),
       });
+      console.log("📤 Resultado de envío de bienvenida:", sendResult);
 
       await supabase.from("registros_whatsapp").insert({
         user_id: user.id,
@@ -123,18 +154,23 @@ export async function POST(req: NextRequest) {
     const queriesAfterReset = await resetQueriesIfNeeded(supabase, user.id, user.consultas_reset);
     const consultasHoy: number = queriesAfterReset ?? user.consultas_hoy;
 
+    console.log(`📊 Consultas hoy: ${consultasHoy} / Límite: ${MAX_FREE_QUERIES}`);
+
     // Verificar límite
     if (user.plan === "free" && consultasHoy >= MAX_FREE_QUERIES) {
-      await sendWhatsAppText({
+      console.log("🛑 Límite alcanzado, enviando mensaje de límite.");
+      const limitResult = await sendWhatsAppText({
         accessToken: WHATSAPP_TOKEN,
         phoneNumberId: PHONE_NUMBER_ID,
         to: from,
         body: limitReachedMessage(),
       });
+      console.log("📤 Resultado límite:", limitResult);
       return new NextResponse("ok", { status: 200 });
     }
 
     // Llamar a OpenAI
+    console.log("🤖 Llamando a OpenAI...");
     const openai = getOpenAI();
     const response = await openai.chat.completions.create({
       model: process.env.OPENAI_MODEL || "gpt-4o-mini",
@@ -146,13 +182,15 @@ export async function POST(req: NextRequest) {
     });
 
     const reply = response.choices[0]?.message?.content || unknownMessage();
+    console.log("🤖 Respuesta OpenAI generada.");
 
-    await sendWhatsAppText({
+    const replyResult = await sendWhatsAppText({
       accessToken: WHATSAPP_TOKEN,
       phoneNumberId: PHONE_NUMBER_ID,
       to: from,
       body: reply,
     });
+    console.log("📤 Resultado envío OpenAI:", replyResult);
 
     // Incrementar contador
     await supabase
