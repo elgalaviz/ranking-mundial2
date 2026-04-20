@@ -58,7 +58,8 @@ export default async function MisLigasPage() {
     .in("owner_phone", [phone, altPhone]);
 
   // Unir sin duplicados
-  const todasMap = new Map<string, typeof ligasMiembro[0]>();
+  type Liga = { id: string; nombre: string; codigo: string; estado: string; tier: number; max_participantes: number; owner_nombre: string };
+  const todasMap = new Map<string, Liga>();
   for (const l of [...(ligasMiembro ?? []), ...(ligasDueno ?? [])]) {
     if (l) todasMap.set(l.id, l);
   }
