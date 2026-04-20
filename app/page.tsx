@@ -245,7 +245,7 @@ function PhoneMockup() {
       <div className="absolute inset-0 bg-[#25D366]/10 blur-3xl rounded-full scale-75" />
 
       {/* Phone frame */}
-      <div className="relative w-64 bg-gray-200 rounded-[2.5rem] border-4 border-gray-300 shadow-2xl overflow-hidden">
+      <div className="relative w-85 bg-gray-200 rounded-[2.5rem] border-4 border-gray-300 shadow-2xl overflow-hidden">
         {/* Notch */}
         <div className="bg-gray-200 flex justify-center pt-2 pb-1">
           <div className="w-20 h-5 bg-gray-400 rounded-full" />
