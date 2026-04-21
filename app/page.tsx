@@ -235,28 +235,52 @@ export default async function LandingPage() {
         </div>
       </section>
 
-      {/* ── PRÓXIMAMENTE ──────────────────────────────── */}
-      <section className="bg-white py-16">
+      {/* ── FANBOT PREMIUM ────────────────────────────── */}
+      <section className="bg-white py-20">
         <div className="max-w-6xl mx-auto px-6">
-          <div className="text-center mb-10">
-            <div className="inline-block bg-[#CE1126]/10 border border-[#CE1126]/30 text-[#CE1126] text-xs px-3 py-1.5 rounded-full mb-4">
-              Próximamente
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 bg-amber-100 border border-amber-300 text-amber-700 text-xs px-3 py-1.5 rounded-full mb-4">
+              <span className="text-base">⭐</span>
+              FanBot Premium
             </div>
-            <h2 className="text-2xl font-bold text-gray-900">Más funciones en camino</h2>
+            <h2 className="text-3xl font-black text-gray-900">Consultas ilimitadas todo el torneo</h2>
+            <p className="text-gray-500 mt-2 text-sm">Un solo pago. Sin límites. Durante todo el Mundial 2026.</p>
           </div>
-          <div className="grid sm:grid-cols-3 gap-4 max-w-2xl mx-auto">
-            {[
-              { icon: "⭐", title: "Estrellas por selección", desc: "Jugadores clave de cada equipo." },
-              { icon: "🎯", title: "Fantasy", desc: "Arma tu equipo ideal y acumula puntos." },
-              { icon: "📊", title: "Estadísticas en vivo", desc: "Datos y análisis de cada partido." },
-            ].map(f => (
-              <div key={f.title} className="bg-gray-50 border border-gray-200 rounded-xl p-5">
-                <div className="text-2xl mb-2">{f.icon}</div>
-                <h3 className="font-bold mb-1 text-sm text-gray-900">{f.title}</h3>
-                <p className="text-gray-500 text-xs leading-relaxed">{f.desc}</p>
-                <div className="mt-3 text-xs text-[#CE1126] font-medium">Muy pronto</div>
-              </div>
-            ))}
+
+          <div className="max-w-4xl mx-auto grid lg:grid-cols-2 gap-8 items-center">
+            {/* Features */}
+            <div className="space-y-4">
+              {[
+                { icon: "💬", title: "Consultas ilimitadas", desc: "Pregunta todo lo que quieras sin restricciones durante los 64 partidos del torneo." },
+                { icon: "📊", title: "Estadísticas y datos en tiempo real", desc: "Historial de enfrentamientos, jugadores clave, análisis tácticos y más." },
+                { icon: "🤖", title: "Predicciones avanzadas", desc: "Análisis con IA de cada partido antes de que empiece." },
+                { icon: "⚡", title: "Acceso prioritario en partidos", desc: "Respuestas inmediatas durante los momentos más intensos del juego." },
+              ].map(f => (
+                <div key={f.title} className="flex gap-4">
+                  <div className="w-10 h-10 bg-amber-50 border border-amber-200 rounded-xl flex items-center justify-center text-xl shrink-0">
+                    {f.icon}
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-sm text-gray-900">{f.title}</h3>
+                    <p className="text-gray-500 text-xs leading-relaxed mt-0.5">{f.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Pricing card */}
+            <div className="bg-gradient-to-br from-amber-400 to-orange-500 rounded-2xl p-8 text-white text-center shadow-xl shadow-amber-200">
+              <div className="text-5xl mb-4">⭐</div>
+              <div className="text-5xl font-black mb-1">$99</div>
+              <div className="text-amber-100 text-sm mb-6">MXN · Pago único · Sin renovación</div>
+              <a
+                href="/fanbot"
+                className="block w-full py-3.5 bg-white text-amber-600 font-bold rounded-xl hover:bg-amber-50 transition-colors"
+              >
+                Obtener Premium →
+              </a>
+              <p className="text-amber-100 text-xs mt-4">Gratis: 3 consultas al día · Premium: ilimitadas</p>
+            </div>
           </div>
         </div>
       </section>
