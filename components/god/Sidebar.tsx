@@ -10,6 +10,7 @@ import {
   Calendar,
   Trophy,
   Swords,
+  DollarSign,
   LogOut,
   User,
 } from "lucide-react";
@@ -20,6 +21,7 @@ const navigation = [
   { name: "Partidos", href: "/god/partidos", icon: Calendar },
   { name: "Quiniela", href: "/god/quiniela", icon: Trophy },
   { name: "Fantasy", href: "/god/fantasy", icon: Swords },
+  { name: "Pagos", href: "/god/pagos", icon: DollarSign },
 ];
 
 function classNames(...classes: string[]) {
