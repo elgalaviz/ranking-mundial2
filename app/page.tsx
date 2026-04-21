@@ -58,17 +58,17 @@ export default async function LandingPage() {
             Mundial 2026 · 11 Jun – 19 Jul · USA · CAN · MEX
           </div>
 
-          <img src="/mifanbot-h.svg" alt="MiFanBot" width={160} height={40} className="mb-5" />
+          <img src="/mifanbot.svg" alt="MiFanBot" width={320} height={320} className="mb-5" />
 
-          <h1 className="text-4xl sm:text-5xl font-black leading-tight mb-4 text-gray-900">
+          <h1 className="text-4xl sm:text-4xl font-black leading-tight mb-4 text-gray-900">
             Tu guía del{" "}
             <span className="text-[#006847]">Mundial 2026</span>
             <br />por WhatsApp
           </h1>
 
           <p className="text-gray-700 text-lg mb-8 leading-relaxed">
-            Recibe alertas <strong className="text-gray-900">15 minutos antes</strong> de cada partido,
-            info de los jugadores a seguir y respuestas a todo lo que quieras saber del mundial.
+            Mi FanBot te responde todo sobre los mundiales, activa y recibe alertas <strong className="text-gray-900">15 minutos antes</strong> de cada partido,
+            y proximamente toda la info de los jugadores a seguir y mucho más.
             Gratis. Sin app. Solo WhatsApp.
           </p>
 
@@ -109,7 +109,7 @@ export default async function LandingPage() {
             className="inline-flex items-center gap-3 bg-black text-white font-semibold text-sm px-5 py-3 rounded-2xl hover:bg-gray-900 transition-all shadow-md"
           >
             <span className="text-lg">📅</span>
-            Pide tu calendario vía WhatsApp
+             Calendario para Iphone y Android del Mundial
           </a>
         </div>
       </section>
@@ -141,24 +141,26 @@ export default async function LandingPage() {
       )}
 
       {/* ── CÓMO FUNCIONA ─────────────────────────────── */}
-      <section className="max-w-6xl mx-auto px-6 py-20">
-        <h2 className="text-2xl font-bold text-center mb-2 text-gray-900">Así de fácil</h2>
-        <p className="text-gray-500 text-center text-sm mb-12">Sin apps, sin registros, sin complicaciones</p>
-        <div className="grid sm:grid-cols-3 gap-8">
-          {[
-            { n: "1", icon: "💬", title: "Escríbenos", desc: "Manda un mensaje al número de FanBot. En segundos quedas registrado." },
-            { n: "2", icon: "⚽", title: "Recibe alertas", desc: "15 minutos antes de cada partido te mandamos info del juego y jugadores a seguir." },
-            { n: "3", icon: "🤖", title: "Pregunta lo que quieras", desc: "Nuestro chatbot responde todo sobre el Mundial 2026 y la historia del fútbol." },
-          ].map(s => (
-            <div key={s.n} className="text-center">
-              <div className="w-14 h-14 bg-[#006847]/10 border border-[#006847]/30 rounded-2xl flex items-center justify-center text-2xl mx-auto mb-4">
-                {s.icon}
+      <section className="bg-black py-20">
+        <div className="max-w-6xl mx-auto px-6">
+          <h2 className="text-2xl font-bold text-center mb-2 text-white">Así de fácil</h2>
+          <p className="text-gray-400 text-center text-sm mb-12">Sin apps, sin registros, sin complicaciones</p>
+          <div className="grid sm:grid-cols-3 gap-8">
+            {[
+              { n: "1", icon: "💬", title: "Escríbenos", desc: "Manda un mensaje al número de FanBot. En segundos quedas registrado." },
+              { n: "2", icon: "⚽", title: "Recibe alertas", desc: "15 minutos antes de cada partido te mandamos info del juego y jugadores a seguir." },
+              { n: "3", icon: "🤖", title: "Pregunta lo que quieras", desc: "Nuestro chatbot responde todo sobre el Mundial 2026 y la historia del fútbol." },
+            ].map(s => (
+              <div key={s.n} className="text-center">
+                <div className="w-14 h-14 bg-white/10 border border-white/20 rounded-2xl flex items-center justify-center text-2xl mx-auto mb-4">
+                  {s.icon}
+                </div>
+                <div className="text-xs text-[#00e5a0] font-bold mb-2">PASO {s.n}</div>
+                <h3 className="font-bold text-lg mb-2 text-white">{s.title}</h3>
+                <p className="text-gray-400 text-sm leading-relaxed">{s.desc}</p>
               </div>
-              <div className="text-xs text-[#006847] font-bold mb-2">PASO {s.n}</div>
-              <h3 className="font-bold text-lg mb-2 text-gray-900">{s.title}</h3>
-              <p className="text-gray-600 text-sm leading-relaxed">{s.desc}</p>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </section>
 
@@ -255,10 +257,10 @@ export default async function LandingPage() {
             {/* Features */}
             <div className="space-y-4">
               {[
-                { icon: "💬", title: "Consultas ilimitadas", desc: "Pregunta todo lo que quieras sin restricciones durante los 64 partidos del torneo." },
-                { icon: "📊", title: "Estadísticas y datos en tiempo real", desc: "Historial de enfrentamientos, jugadores clave, análisis tácticos y más." },
-                { icon: "🤖", title: "Predicciones avanzadas", desc: "Análisis con IA de cada partido antes de que empiece." },
-                { icon: "⚡", title: "Acceso prioritario en partidos", desc: "Respuestas inmediatas durante los momentos más intensos del juego." },
+                { icon: "💬", title: "Consultas ilimitadas", desc: "Pregunta todo lo que quieras sin restricciones durante los 104 partidos del torneo." },
+                { icon: "📊", title: "Estadísticas y alineaciones durante el Mundial", desc: "Datos actualizados de cada partido: alineaciones, resultados y más." },
+                { icon: "⚽", title: "Info de cada partido", desc: "Historial de enfrentamientos, jugadores clave y contexto antes de cada juego." },
+                { icon: "⚡", title: "Acceso prioritario", desc: "Respuestas inmediatas durante los momentos más intensos del torneo." },
               ].map(f => (
                 <div key={f.title} className="flex gap-4">
                   <div className="w-10 h-10 bg-amber-50 border border-amber-200 rounded-xl flex items-center justify-center text-xl shrink-0">

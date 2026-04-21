@@ -70,8 +70,8 @@ export default function FanbotLandingPage() {
               <ul className="space-y-2 text-sm text-gray-600">
                 <li className="flex gap-2"><span className="text-green-500">✓</span> Alertas de partidos</li>
                 <li className="flex gap-2"><span className="text-green-500">✓</span> 3 consultas/día</li>
-                <li className="flex gap-2"><span className="text-gray-300">✗</span> <span className="text-gray-400">Estadísticas avanzadas</span></li>
-                <li className="flex gap-2"><span className="text-gray-300">✗</span> <span className="text-gray-400">Predicciones con IA</span></li>
+                <li className="flex gap-2"><span className="text-gray-300">✗</span> <span className="text-gray-400">Estadísticas y alineaciones</span></li>
+                <li className="flex gap-2"><span className="text-gray-300">✗</span> <span className="text-gray-400">Info detallada de partidos</span></li>
               </ul>
             </div>
             <div className="border-2 border-amber-400 rounded-xl p-4 relative">
@@ -80,8 +80,8 @@ export default function FanbotLandingPage() {
               <ul className="space-y-2 text-sm text-gray-700">
                 <li className="flex gap-2"><span className="text-amber-500">⭐</span> Alertas de partidos</li>
                 <li className="flex gap-2"><span className="text-amber-500">⭐</span> Consultas ilimitadas</li>
-                <li className="flex gap-2"><span className="text-amber-500">⭐</span> Estadísticas avanzadas</li>
-                <li className="flex gap-2"><span className="text-amber-500">⭐</span> Predicciones con IA</li>
+                <li className="flex gap-2"><span className="text-amber-500">⭐</span> Estadísticas y alineaciones</li>
+                <li className="flex gap-2"><span className="text-amber-500">⭐</span> Info detallada de partidos</li>
               </ul>
             </div>
           </div>

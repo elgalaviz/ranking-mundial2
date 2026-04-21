@@ -126,21 +126,28 @@ export async function POST(req: NextRequest) {
       return new NextResponse("ok", { status: 200 });
     }
 
-    // Detectar intención de baja
-    if (incomingText === "stop" || incomingText === "baja") {
-      const { error } = await supabase
-        .from("users")
-        .delete()
-        .eq("whatsapp_id", waId);
+    // Detectar intención de baja — primero pedir confirmación
+    if (incomingText === "baja" || incomingText === "stop") {
+      await sendWhatsAppText({
+        accessToken: WHATSAPP_TOKEN,
+        phoneNumberId: PHONE_NUMBER_ID,
+        to: from,
+        body:
+          `⚠️ ¿Confirmas que quieres eliminar tu cuenta y todos tus datos?\n\n` +
+          `Responde *CONFIRMAR BAJA* para proceder.\n\n` +
+          `Si fue un error, ignora este mensaje.`,
+      });
+      return new NextResponse("ok", { status: 200 });
+    }
 
-      if (!error) {
-        await sendWhatsAppText({
-          accessToken: WHATSAPP_TOKEN,
-          phoneNumberId: PHONE_NUMBER_ID,
-          to: from,
-          body: "⚽ *Ranking Mundial 26*\n\nTu registro ha sido cancelado exitosamente y tus datos han sido eliminados de nuestro sistema.\n\nYa no recibirás más alertas ni mensajes de nuestra parte. ¡Gracias por habernos acompañado! 👋",
-        });
-      }
+    if (incomingText === "confirmar baja") {
+      await supabase.from("users").delete().eq("whatsapp_id", waId);
+      await sendWhatsAppText({
+        accessToken: WHATSAPP_TOKEN,
+        phoneNumberId: PHONE_NUMBER_ID,
+        to: from,
+        body: "👋 Tu cuenta y datos han sido eliminados. ¡Gracias por acompañarnos! Si cambias de opinión, escríbenos cuando quieras.",
+      });
       return new NextResponse("ok", { status: 200 });
     }
 
