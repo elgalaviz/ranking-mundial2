@@ -269,7 +269,7 @@ export default async function LandingPage() {
             </div>
 
             {/* Pricing card */}
-            <div className="bg-gradient-to-br from-amber-400 to-orange-500 rounded-2xl p-8 text-white text-center shadow-xl shadow-amber-200">
+            <div className="bg-linear-to-br from-amber-400 to-orange-500 rounded-2xl p-8 text-white text-center shadow-xl shadow-amber-200">
               <div className="text-5xl mb-4">⭐</div>
               <div className="text-5xl font-black mb-1">$99</div>
               <div className="text-amber-100 text-sm mb-6">MXN · Pago único · Sin renovación</div>
