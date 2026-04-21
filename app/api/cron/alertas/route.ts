@@ -70,10 +70,11 @@ export async function POST(req: NextRequest) {
 
     const mensajePatrocinador = patrocinadores?.mensaje_texto || null;
 
-    // Obtener todos los usuarios registrados
+    // Obtener usuarios que aceptaron alertas (o no han respondido aún = null)
     const { data: usuarios } = await supabase
       .from("users")
-      .select("id, phone");
+      .select("id, phone")
+      .neq("alertas_activas", false);
 
     if (!usuarios || usuarios.length === 0) {
       return NextResponse.json({ ok: true, enviadas: 0, msg: "Sin usuarios registrados" });

@@ -10,6 +10,7 @@ export const runtime = "nodejs";
 const VERIFY_TOKEN = process.env.META_VERIFY_TOKEN || "";
 const PHONE_NUMBER_ID = process.env.WHATSAPP_PHONE_NUMBER_ID || "";
 const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN || "";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 const MAX_FREE_QUERIES = 3;
 
 function getSupabase() {
@@ -88,6 +89,43 @@ export async function POST(req: NextRequest) {
 
     const incomingText = text.toLowerCase();
 
+    // Detectar solicitud de calendario
+    if (incomingText.includes("calendario")) {
+      await sendWhatsAppText({
+        accessToken: WHATSAPP_TOKEN,
+        phoneNumberId: PHONE_NUMBER_ID,
+        to: from,
+        body:
+          `📅 *¡Claro, te lo proporciono con gusto!*\n\n` +
+          `Aquí está el calendario completo del Mundial 2026 para agregar a Google Calendar o iPhone:\n\n` +
+          `${APP_URL}/api/calendario\n\n` +
+          `Incluye los 104 partidos con horarios en tu zona horaria. ⚽🏆`,
+      });
+      return new NextResponse("ok", { status: 200 });
+    }
+
+    // Detectar opt-in/opt-out de notificaciones
+    if (incomingText === "sí alertas" || incomingText === "si alertas" || incomingText === "quiero alertas") {
+      await supabase.from("users").update({ alertas_activas: true }).eq("whatsapp_id", waId);
+      await sendWhatsAppText({
+        accessToken: WHATSAPP_TOKEN,
+        phoneNumberId: PHONE_NUMBER_ID,
+        to: from,
+        body: `✅ *¡Listo!* Te avisaré 15 minutos antes de cada partido. ⚽`,
+      });
+      return new NextResponse("ok", { status: 200 });
+    }
+    if (incomingText === "no alertas" || incomingText === "sin alertas" || incomingText === "no quiero alertas") {
+      await supabase.from("users").update({ alertas_activas: false }).eq("whatsapp_id", waId);
+      await sendWhatsAppText({
+        accessToken: WHATSAPP_TOKEN,
+        phoneNumberId: PHONE_NUMBER_ID,
+        to: from,
+        body: `👍 Entendido, no te mandaré alertas de partidos. Siempre puedes preguntarme lo que quieras aquí. ⚽`,
+      });
+      return new NextResponse("ok", { status: 200 });
+    }
+
     // Detectar intención de baja
     if (incomingText === "stop" || incomingText === "baja") {
       const { error } = await supabase
@@ -145,6 +183,18 @@ export async function POST(req: NextRequest) {
       await supabase.from("registros_whatsapp").insert({
         user_id: user.id,
         tipo_mensaje: "bienvenida",
+      });
+
+      // Preguntar opt-in de notificaciones
+      await sendWhatsAppText({
+        accessToken: WHATSAPP_TOKEN,
+        phoneNumberId: PHONE_NUMBER_ID,
+        to: from,
+        body:
+          `🔔 ¿Quieres que te avise *15 minutos antes* de cada partido?\n\n` +
+          `Responde:\n` +
+          `✅ *Sí alertas*\n` +
+          `❌ *No alertas*`,
       });
 
       return new NextResponse("ok", { status: 200 });

@@ -34,7 +34,7 @@ export default async function LandingPage() {
     <main className="min-h-screen bg-white text-gray-900 overflow-x-hidden">
 
       {/* ── NAV ───────────────────────────────────────── */}
-      <nav className="bg-[#006847] shadow-md">
+      <nav className="bg-black shadow-md">
         <div className="flex items-center justify-between px-6 py-4 max-w-6xl mx-auto">
           <a href="/">
             <img src="/mifanbot-h.svg" alt="MiFanBot" width={140} height={36} />
@@ -43,7 +43,7 @@ export default async function LandingPage() {
             href={`https://wa.me/${WA_NUMBER}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm border border-white text-white px-4 py-2 rounded-full hover:bg-white hover:text-[#006847] transition-all font-medium"
+            className="text-sm border border-white text-white px-4 py-2 rounded-full hover:bg-white hover:text-black transition-all font-medium"
           >
             Unirme gratis
           </a>
@@ -57,6 +57,8 @@ export default async function LandingPage() {
             <span className="w-2 h-2 bg-[#006847] rounded-full animate-pulse" />
             Mundial 2026 · 11 Jun – 19 Jul · USA · CAN · MEX
           </div>
+
+          <img src="/mifanbot-h.svg" alt="MiFanBot" width={160} height={40} className="mb-5" />
 
           <h1 className="text-4xl sm:text-5xl font-black leading-tight mb-4 text-gray-900">
             Tu guía del{" "}
@@ -82,13 +84,6 @@ export default async function LandingPage() {
 
           <p className="text-gray-500 text-sm">Sin registros. Sin contraseña. Solo escríbenos.</p>
 
-          <a
-            href="/api/calendario"
-            className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-[#006847] mt-3 transition-colors"
-          >
-            📅 Descargar todos los partidos para Google Calendar / iPhone
-          </a>
-
           {/* Stats */}
           <div className="flex gap-8 mt-10">
             {[
@@ -105,8 +100,17 @@ export default async function LandingPage() {
         </div>
 
         {/* Phone mockup */}
-        <div className="flex justify-center lg:justify-end">
+        <div className="flex flex-col items-center lg:items-end gap-5">
           <PhoneMockup />
+          <a
+            href={`https://wa.me/${WA_NUMBER}?text=Hola%20FanBot%2C%20quiero%20mi%20calendario%20del%20Mundial%202026`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-3 bg-black text-white font-semibold text-sm px-5 py-3 rounded-2xl hover:bg-gray-900 transition-all shadow-md"
+          >
+            <span className="text-lg">📅</span>
+            Pide tu calendario vía WhatsApp
+          </a>
         </div>
       </section>
 
