@@ -91,19 +91,14 @@ export async function POST(req: NextRequest) {
 
 
     // 1. MAPEAR A NEGOCIO
-    const { data: waAccount, error: waError } = await supabase
-      .from("whatsapp_accounts")
-      .select("business_id, access_token")
-      .eq("phone_number_id", phoneNumberId)
-      .maybeSingle();
+    // Al no tener tabla whatsapp_accounts, usamos variables de entorno directamente
+    const business_id = process.env.WHATSAPP_BUSINESS_ID || "ranking-mundial";
+    const accessToken = process.env.WHATSAPP_TOKEN || "";
 
-    if (waError || !waAccount?.business_id) {
-      console.error("❌ Número no vinculado:", waError);
+    if (!accessToken) {
+      console.error("❌ Falta configurar WHATSAPP_TOKEN en .env");
       return new NextResponse("ok", { status: 200 });
     }
-
-    const business_id = waAccount.business_id;
-    const accessToken = waAccount.access_token || "";
 
     // 2. MANEJAR RESPUESTA DE TRIVIA
     if (text === 'trivia_correcta' || text.startsWith('trivia_incorrecta')) {

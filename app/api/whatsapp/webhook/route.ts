@@ -123,12 +123,12 @@ export async function POST(req: NextRequest) {
     }
 
     // --- Comandos especiales (no cuentan contra el límite) ---
-    if (incomingText === "sí alertas" || incomingText === "si alertas" || incomingText === "quiero alertas") {
+    if (incomingText === "sí" || incomingText === "si" || incomingText === "sí alertas" || incomingText === "si alertas" || incomingText === "quiero alertas") {
       await supabase.from("users").update({ alertas_activas: true }).eq("whatsapp_id", waId);
       await sendWhatsAppText({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from, body: "✅ *¡Listo!* Te avisaré 15 minutos antes de cada partido. ⚽" });
       return new NextResponse("ok", { status: 200 });
     }
-    if (incomingText === "no alertas" || incomingText === "sin alertas" || incomingText === "no quiero alertas") {
+    if (incomingText === "no" || incomingText === "no alertas" || incomingText === "sin alertas" || incomingText === "no quiero alertas") {
       await supabase.from("users").update({ alertas_activas: false }).eq("whatsapp_id", waId);
       await sendWhatsAppText({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from, body: "👍 Entendido, no te mandaré alertas de partidos. ⚽" });
       return new NextResponse("ok", { status: 200 });
@@ -155,7 +155,7 @@ export async function POST(req: NextRequest) {
         .single();
       user = created;
       await sendWhatsAppText({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from, body: welcomeMessage(profileName) });
-      await sendWhatsAppText({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from, body: "🔔 ¿Quieres que te avise *15 minutos antes* de cada partido?\n\nResponde:\n✅ *Sí alertas*\n❌ *No alertas*" });
+      await sendWhatsAppText({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from, body: "🔔 ¿Quieres que te avise *15 minutos antes* de cada partido?\n\nResponde:\n✅ *Sí*\n❌ *No*" });
       await supabase.from("registros_whatsapp").insert({ user_id: user.id, tipo_mensaje: "bienvenida" });
       return new NextResponse("ok", { status: 200 });
     }

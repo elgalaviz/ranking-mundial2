@@ -12,21 +12,12 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Falta el parámetro 'phone'. Ejemplo: ?phone=5218112345678" }, { status: 400 });
   }
 
-  // 1. Obtener configuración de WhatsApp de Supabase
-  // (Tomaremos la primera cuenta activa para esta prueba)
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  );
+  // 1. Obtener configuración de WhatsApp de variables de entorno
+  const accessToken = process.env.WHATSAPP_TOKEN || "";
+  const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID || "";
 
-  const { data: waAccount, error } = await supabase
-    .from("whatsapp_accounts")
-    .select("access_token, phone_number_id")
-    .limit(1)
-    .single();
-
-  if (error || !waAccount) {
-    return NextResponse.json({ error: "No se encontró configuración de WhatsApp en la base de datos." }, { status: 500 });
+  if (!accessToken || !phoneNumberId) {
+    return NextResponse.json({ error: "Faltan configurar variables de entorno (WHATSAPP_TOKEN / WHATSAPP_PHONE_NUMBER_ID)." }, { status: 500 });
   }
 
   // 2. Construir el mensaje de alerta
@@ -35,8 +26,8 @@ export async function GET(req: NextRequest) {
   // 3. Enviar el mensaje usando tu función existente
   try {
     const resultado = await sendWhatsAppText({
-      accessToken: waAccount.access_token,
-      phoneNumberId: waAccount.phone_number_id,
+      accessToken: accessToken,
+      phoneNumberId: phoneNumberId,
       to: phone,
       body: mensajePrueba,
     });
