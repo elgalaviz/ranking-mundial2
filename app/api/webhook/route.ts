@@ -1,15 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import { generateReply } from "@/lib/ai/reply";
 import { getSystemPrompt } from "@/lib/ai/systemPrompt";
 import { buildReplyPrompt } from "@/lib/ai/replyPrompt";
 import { extractMemory } from "@/lib/ai/memory";
 import { sendWhatsAppText } from "@/lib/ai/sendWhatsAppText"; // Asumimos que este existe
-import { sendWhatsAppReplyButtons, sendWhatsAppListMessage } from "@/lib/ai/sendWhatsAppInteractive"; // Importamos las nuevas funciones
+import { sendWhatsAppReplyButtons, sendWhatsAppListMessage } from "@/lib/ai/sendWhatsAppInteractive";
+import { tools, getPartidos } from "@/lib/ai/tools";
+import OpenAI from "openai";
 
 export const runtime = "nodejs";
 
 const VERIFY_TOKEN = process.env.META_VERIFY_TOKEN || "";
+
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY || "" });
 
 function getSupabase() {
   return createClient(
@@ -102,7 +105,7 @@ export async function POST(req: NextRequest) {
     // +++ NUEVO: Manejar respuesta de la trivia +++
     if (text === 'trivia_correcta' || text === 'trivia_incorrecta') {
       const { data: contactoTrivia } = await supabase
-        .from("contactos")
+        .from("users")
         .select("id, jugo_trivia_hoy")
         .eq("whatsapp", from)
         .eq("business_id", businessId)
@@ -112,13 +115,13 @@ export async function POST(req: NextRequest) {
       if (contactoTrivia && !contactoTrivia.jugo_trivia_hoy) {
         let msg = "";
         if (text === 'trivia_correcta') {
-          await supabase.from("contactos").update({
+          await supabase.from("users").update({
             consultas_extra_hoy: 2,
             jugo_trivia_hoy: true
           }).eq('id', contactoTrivia.id);
           msg = "¡Correcto! Eres un verdadero fan. 🥳 Has ganado 2 consultas extra para hoy, patrocinado por Strendus. ¿En qué más te puedo ayudar?";
         } else { // trivia_incorrecta
-          await supabase.from("contactos").update({
+          await supabase.from("users").update({
             jugo_trivia_hoy: true
           }).eq('id', contactoTrivia.id);
           msg = "¡Casi! Esa no era la respuesta. 😕 Gracias por participar en la trivia de Strendus. ¡Nos vemos mañana para más consultas!";
@@ -148,7 +151,7 @@ export async function POST(req: NextRequest) {
 
     // 4. BUSCAR O CREAR CONTACTO
     let { data: contacto } = await supabase
-      .from("contactos")
+      .from("users")
       .select("*")
       .eq("business_id", businessId)
       .eq("whatsapp", from)
@@ -156,7 +159,7 @@ export async function POST(req: NextRequest) {
 
     if (!contacto) {
       const { data: nuevo } = await supabase
-        .from("contactos")
+        .from("users")
         .insert({
           whatsapp: from,
           business_id: businessId,
@@ -212,7 +215,7 @@ export async function POST(req: NextRequest) {
       }
 
       const { data: updatedContact, error: updateError } = await supabase
-        .from("contactos")
+        .from("users")
         .update(updateData)
         .eq("id", contacto.id)
         .select("*")
@@ -229,30 +232,58 @@ export async function POST(req: NextRequest) {
       if ((contactoActualizado.consultas_hoy || 0) > limiteDiario) {
         // Si no ha jugado la trivia hoy, se la ofrecemos.
         if (!contactoActualizado.jugo_trivia_hoy) {
-            console.log(`🚫 Límite de 3 consultas alcanzado para ${from}. Ofreciendo trivia.`);
-            
-            const triviaBody = "Lo siento, tus 3 mensajes diarios se terminaron. ¡Pero te propongo algo! Una trivia patrocinada por Strendus: si aciertas, ganas 2 mensajes más.\n\n*¿Quién es el máximo goleador histórico de la Selección Mexicana?* ⚽";
-            const triviaButtons = [
-                { id: 'trivia_correcta', title: 'Javier Hernández' },
-                { id: 'trivia_incorrecta', title: 'Hugo Sánchez' },
-                { id: 'trivia_incorrecta', title: 'Cuauhtémoc Blanco' }
-            ];
+            console.log(`🚫 Límite de 3 consultas alcanzado para ${from}. Ofreciendo trivia generada por IA.`);
+        const triviaSystemPrompt = "Eres un asistente que genera trivias de fútbol en formato JSON.";
+          const triviaUserPrompt = `Genera una trivia de opción múltiple sobre la Selección Mexicana de Fútbol. La pregunta debe ser de dificultad media para un aficionado. La respuesta correcta debe tener el id 'trivia_correcta' y las otras dos 'trivia_incorrecta'. Las opciones deben venir en orden aleatorio. Devuelve únicamente el objeto JSON con la siguiente estructura:
+          {
+            "body": "Lo siento, tus 3 mensajes diarios se terminaron. ¡Pero te propongo algo! Una trivia patrocinada por Strendus: si aciertas, ganas 2 mensajes más.\\n\\n*AQUÍ LA PREGUNTA*",
+            "buttons": [
+              {"id": "id_aleatorio_1", "title": "Opción 1"},
+              {"id": "id_aleatorio_2", "title": "Opción 2"},
+              {"id": "id_aleatorio_3", "title": "Opción 3"}
+            ]
+          }`;
 
-            await sendWhatsAppReplyButtons({ accessToken, phoneNumberId, to: from, body: triviaBody, buttons: triviaButtons });
-            await supabase.from("mensajes_recibidos").insert({
-              whatsapp: from, texto: triviaBody, tipo: "bot", business_id: businessId,
+          try {
+            const triviaResponse = await openai.chat.completions.create({
+              model: process.env.OPENAI_MODEL || "gpt-4o-mini",
+              messages: [
+                { role: "system", content: triviaSystemPrompt },
+                { role: "user", content: triviaUserPrompt },
+              ],
+              response_format: { type: "json_object" },
             });
-        } else {
-            // Si ya jugó, se le informa que alcanzó el límite final.
-            console.log(`🚫 Límite de ${limiteDiario} consultas diarias excedido para ${from}.`);
-            const respuestaLimite = "Has alcanzado tu límite de consultas por hoy. ¡Nos vemos mañana! ⭐";
-            
-            await sendWhatsAppText({ accessToken, phoneNumberId, to: from, body: respuestaLimite });
+            const triviaContent = triviaResponse.choices[0].message.content;
+            const triviaJson = JSON.parse(triviaContent || "{}");
+
+            if (triviaJson.body && triviaJson.buttons) {
+              await sendWhatsAppReplyButtons({ accessToken, phoneNumberId, to: from, body: triviaJson.body, buttons: triviaJson.buttons });
+              await supabase.from("mensajes_recibidos").insert({
+                whatsapp: from, texto: triviaJson.body, tipo: "bot", business_id: businessId,
+              });
+            } else {
+              throw new Error("El JSON de la trivia no tiene el formato esperado.");
+            }
+          } catch (e) {
+            console.error("❌ Error generando trivia con IA, enviando trivia fija de respaldo.", e);
+            const fallbackTriviaBody = "Lo siento, tus 3 mensajes diarios se terminaron. ¡Pero te propongo algo! Una trivia patrocinada por Strendus: si aciertas, ganas 2 mensajes más.\n\n*¿Quién es el máximo goleador histórico de la Selección Mexicana?* ⚽";
+            const fallbackButtons = [{ id: 'trivia_correcta', title: 'Javier Hernández' }, { id: 'trivia_incorrecta', title: 'Hugo Sánchez' }, { id: 'trivia_incorrecta', title: 'Cuauhtémoc Blanco' }];
+            await sendWhatsAppReplyButtons({ accessToken, phoneNumberId, to: from, body: fallbackTriviaBody, buttons: fallbackButtons });
             await supabase.from("mensajes_recibidos").insert({
-              whatsapp: from, texto: respuestaLimite, tipo: "bot", business_id: businessId,
+              whatsapp: from, texto: fallbackTriviaBody, tipo: "bot", business_id: businessId,
             });
-        }
-        return new NextResponse("ok", { status: 200 });
+          }
+      } else {
+          // Si ya jugó, se le informa que alcanzó el límite final.
+          console.log(`🚫 Límite de ${limiteDiario} consultas diarias excedido para ${from}.`);
+          const respuestaLimite = "Has alcanzado tu límite de consultas por hoy. ¡Nos vemos mañana! ⭐";
+          
+          await sendWhatsAppText({ accessToken, phoneNumberId, to: from, body: respuestaLimite });
+          await supabase.from("mensajes_recibidos").insert({
+            whatsapp: from, texto: respuestaLimite, tipo: "bot", business_id: businessId,
+          });
+      }
+      return new NextResponse("ok", { status: 200 });
       }
 
       contacto = contactoActualizado;
@@ -270,7 +301,7 @@ export async function POST(req: NextRequest) {
     // Invertir para orden cronológico y mapear a formato OpenAI
     const history = (historialData || [])
       .reverse()
-      .slice(0, -1) // quitar el último que es el mensaje actual
+      .slice(0, -1) // Quitar el último que es el mensaje actual
       .map((m) => ({
         role: m.tipo === "bot" ? "assistant" as const : "user" as const,
         content: m.texto || "",
@@ -282,7 +313,59 @@ export async function POST(req: NextRequest) {
     const systemPrompt = getSystemPrompt({ contacto: contacto || {} });
     const userPrompt = buildReplyPrompt({ contacto: contacto || {}, incomingMessage: text });
 
-    const respuestaIA = await generateReply({ systemPrompt, userPrompt, history });
+    const messages: OpenAI.Chat.ChatCompletionMessageParam[] = [
+      { role: "system", content: systemPrompt },
+      ...history,
+      { role: "user", content: userPrompt },
+    ];
+
+    console.log("🗣️  Enviando a OpenAI:", JSON.stringify(messages.slice(-3), null, 2));
+
+    let response = await openai.chat.completions.create({
+      model: process.env.OPENAI_MODEL || "gpt-4o-mini",
+      messages: messages,
+      tools: tools,
+      tool_choice: "auto",
+    });
+
+    let responseMessage = response.choices[0].message;
+    const toolCalls = responseMessage.tool_calls;
+
+    if (toolCalls) {
+      console.log("🛠️  IA solicitó llamada a herramienta:", toolCalls);
+      messages.push(responseMessage);
+
+      for (const toolCall of toolCalls) {
+        // Añadimos un type guard para asegurar que es una llamada a función
+        if (toolCall.type === 'function') {
+          const functionName = toolCall.function.name;
+          const functionArgs = JSON.parse(toolCall.function.arguments);
+          let functionResponse;
+
+          if (functionName === 'getPartidos') {
+            functionResponse = await getPartidos(functionArgs.equipo);
+          } else {
+            console.error(`❌ Herramienta desconocida: ${functionName}`);
+            continue;
+          }
+
+          messages.push({
+            tool_call_id: toolCall.id,
+            role: "tool",
+            content: functionResponse,
+          });
+        }
+      }
+
+      console.log("🗣️  Enviando a OpenAI con resultado de herramienta...");
+      const secondResponse = await openai.chat.completions.create({
+        model: process.env.OPENAI_MODEL || "gpt-4o-mini",
+        messages: messages,
+      });
+      responseMessage = secondResponse.choices[0].message;
+    }
+
+    const respuestaIA = responseMessage.content || "No pude procesar tu solicitud en este momento. Intenta de nuevo más tarde.";
     console.log("🤖 Respuesta IA:", respuestaIA);
 
     let respuestaParsed: any;
@@ -319,7 +402,7 @@ export async function POST(req: NextRequest) {
       });
 
       await supabase
-        .from("contactos")
+        .from("users")
         .update({
           resumen: memory.resumen,
           ultimo_tema: memory.ultimo_tema,
