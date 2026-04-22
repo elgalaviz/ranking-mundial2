@@ -60,8 +60,8 @@ export default function CondicionesPage() {
           <h2>1. Descripción del servicio</h2>
           <p>
             Ranking Mundial 26 es un servicio gratuito de alertas deportivas vía WhatsApp para el
-            Mundial de Fútbol 2026. Incluye: alertas automáticas 15 minutos antes de cada partido,
-            acceso a un FanBot con hasta 3 consultas diarias gratuitas, calendario descargable (.ics),
+            Mundial de Fútbol 2026. Incluye: alertas automáticas 15 minutos antes de cada partido, acceso
+            a un FanBot con hasta 5 consultas diarias gratuitas, calendario descargable (.ics),
             y contenido patrocinado de marcas aliadas.
           </p>
 
