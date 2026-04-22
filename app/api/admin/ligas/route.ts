@@ -1,10 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { createClient as createServerClient } from "@/lib/supabase/server";
 import { sendWhatsAppText } from "@/lib/ai/sendWhatsAppText";
 
 const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN || "";
 const PHONE_NUMBER_ID = process.env.WHATSAPP_PHONE_NUMBER_ID || "";
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://rankingmundial26.com";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "rene.galaviz@gmail.com";
+
+async function requireAdmin(): Promise<boolean> {
+  const supabase = await createServerClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  return !!user && user.email === ADMIN_EMAIL;
+}
 
 function getSupabase() {
   return createClient(
@@ -25,6 +33,7 @@ export async function GET() {
 }
 
 export async function PATCH(req: NextRequest) {
+  if (!await requireAdmin()) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const { id, estado } = await req.json();
   if (!id || !estado) return NextResponse.json({ error: "Faltan campos." }, { status: 400 });
 

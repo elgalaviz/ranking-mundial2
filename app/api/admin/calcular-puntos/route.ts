@@ -1,9 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { createClient as createServerClient } from "@/lib/supabase/server";
 import { sendWhatsAppText } from "@/lib/ai/sendWhatsAppText";
 
 const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN || "";
 const PHONE_NUMBER_ID = process.env.WHATSAPP_PHONE_NUMBER_ID || "";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "rene.galaviz@gmail.com";
+
+async function requireAdmin(): Promise<boolean> {
+  const supabase = await createServerClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  return !!user && user.email === ADMIN_EMAIL;
+}
 
 function getSupabase() {
   return createClient(
@@ -47,6 +55,7 @@ function buildMensaje(
 }
 
 export async function POST(req: NextRequest) {
+  if (!await requireAdmin()) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const { partido_id } = await req.json();
   if (!partido_id) {
     return NextResponse.json({ error: "partido_id requerido." }, { status: 400 });

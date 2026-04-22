@@ -6,8 +6,14 @@ Ya te inscribí a las alertas — 15 min antes de cada partido te aviso con info
 ¿Tienes alguna pregunta del mundial? Tienes 5 consultas gratis al día 🎯`;
 }
 
-export function limitReachedMessage(): string {
-  return `Has alcanzado tu límite de consultas por hoy. ¡Nos vemos mañana! ⭐`;
+export function limitReachedMessage(appUrl?: string): string {
+  const url = appUrl || "https://rankingmundial26.com";
+  return (
+    `Has alcanzado tu límite de consultas gratuitas por hoy. 😔\n\n` +
+    `¿Quieres consultas *ilimitadas* y participar en la *Quiniela Liga* del Mundial? ⭐\n` +
+    `👉 Activa *FanBot Premium* aquí: ${url}/fanbot\n\n` +
+    `¡Nos vemos mañana!`
+  );
 }
 
 export function unknownMessage(): string {

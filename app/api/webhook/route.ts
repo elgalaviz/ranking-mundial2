@@ -10,6 +10,7 @@ import OpenAI from "openai";
 export const runtime = "nodejs";
 
 const VERIFY_TOKEN = process.env.META_VERIFY_TOKEN || "";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://rankingmundial26.com";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY || "" });
 
@@ -105,7 +106,7 @@ export async function POST(req: NextRequest) {
     const accessToken = waAccount.access_token || "";
 
     // 2. MANEJAR RESPUESTA DE TRIVIA
-    if (text === 'trivia_correcta' || text === 'trivia_incorrecta') {
+    if (text === 'trivia_correcta' || text.startsWith('trivia_incorrecta')) {
       const { data: contactoTrivia } = await supabase
         .from("users")
         .select("id, jugo_trivia_hoy")
@@ -115,18 +116,22 @@ export async function POST(req: NextRequest) {
 
       // Solo procesar si el contacto existe y no ha jugado hoy
       if (contactoTrivia && !contactoTrivia.jugo_trivia_hoy) {
+        const { data: patrocinadorResp } = await supabase
+          .from('patrocinadores').select('nombre').eq('activo', true).limit(1).maybeSingle();
+        const nombrePatrocinadorResp = patrocinadorResp?.nombre || "nuestros amigos";
+
         let msg = "";
         if (text === 'trivia_correcta') {
           await supabase.from("users").update({
             consultas_extra_hoy: 3,
             jugo_trivia_hoy: true
           }).eq('id', contactoTrivia.id);
-          msg = "¡Correcto! Eres un verdadero fan. 🥳 Has ganado 3 consultas extra para hoy, patrocinado por Strendus. ¿En qué más te puedo ayudar?";
+          msg = `¡Correcto! Eres un verdadero fan. 🥳 Has ganado 3 consultas extra para hoy, patrocinado por ${nombrePatrocinadorResp}. ¿En qué más te puedo ayudar?`;
         } else { // trivia_incorrecta
           await supabase.from("users").update({
             jugo_trivia_hoy: true
           }).eq('id', contactoTrivia.id);
-          msg = "¡Casi! Esa no era la respuesta. 😕 Gracias por participar en la trivia de Strendus. ¡Nos vemos mañana para más consultas!";
+          msg = `¡Casi! Esa no era la respuesta. 😕 Gracias por participar en la trivia de ${nombrePatrocinadorResp}. ¡Nos vemos mañana para más consultas!`;
         }
 
         await sendWhatsAppText({ accessToken, phoneNumberId, to: from, body: msg });
@@ -246,13 +251,13 @@ export async function POST(req: NextRequest) {
             console.log(`[DEBUG] Ofreciendo trivia porque 'jugo_trivia_hoy' es false.`);
             console.log(`🚫 Límite de 5 consultas alcanzado para ${from}. Ofreciendo trivia generada por IA.`);
         const triviaSystemPrompt = "Eres un asistente que genera trivias de fútbol en formato JSON.";
-          const triviaUserPrompt = `Genera una trivia de opción múltiple sobre la Selección Mexicana de Fútbol. La pregunta debe ser de dificultad media para un aficionado. La respuesta correcta debe tener el id 'trivia_correcta' y las otras dos 'trivia_incorrecta'. Las opciones deben venir en orden aleatorio. Devuelve únicamente el objeto JSON con la siguiente estructura: // RECOMENDACIÓN: Considera cambiar "tus 3 mensajes diarios se terminaron" a "has alcanzado tu límite de mensajes gratuitos" para que sea más preciso.
+          const triviaUserPrompt = `Genera una trivia de opción múltiple sobre la Selección Mexicana de Fútbol. La pregunta debe ser de dificultad media para un aficionado. La respuesta correcta debe tener el id 'trivia_correcta'. Las dos respuestas incorrectas deben tener ids ÚNICOS: 'trivia_incorrecta_a' y 'trivia_incorrecta_b'. Las opciones deben venir en orden aleatorio. Devuelve únicamente el objeto JSON con la siguiente estructura:
           {
-            "body": "Lo siento, tus 5 mensajes diarios se terminaron. ¡Pero te propongo algo! Una trivia patrocinada por ${nombrePatrocinador}: si aciertas, ganas 3 mensajes más.\\n\\n*AQUÍ LA PREGUNTA*",
+            "body": "Has alcanzado tu límite de mensajes gratuitos. ¡Pero te propongo algo! Una trivia patrocinada por ${nombrePatrocinador}: si aciertas, ganas 3 mensajes más.\\n\\n*AQUÍ LA PREGUNTA*",
             "buttons": [
-              {"id": "trivia_incorrecta", "title": "Respuesta Incorrecta A"},
+              {"id": "trivia_incorrecta_a", "title": "Respuesta Incorrecta A"},
               {"id": "trivia_correcta", "title": "Respuesta Correcta"},
-              {"id": "trivia_incorrecta", "title": "Respuesta Incorrecta B"}
+              {"id": "trivia_incorrecta_b", "title": "Respuesta Incorrecta B"}
             ]
           }`;
 
@@ -278,8 +283,8 @@ export async function POST(req: NextRequest) {
             }
           } catch (e) {
             console.error("❌ Error generando trivia con IA, enviando trivia fija de respaldo.", e);
-            const fallbackTriviaBody = `Lo siento, has alcanzado tu límite de mensajes gratuitos por hoy. ¡Pero te propongo algo! Una trivia patrocinada por ${nombrePatrocinador}: si aciertas, ganas 3 mensajes más.\n\n*¿Quién es el máximo goleador histórico de la Selección Mexicana?* ⚽`;
-            const fallbackButtons = [{ id: 'trivia_correcta', title: 'Javier Hernández' }, { id: 'trivia_incorrecta', title: 'Hugo Sánchez' }, { id: 'trivia_incorrecta', title: 'Cuauhtémoc Blanco' }];
+            const fallbackTriviaBody = `Has alcanzado tu límite de mensajes gratuitos por hoy. ¡Pero te propongo algo! Una trivia patrocinada por ${nombrePatrocinador}: si aciertas, ganas 3 mensajes más.\n\n*¿Quién es el máximo goleador histórico de la Selección Mexicana?* ⚽`;
+            const fallbackButtons = [{ id: 'trivia_correcta', title: 'Javier Hernández' }, { id: 'trivia_incorrecta_a', title: 'Hugo Sánchez' }, { id: 'trivia_incorrecta_b', title: 'Cuauhtémoc Blanco' }];
             await sendWhatsAppReplyButtons({ accessToken, phoneNumberId, to: from, body: fallbackTriviaBody, buttons: fallbackButtons });
             await supabase.from("mensajes_recibidos").insert({
               whatsapp: from, texto: fallbackTriviaBody, tipo: "bot", business_id: business_id,
@@ -289,7 +294,7 @@ export async function POST(req: NextRequest) {
           // Si ya jugó, se le informa que alcanzó el límite final.
           console.log(`[DEBUG] Enviando mensaje de límite final porque 'jugo_trivia_hoy' es true.`);
           console.log(`🚫 Límite de ${limiteDiario} consultas diarias excedido para ${from}.`);
-          const respuestaLimite = limitReachedMessage();
+          const respuestaLimite = limitReachedMessage(APP_URL);
           
           await sendWhatsAppText({ accessToken, phoneNumberId, to: from, body: respuestaLimite });
           await supabase.from("mensajes_recibidos").insert({

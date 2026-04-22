@@ -34,9 +34,8 @@ function formatAlertMessage(partido: Record<string, string>, patrocinador: strin
 }
 
 export async function POST(req: NextRequest) {
-  // Verificar secret para que solo Supabase pueda llamar este endpoint
   const secret = req.headers.get("x-cron-secret");
-  if (CRON_SECRET && secret !== CRON_SECRET) {
+  if (!CRON_SECRET || secret !== CRON_SECRET) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

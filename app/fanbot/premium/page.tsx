@@ -37,7 +37,7 @@ function PremiumContent() {
       </div>
 
       <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-        <div className="bg-gradient-to-br from-amber-400 to-orange-500 p-6 text-center text-white">
+        <div className="bg-linear-to-br from-amber-400 to-orange-500 p-6 text-center text-white">
           <div className="text-5xl mb-2">⭐</div>
           <h1 className="text-2xl font-black">FanBot Premium</h1>
           <p className="text-amber-100 text-sm mt-1">Pase completo Mundial 2026</p>

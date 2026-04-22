@@ -1,5 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { createClient as createServerClient } from "@/lib/supabase/server";
+
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "rene.galaviz@gmail.com";
+
+async function requireAdmin(): Promise<boolean> {
+  const supabase = await createServerClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  return !!user && user.email === ADMIN_EMAIL;
+}
 
 function getSupabase() {
   return createClient(
@@ -20,6 +29,7 @@ export async function GET() {
 }
 
 export async function PATCH(req: NextRequest) {
+  if (!await requireAdmin()) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const supabase = getSupabase();
   const body = await req.json();
   const { id, ...fields } = body;
@@ -36,6 +46,7 @@ export async function PATCH(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
+  if (!await requireAdmin()) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const supabase = getSupabase();
   const { id } = await req.json();
 
@@ -45,6 +56,7 @@ export async function DELETE(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  if (!await requireAdmin()) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const supabase = getSupabase();
   const body = await req.json();
 
