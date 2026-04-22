@@ -13,7 +13,7 @@ export async function getPartidos(equipo?: string) {
   console.log(`🛠️ Ejecutando herramienta 'getPartidos' para el equipo: ${equipo || "todos"}`);
   const supabase = getSupabase();
   try {
-    let query = supabase.from('partidos').select('equipo_local, equipo_visitante, fecha, estadio').limit(10);
+    let query = supabase.from('partidos').select('equipo_local, equipo_visitante, fecha_utc, estadio').limit(10);
 
     if (equipo) {
       // Busca partidos donde el equipo es local O visitante
@@ -21,7 +21,7 @@ export async function getPartidos(equipo?: string) {
     }
     
     // Ordena por fecha para mostrar los próximos primero
-    query = query.order('fecha', { ascending: true });
+    query = query.order('fecha_utc', { ascending: true });
 
     const { data, error } = await query;
 
@@ -37,7 +37,7 @@ export async function getPartidos(equipo?: string) {
     // Formateamos la fecha para que sea más legible para la IA
     const formattedData = data.map(partido => ({
       ...partido,
-      fecha: new Date(partido.fecha).toLocaleString('es-MX', {
+      fecha: new Date(partido.fecha_utc).toLocaleString('es-MX', {
         timeZone: 'America/Mexico_City',
         weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
         hour: '2-digit', minute: '2-digit',

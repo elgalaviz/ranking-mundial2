@@ -1,0 +1,107 @@
+[33me30f62e[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m cambios
+[33m93d2210[m res
+[33m6f7083b[m interactiva
+[33m5045e86[m strendus
+[33md1ba125[m logs
+[33mcc302b8[m trivia agregada
+[33m68b167a[m todo listo?
+[33m7a88b31[m preguntar alertas, calendario
+[33mf0e21a8[m gran respaldo antes de pronostico via whatsapp
+[33m9c29e5b[m premium
+[33m1ccae15[m mercadopagpo
+[33m18cddc7[m quiniela list
+[33m7e88610[m fix: remove dead code from dashboard causing TS build error
+[33m18a0a9d[m quinieva
+[33mfd6d127[m quiniela nueva
+[33m31c9748[m quiniela
+[33ma5a821f[m camboios
+[33mf612a65[m quiniela
+[33m28b59b7[m auth
+[33m9393d7f[m sidebar y usuarios
+[33m7c37dc5[m sidebar
+[33m2b0f1a2[m nuevo sidebar
+[33m24ffec9[m nueva openia
+[33m169258b[m sql editado users
+[33m15486e3[m probar webhook
+[33m389a08e[m feat: agrega páginas legales de privacidad, condiciones y eliminación de datos con diseño Mundial 26
+[33m6a226ed[m feat: rewrite legal pages with Ranking Agencia branding and WhatsApp consent disclaimer
+[33m4e2a6b1[m feat: archivo .ics con todos los partidos del Mundial 2026 + alerta 15min
+[33m85c3be6[m feat: cron job alertas WhatsApp 15min antes de cada partido
+[33m98d2d29[m fix: phone mockup 30% más ancho
+[33m2790374[m fix: phone mockup claro, burbujas WhatsApp estilo real, menos altura
+[33m798cf53[m fix: landing page con fondo claro, colores México verde/rojo/blanco
+[33mcfadf7e[m fix: texto blanco/claro en toda la landing
+[33m79378aa[m feat: landing page Ranking Mundial 26 con mockup WhatsApp y colores México
+[33m50c1304[m feat: partidos admin con acordeón por día, fondo claro
+[33m0d7f379[m fix: partidos con equipos reales FIFA 2026 (schedule oficial)
+[33mb378dbc[m feat: 104 partidos Mundial 2026 + admin CRUD en /god/partidos
+[33mf29fe70[m fix: swap Anthropic for OpenAI in FanBot webhook
+[33mf01fb45[m feat: FanBot webhook — registro, chatbot con Claude, límite 3 consultas/día
+[33m3005cec[m feat: initial schema — users, partidos, registros_whatsapp, patrocinadores, quiniela_picks
+[33m979be3e[m fix: force-dynamic on all supabase pages to prevent build-time prerender error
+[33mb6d1b20[m fix: lazy-init supabase client to avoid build-time error
+[33m8ad9280[m dos paginas mas
+[33m3c9f241[m feat: sección configuración del bot con upload de catálogo Excel
+[33m580ac2c[m index cambios
+[33m95e71d6[m nuevo
+[33m40fef19[m fix: precio lanzamiento 99 MXN/mes, regular ,200 MXN/mes
+[33m8bae214[m feat: precio de lanzamiento early access + fix feature multi-vendedor
+[33m49a51fd[m seo: metadata completa, schemas JSON-LD, sitemap y robots.txt
+[33m98cec41[m design: landing con paleta de la presentación Prospekto
+[33mf92dec1[m feat: editar WhatsApp de vendedores en /god/negocios/[id]
+[33m7522e86[m feat: notificación WhatsApp al vendedor en leads nuevos
+[33mb84ad94[m feat: landing responsiva con logos reales de Prospekto
+[33mc31918b[m fix: eliminar middleware.ts — Next.js 16 usa proxy.ts como convención
+[33m2e29a3d[m fix: restaurar middleware.ts y eliminar redirect en landing
+[33m39f624c[m nuevo
+[33mcbceba6[m a index
+[33md3c1132[m proxy a index
+[33m099dfdf[m proxy nuevo y sesion cerrar bueno
+[33m33b7983[m proxy nuevo
+[33m5022b6c[m nuevo
+[33m7ce9372[m respaldo final
+[33mc6c2525[m excel agregar
+[33m4fe1e3f[m sin errores
+[33m4ef06e4[m refresh leads
+[33m43663a8[m boton nuevo y refresh al regresar
+[33m88d9c9a[m memoria arreglada
+[33m48391f6[m nuevo dash
+[33m6b86094[m memoria ia actualizada
+[33ma8cca8c[m prospekto sidebar
+[33m4e82343[m feat: branding completo de Prospekto
+[33ma893656[m logos prospekta
+[33m6d7e547[m cerrar sesion
+[33m18328ec[m nombre prospekto
+[33m165edec[m se ve nombre
+[33m031b023[m feat: exportar leads filtrados a CSV
+[33mfb14a82[m feat: historial de conversación + memoria enriquecida
+[33m4c0ab17[m feat: confirmación al guardar config del bot
+[33mf0c1df0[m feat: panel god para gestión de negocios
+[33m002aa47[m feat: panel god para gestión de negocios
+[33m057473c[m feat: página config del bot + prompt dinámico
+[33m9ce2f3c[m feat: sidebar responsive + botón cerrar sesión
+[33mdc30e62[m respaldo completo
+[33m79b3f5d[m style: header y resumen IA con color lila del sidebar
+[33me4d0979[m fix: add placeholder whatsapp admin page
+[33m7f6cdda[m fix: add placeholder whatsapp admin page
+[33m228cf36[m fix: webhook con IA, business_id y round robin
+[33m170ca16[m backup proyecto antes de debug
+[33m333cdc7[m fix supabase server import
+[33m4fc7b29[m fix webhook business_id mapping
+[33m557f3a5[m[33m ([m[1;32mrespaldo-caos-actual[m[33m)[m Corrige orden de autoStatus en resumen de contacto
+[33mb8cfca6[m Actualiza links del dashboard para usar id del lead
+[33m627b7f0[m Agrega historial de conversación en detalle del lead
+[33m1644584[m Fix: params async + query lead by id
+[33m1c44a72[m Fix: detalle de lead ahora usa Supabase
+[33me835f3d[m Agrega guardado de notas en Supabase
+[33meef05d9[m Conecta detalle de lead con Supabase y elimina dependencia de Google Sheets
+[33m8dfd87f[m Conecta página de leads con Supabase
+[33m2ca8fd4[m Conecta página de leads con Supabase
+[33m97056bc[m Integra dashboard con Supabase y elimina Google Sheets como fuente de leads
+[33m688a8e5[m Ajusta webhook bot con contactos y estrategia por seguimiento
+[33m024a46f[m Ajusta webhook bot con contactos y estrategia por seguimiento
+[33m52780d0[m Agrega flujo de llamada con mensaje IA
+[33m4935ec1[m Webhook bot con Supabase, OpenAI y Meta
+[33md21c4d2[m Webhook bot con Supabase, OpenAI y Meta
+[33ma07b8b1[m Configuracion de webhook y supabase
+[33m60a9f70[m crm bot inicial

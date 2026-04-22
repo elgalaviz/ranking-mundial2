@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { getSystemPrompt } from "@/lib/ai/systemPrompt";
-import { buildReplyPrompt } from "@/lib/ai/replyPrompt";
-import { extractMemory } from "@/lib/ai/memory";
-import { sendWhatsAppText } from "@/lib/ai/sendWhatsAppText"; // Asumimos que este existe
-import { sendWhatsAppReplyButtons, sendWhatsAppListMessage } from "@/lib/ai/sendWhatsAppInteractive";
-import { tools, getPartidos } from "@/lib/ai/tools";
+import { sendWhatsAppText } from "@/lib/ai/sendWhatsAppText";
+import { sendWhatsAppReplyButtons } from "@/lib/ai/sendWhatsAppInteractive";
+import { tools, getPartidos } from "@/lib/ai/tools"; // Asegúrate que la importación de getPartidos sea correcta
 import OpenAI from "openai";
 
 export const runtime = "nodejs";
@@ -14,12 +12,19 @@ const VERIFY_TOKEN = process.env.META_VERIFY_TOKEN || "";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY || "" });
 
+// --- Helper Functions ---
 function getSupabase() {
   return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
 }
+const isSameDayInMX = (d1: Date, d2: Date | null): boolean => {
+  if (!d2) return false;
+  const tz = "America/Mexico_City";
+  const d1Str = d1.toLocaleDateString("en-CA", { timeZone: tz });
+  return new Date(d2).toLocaleDateString("en-CA", { timeZone: tz }) === d1Str;
+};
 
 export async function GET(req: NextRequest) {
   const url = new URL(req.url);
@@ -36,14 +41,13 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   const supabase = getSupabase();
   try {
-    console.log("🔥 WEBHOOK HIT");
-
     const body = await req.json();
     const entry = body.entry?.[0];
     const change = entry?.changes?.[0];
     const value = change?.value;
     const message = value?.messages?.[0];
 
+    // Ignorar eventos que no son mensajes (ej. estados 'delivered', 'read')
     if (!message) {
       // Si es una actualización de estado (ej. 'delivered', 'read'), lo registramos y terminamos.
       if (value?.statuses?.[0]) {
@@ -59,7 +63,7 @@ export async function POST(req: NextRequest) {
     const from = message.from;
     const messageId = message.id;
 
-    // ✅ MEJORADO: Manejar respuestas de mensajes interactivos
+    // Extraer texto del mensaje (normal o interactivo)
     let text: string;
     if (message.type === 'interactive') {
       const interactiveType = message.interactive.type;
@@ -80,12 +84,9 @@ export async function POST(req: NextRequest) {
       return new NextResponse("ok", { status: 200 });
     }
 
-    // ✅ NUEVO: Extraer nombre del perfil de WhatsApp
     const profileName = value?.contacts?.[0]?.profile?.name || null;
+    console.log(`💬 Mensaje de ${from} (${profileName || 'sin nombre'}): "${text}"`);
 
-    console.log("📞 phoneNumberId:", phoneNumberId);
-    console.log("👤 Nombre del perfil:", profileName);
-    console.log("💬 Mensaje recibido:", text);
 
     // 1. MAPEAR A NEGOCIO
     const { data: waAccount, error: waError } = await supabase
@@ -99,16 +100,16 @@ export async function POST(req: NextRequest) {
       return new NextResponse("ok", { status: 200 });
     }
 
-    const businessId = waAccount.business_id;
+    const business_id = waAccount.business_id;
     const accessToken = waAccount.access_token || "";
 
-    // +++ NUEVO: Manejar respuesta de la trivia +++
+    // 2. MANEJAR RESPUESTA DE TRIVIA
     if (text === 'trivia_correcta' || text === 'trivia_incorrecta') {
       const { data: contactoTrivia } = await supabase
         .from("users")
         .select("id, jugo_trivia_hoy")
-        .eq("whatsapp", from)
-        .eq("business_id", businessId)
+        .eq("phone", from)
+        .eq("business_id", business_id)
         .single();
 
       // Solo procesar si el contacto existe y no ha jugado hoy
@@ -129,7 +130,7 @@ export async function POST(req: NextRequest) {
 
         await sendWhatsAppText({ accessToken, phoneNumberId, to: from, body: msg });
         await supabase.from("mensajes_recibidos").insert({
-          whatsapp: from, texto: msg, tipo: "bot", business_id: businessId,
+          whatsapp: from, texto: msg, tipo: "bot", business_id: business_id,
         });
       }
       // En cualquier caso, detenemos el procesamiento aquí para las respuestas de la trivia.
@@ -137,59 +138,39 @@ export async function POST(req: NextRequest) {
       return new NextResponse("ok", { status: 200 });
     }
 
-    // 2. EVITAR DUPLICADOS
-    const { error: insertError } = await supabase
-      .from("mensajes_recibidos")
-      .insert({ whatsapp: from, texto: text, tipo: "cliente", message_id: messageId, business_id: businessId });
-
-    if (insertError) {
-      console.log("⚠️ Mensaje duplicado:", messageId);
-      return new NextResponse("ok", { status: 200 });
-    }
-
-    console.log("💾 Mensaje guardado");
-
-    // 4. BUSCAR O CREAR CONTACTO
-    let { data: contacto } = await supabase
+    // 3. BUSCAR O CREAR USUARIO Y MANEJAR LÍMITES
+    let { data: user } = await supabase
       .from("users")
       .select("*")
-      .eq("business_id", businessId)
-      .eq("whatsapp", from)
+      .eq("business_id", business_id)
+      .eq("phone", from)
       .maybeSingle();
 
-    if (!contacto) {
+    if (!user) {
       const { data: nuevo } = await supabase
         .from("users")
         .insert({
-          whatsapp: from,
-          business_id: businessId,
-          estado: "interesado",
-          veces_contacto: 1,
-          nombre: profileName,  // ✅ NUEVO: Guardar nombre del perfil
+          phone: from,
+          whatsapp_id: from,
+          name: profileName,
+          business_id: business_id,
+          plan: 'free',
           consultas_hoy: 1,
           fecha_ultima_consulta: new Date().toISOString(),
         })
         .select()
         .maybeSingle();
 
-      contacto = nuevo;
-      console.log("👤 Contacto creado:", profileName ?? "sin nombre");
+      user = nuevo;
+      console.log("👤 Usuario creado:", profileName ?? "sin nombre");
     } else {
       // Lógica para el límite diario de consultas
-      const isSameDayInMX = (d1: Date, d2: Date | null): boolean => {
-        if (!d2) return false;
-        const tz = "America/Mexico_City";
-        const d1Str = d1.toLocaleDateString("en-CA", { timeZone: tz });
-        const d2Str = new Date(d2).toLocaleDateString("en-CA", { timeZone: tz });
-        return d1Str === d2Str;
-      };
-
       const hoy = new Date();
-      const ultimaConsulta = contacto.fecha_ultima_consulta ? new Date(contacto.fecha_ultima_consulta) : null;
+      const ultimaConsulta = user.fecha_ultima_consulta ? new Date(user.fecha_ultima_consulta) : null;
       
-      let consultasHoy = contacto.consultas_hoy || 0;
-      let jugoTrivia = contacto.jugo_trivia_hoy || false;
-      let consultasExtra = contacto.consultas_extra_hoy || 0;
+      let consultasHoy = user.consultas_hoy || 0;
+      let jugoTrivia = user.jugo_trivia_hoy || false;
+      let consultasExtra = user.consultas_extra_hoy || 0;
 
       if (ultimaConsulta && isSameDayInMX(hoy, ultimaConsulta)) {
         consultasHoy++;
@@ -203,21 +184,20 @@ export async function POST(req: NextRequest) {
       // 💡 REFACTOR: Actualizamos el contacto con los nuevos contadores ANTES de checar el límite.
       // Así nos aseguramos que el estado se guarde siempre, incluso si el usuario ya no puede consultar.
       const updateData: any = {
-        veces_contacto: (contacto.veces_contacto || 0) + 1,
         consultas_hoy: consultasHoy,
         jugo_trivia_hoy: jugoTrivia,
         consultas_extra_hoy: consultasExtra,
         fecha_ultima_consulta: hoy.toISOString(),
       };
 
-      if (profileName && (!contacto.nombre || contacto.nombre === 'Desconocido')) {
-        updateData.nombre = profileName;
+      if (profileName && (!user.name || user.name === 'Desconocido')) {
+        updateData.name = profileName;
       }
 
       const { data: updatedContact, error: updateError } = await supabase
         .from("users")
         .update(updateData)
-        .eq("id", contacto.id)
+        .eq("id", user.id)
         .select("*")
         .single();
 
@@ -226,14 +206,25 @@ export async function POST(req: NextRequest) {
       }
 
       // Usamos el contacto recién actualizado para las validaciones
-      const contactoActualizado = updatedContact || contacto;
+      const contactoActualizado = updatedContact || user;
       const limiteDiario = 3 + (contactoActualizado.consultas_extra_hoy || 0);
+      const consultasActuales = contactoActualizado.consultas_hoy || 0;
 
-      if ((contactoActualizado.consultas_hoy || 0) > limiteDiario) {
+      console.log(`[DEBUG] Verificando límite para ${from}:`);
+      console.log(`[DEBUG] - Consultas de hoy: ${consultasActuales}`);
+      console.log(`[DEBUG] - Consultas extra: ${contactoActualizado.consultas_extra_hoy || 0}`);
+      console.log(`[DEBUG] - Límite diario total: ${limiteDiario}`);
+      console.log(`[DEBUG] - ¿Ha jugado trivia hoy?: ${contactoActualizado.jugo_trivia_hoy}`);
+      console.log(`[DEBUG] - Condición a evaluar: ${consultasActuales} > ${limiteDiario}`);
+
+
+      if (consultasActuales > limiteDiario) {
+        console.log(`[DEBUG] Condición (>) CUMPLIDA. Entrando al bloque de límite.`);
         // Si no ha jugado la trivia hoy, se la ofrecemos.
         if (!contactoActualizado.jugo_trivia_hoy) {
+            console.log(`[DEBUG] Ofreciendo trivia porque 'jugo_trivia_hoy' es false.`);
             console.log(`🚫 Límite de 3 consultas alcanzado para ${from}. Ofreciendo trivia generada por IA.`);
-            const triviaSystemPrompt = "Eres un asistente que genera trivias de fútbol en formato JSON.";
+        const triviaSystemPrompt = "Eres un asistente que genera trivias de fútbol en formato JSON.";
           const triviaUserPrompt = `Genera una trivia de opción múltiple sobre la Selección Mexicana de Fútbol. La pregunta debe ser de dificultad media para un aficionado. La respuesta correcta debe tener el id 'trivia_correcta' y las otras dos 'trivia_incorrecta'. Las opciones deben venir en orden aleatorio. Devuelve únicamente el objeto JSON con la siguiente estructura:
           {
             "body": "Lo siento, tus 3 mensajes diarios se terminaron. ¡Pero te propongo algo! Una trivia patrocinada por Strendus: si aciertas, ganas 2 mensajes más.\\n\\n*AQUÍ LA PREGUNTA*",
@@ -259,7 +250,7 @@ export async function POST(req: NextRequest) {
             if (triviaJson.body && triviaJson.buttons) {
               await sendWhatsAppReplyButtons({ accessToken, phoneNumberId, to: from, body: triviaJson.body, buttons: triviaJson.buttons });
               await supabase.from("mensajes_recibidos").insert({
-                whatsapp: from, texto: triviaJson.body, tipo: "bot", business_id: businessId,
+                whatsapp: from, texto: triviaJson.body, tipo: "bot", business_id: business_id,
               });
             } else {
               throw new Error("El JSON de la trivia no tiene el formato esperado.");
@@ -270,57 +261,37 @@ export async function POST(req: NextRequest) {
             const fallbackButtons = [{ id: 'trivia_correcta', title: 'Javier Hernández' }, { id: 'trivia_incorrecta', title: 'Hugo Sánchez' }, { id: 'trivia_incorrecta', title: 'Cuauhtémoc Blanco' }];
             await sendWhatsAppReplyButtons({ accessToken, phoneNumberId, to: from, body: fallbackTriviaBody, buttons: fallbackButtons });
             await supabase.from("mensajes_recibidos").insert({
-              whatsapp: from, texto: fallbackTriviaBody, tipo: "bot", business_id: businessId,
+              whatsapp: from, texto: fallbackTriviaBody, tipo: "bot", business_id: business_id,
             });
           }
       } else {
           // Si ya jugó, se le informa que alcanzó el límite final.
+          console.log(`[DEBUG] Enviando mensaje de límite final porque 'jugo_trivia_hoy' es true.`);
           console.log(`🚫 Límite de ${limiteDiario} consultas diarias excedido para ${from}.`);
           const respuestaLimite = "Has alcanzado tu límite de consultas por hoy. ¡Nos vemos mañana! ⭐";
           
           await sendWhatsAppText({ accessToken, phoneNumberId, to: from, body: respuestaLimite });
           await supabase.from("mensajes_recibidos").insert({
-            whatsapp: from, texto: respuestaLimite, tipo: "bot", business_id: businessId,
+            whatsapp: from, texto: respuestaLimite, tipo: "bot", business_id: business_id,
           });
       }
       return new NextResponse("ok", { status: 200 });
+      } else {
+        console.log(`[DEBUG] Condición (>) NO CUMPLIDA. Procesando mensaje normalmente.`);
       }
 
-      contacto = contactoActualizado;
+      user = contactoActualizado;
     }
 
-    // 5. OBTENER HISTORIAL RECIENTE (últimos 10 mensajes)
-    const { data: historialData } = await supabase
-      .from("mensajes_recibidos")
-      .select("texto, tipo")
-      .eq("whatsapp", from)
-      .eq("business_id", businessId)
-      .order("created_at", { ascending: false })
-      .limit(10);
-
-    // Invertir para orden cronológico y mapear a formato OpenAI
-    const history = (historialData || [])
-      .reverse()
-      .slice(0, -1) // Quitar el último que es el mensaje actual
-      .map((m) => ({
-        role: m.tipo === "bot" ? "assistant" as const : "user" as const,
-        content: m.texto || "",
-      }));
-
-    console.log(`📜 Historial: ${history.length} mensajes anteriores`);
-
-    // 6. GENERAR RESPUESTA IA
-    const systemPrompt = getSystemPrompt({ contacto: contacto || {} });
-    const userPrompt = buildReplyPrompt({ contacto: contacto || {}, incomingMessage: text });
+    // 4. GENERAR RESPUESTA CON IA (SIN HISTORIAL)
+    const systemPrompt = getSystemPrompt({ contacto: user || {} });
 
     const messages: OpenAI.Chat.ChatCompletionMessageParam[] = [
       { role: "system", content: systemPrompt },
-      ...history,
-      { role: "user", content: userPrompt },
+      { role: "user", content: text },
     ];
 
-    console.log("🗣️  Enviando a OpenAI:", JSON.stringify(messages.slice(-3), null, 2));
-
+    // --- Lógica de Herramientas ---
     let response = await openai.chat.completions.create({
       model: process.env.OPENAI_MODEL || "gpt-4o-mini",
       messages: messages,
@@ -365,56 +336,19 @@ export async function POST(req: NextRequest) {
       responseMessage = secondResponse.choices[0].message;
     }
 
-    const respuestaIA = responseMessage.content || "No pude procesar tu solicitud en este momento. Intenta de nuevo más tarde.";
-    console.log("🤖 Respuesta IA:", respuestaIA);
+    const aiResponseText = responseMessage.content || "No pude procesar tu solicitud en este momento. Intenta de nuevo más tarde.";
+    console.log("🤖 Respuesta IA:", aiResponseText);
 
+    // 5. ENVIAR RESPUESTA
     let respuestaParsed: any;
-    let textoRespuestaParaGuardar: string;
-
     try {
       // Intenta parsear la respuesta como JSON para mensajes interactivos
-      respuestaParsed = JSON.parse(respuestaIA);
-      textoRespuestaParaGuardar = respuestaParsed.body || "Mensaje interactivo enviado.";
+      respuestaParsed = JSON.parse(aiResponseText);
     } catch (e) {
       // Si falla, es una respuesta de texto plano
-      respuestaParsed = { type: 'text', body: respuestaIA };
-      textoRespuestaParaGuardar = respuestaIA;
+      respuestaParsed = { type: 'text', body: aiResponseText };
     }
 
-    // 7. GUARDAR RESPUESTA
-    await supabase.from("mensajes_recibidos").insert({
-      whatsapp: from, texto: textoRespuestaParaGuardar, tipo: "bot", business_id: businessId,
-    });
-
-    // 8. ACTUALIZAR MEMORIA
-    let memory: Awaited<ReturnType<typeof extractMemory>> | null = null;
-    
-    // Prepara el texto que se usará para actualizar la memoria del contacto
-    const assistantReplyForMemory = respuestaParsed.type === 'text' 
-      ? respuestaParsed.body 
-      : `[Se envió un mensaje interactivo: ${respuestaParsed.type}] ${respuestaParsed.body}`;
-
-    if (contacto) {
-      memory = await extractMemory({
-        contacto,
-        incomingMessage: text,
-        assistantReply: assistantReplyForMemory,
-      });
-
-      await supabase
-        .from("users")
-        .update({
-          resumen: memory.resumen,
-          ultimo_tema: memory.ultimo_tema,
-          nombre: profileName || memory.nombre || contacto.nombre || null,
-          ultima_respuesta: new Date().toISOString(),
-        })
-        .eq("id", contacto.id);
-
-      console.log("🧠 Memoria actualizada.");
-    }
-
-    // 9. ENVIAR WHATSAPP
     let resultadoEnvio;
 
     if (respuestaParsed.type === 'buttons' && respuestaParsed.buttons) {
@@ -422,13 +356,6 @@ export async function POST(req: NextRequest) {
         accessToken, phoneNumberId, to: from,
         body: respuestaParsed.body,
         buttons: respuestaParsed.buttons,
-      });
-    } else if (respuestaParsed.type === 'list' && respuestaParsed.sections) {
-      resultadoEnvio = await sendWhatsAppListMessage({
-        accessToken, phoneNumberId, to: from,
-        body: respuestaParsed.body,
-        buttonText: respuestaParsed.button_text,
-        sections: respuestaParsed.sections,
       });
     } else {
       resultadoEnvio = await sendWhatsAppText({
@@ -442,7 +369,6 @@ export async function POST(req: NextRequest) {
     } else {
       console.log("✅ Mensaje enviado");
     }
-
 
     return new NextResponse("ok", { status: 200 });
   } catch (error) {

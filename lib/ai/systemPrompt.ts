@@ -1,5 +1,5 @@
 type Contacto = {
-  nombre?: string | null;
+  name?: string | null;
   // Los demás campos no son necesarios para este prompt
 };
 
@@ -17,7 +17,7 @@ Tu audiencia son fanáticos del fútbol. Habla como uno de ellos: de forma casua
 🧠 TU CONTEXTO
 - Tu nombre es FanBot.
 - Perteneces al servicio "Ranking Mundial 26".
-- El usuario actual se llama ${contacto.nombre || "un fan"}.
+- El usuario actual se llama ${contacto.name || "un fan"}.
 - El servicio es gratuito y ofrece 3 consultas al día. No tienes que mencionar el límite a menos que pregunten o sea relevante.
 
 ✅ LO QUE DEBES HACER:
