@@ -197,11 +197,38 @@ export async function POST(req: NextRequest) {
         consultasExtra = 0;
       }
 
-      const limiteDiario = 3 + consultasExtra;
+      // 💡 REFACTOR: Actualizamos el contacto con los nuevos contadores ANTES de checar el límite.
+      // Así nos aseguramos que el estado se guarde siempre, incluso si el usuario ya no puede consultar.
+      const updateData: any = {
+        veces_contacto: (contacto.veces_contacto || 0) + 1,
+        consultas_hoy: consultasHoy,
+        jugo_trivia_hoy: jugoTrivia,
+        consultas_extra_hoy: consultasExtra,
+        fecha_ultima_consulta: hoy.toISOString(),
+      };
 
-      if (consultasHoy > limiteDiario) {
+      if (profileName && (!contacto.nombre || contacto.nombre === 'Desconocido')) {
+        updateData.nombre = profileName;
+      }
+
+      const { data: updatedContact, error: updateError } = await supabase
+        .from("contactos")
+        .update(updateData)
+        .eq("id", contacto.id)
+        .select("*")
+        .single();
+
+      if (updateError) {
+        console.error("❌ Error actualizando el contador del contacto:", updateError);
+      }
+
+      // Usamos el contacto recién actualizado para las validaciones
+      const contactoActualizado = updatedContact || contacto;
+      const limiteDiario = 3 + (contactoActualizado.consultas_extra_hoy || 0);
+
+      if ((contactoActualizado.consultas_hoy || 0) > limiteDiario) {
         // Si no ha jugado la trivia hoy, se la ofrecemos.
-        if (!jugoTrivia) {
+        if (!contactoActualizado.jugo_trivia_hoy) {
             console.log(`🚫 Límite de 3 consultas alcanzado para ${from}. Ofreciendo trivia.`);
             
             const triviaBody = "Lo siento, tus 3 mensajes diarios se terminaron. ¡Pero te propongo algo! Una trivia patrocinada por Strendus: si aciertas, ganas 2 mensajes más.\n\n*¿Quién es el máximo goleador histórico de la Selección Mexicana?* ⚽";
@@ -228,26 +255,7 @@ export async function POST(req: NextRequest) {
         return new NextResponse("ok", { status: 200 });
       }
 
-      const updateData: any = {
-        veces_contacto: (contacto.veces_contacto || 0) + 1,
-        consultas_hoy: consultasHoy,
-        jugo_trivia_hoy: jugoTrivia,
-        consultas_extra_hoy: consultasExtra,
-        fecha_ultima_consulta: hoy.toISOString(),
-      };
-
-      if (profileName && (!contacto.nombre || contacto.nombre === 'Desconocido')) {
-        updateData.nombre = profileName;
-      }
-
-      const { data: updatedContact } = await supabase
-        .from("contactos")
-        .update(updateData)
-        .eq("id", contacto.id)
-        .select()
-        .single();
-      
-      contacto = updatedContact;
+      contacto = contactoActualizado;
     }
 
     // 5. OBTENER HISTORIAL RECIENTE (últimos 10 mensajes)
