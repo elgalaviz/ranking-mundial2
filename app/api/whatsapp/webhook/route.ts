@@ -175,43 +175,47 @@ export async function POST(req: NextRequest) {
         // Ofrecer trivia
         const { data: pat } = await supabase.from("patrocinadores").select("nombre").eq("activo", true).limit(1).maybeSingle();
         const sponsor = pat?.nombre || "nuestros amigos";
-        const triviaPrompt = `Genera una trivia de opción múltiple sobre la Selección Mexicana de Fútbol. Dificultad media. La respuesta correcta tiene id 'trivia_correcta'. Las dos incorrectas tienen ids ÚNICOS: 'trivia_incorrecta_a' y 'trivia_incorrecta_b'. Orden aleatorio. Solo devuelve el JSON:
+        // El modelo solo genera la pregunta y respuestas — nosotros asignamos los IDs
+        // para evitar que el modelo mezcle cuál es correcta e incorrecta.
+        const triviaPrompt = `Genera una trivia de fútbol sobre la Selección Mexicana. Dificultad media. Devuelve SOLO este JSON (sin texto extra):
 {
-  "body": "Has alcanzado tu límite de mensajes gratuitos. ¡Una trivia patrocinada por ${sponsor}: si aciertas, ganas 3 mensajes más!\\n\\n*AQUÍ LA PREGUNTA*",
-  "buttons": [
-    {"id": "trivia_incorrecta_a", "title": "Opción incorrecta A"},
-    {"id": "trivia_correcta", "title": "Opción correcta"},
-    {"id": "trivia_incorrecta_b", "title": "Opción incorrecta B"}
-  ]
+  "pregunta": "¿La pregunta aquí? (máx 120 caracteres)",
+  "correcta": "Respuesta correcta (máx 18 caracteres)",
+  "incorrecta_1": "Opción falsa 1 (máx 18 caracteres)",
+  "incorrecta_2": "Opción falsa 2 (máx 18 caracteres)"
 }`;
+        const footer = `Trivia patrocinada por: ${sponsor}`;
         try {
           const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
           const triviaResp = await openai.chat.completions.create({
             model: process.env.OPENAI_MODEL || "gpt-4o-mini",
             messages: [
-              { role: "system", content: "Genera trivias de fútbol en formato JSON." },
+              { role: "system", content: "Eres un generador de trivias de fútbol. Responde solo con el JSON solicitado." },
               { role: "user", content: triviaPrompt },
             ],
             response_format: { type: "json_object" },
           });
-          const triviaJson = JSON.parse(triviaResp.choices[0].message.content || "{}");
-          if (triviaJson.body && triviaJson.buttons) {
-            await sendWhatsAppReplyButtons({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from, body: triviaJson.body, buttons: triviaJson.buttons });
-          } else {
-            throw new Error("JSON de trivia inválido");
-          }
+          const t = JSON.parse(triviaResp.choices[0].message.content || "{}");
+          if (!t.pregunta || !t.correcta || !t.incorrecta_1 || !t.incorrecta_2) throw new Error("JSON incompleto");
+
+          // Asignamos IDs nosotros y mezclamos el orden aleatoriamente
+          const opciones = [
+            { id: "trivia_correcta",    title: String(t.correcta).slice(0, 18) },
+            { id: "trivia_incorrecta_a", title: String(t.incorrecta_1).slice(0, 18) },
+            { id: "trivia_incorrecta_b", title: String(t.incorrecta_2).slice(0, 18) },
+          ].sort(() => Math.random() - 0.5);
+
+          const body = `Has alcanzado tu límite de mensajes gratuitos. ¡Si aciertas la trivia, ganas 3 mensajes más!\n\n*${t.pregunta}*`;
+          await sendWhatsAppReplyButtons({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from, body, buttons: opciones, footer });
         } catch (e) {
           console.error("❌ Error en trivia IA, usando fallback:", e);
-          const fallbackBody = `Has alcanzado tu límite de mensajes gratuitos. ¡Una trivia patrocinada por ${sponsor}: si aciertas, ganas 3 mensajes más!\n\n*¿Quién es el máximo goleador histórico de la Selección Mexicana?* ⚽`;
-          await sendWhatsAppReplyButtons({
-            accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from,
-            body: fallbackBody,
-            buttons: [
-              { id: "trivia_correcta", title: "Javier Hernández" },
-              { id: "trivia_incorrecta_a", title: "Hugo Sánchez" },
-              { id: "trivia_incorrecta_b", title: "Cuauhtémoc Blanco" },
-            ],
-          });
+          const opciones = [
+            { id: "trivia_correcta",    title: "Javier Hernández" },
+            { id: "trivia_incorrecta_a", title: "Hugo Sánchez" },
+            { id: "trivia_incorrecta_b", title: "Cuauhtémoc Blanco" },
+          ].sort(() => Math.random() - 0.5);
+          const body = `Has alcanzado tu límite de mensajes gratuitos. ¡Si aciertas la trivia, ganas 3 mensajes más!\n\n*¿Quién es el máximo goleador histórico de la Selección Mexicana?* ⚽`;
+          await sendWhatsAppReplyButtons({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from, body, buttons: opciones, footer });
         }
       } else {
         // Ya jugó trivia — ofrecer premium

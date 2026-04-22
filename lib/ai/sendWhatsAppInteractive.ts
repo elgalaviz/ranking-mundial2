@@ -43,20 +43,19 @@ interface ReplyButton {
   title: string;
 }
 
-export async function sendWhatsAppReplyButtons({ accessToken, phoneNumberId, to, body, buttons }: { accessToken: string; phoneNumberId: string; to: string; body: string; buttons: ReplyButton[] }) {
-  const message = {
-    type: "interactive",
-    interactive: {
-      type: "button",
-      body: { text: body },
-      action: {
-        buttons: buttons.slice(0, 3).map(btn => ({
-          type: "reply",
-          reply: { id: btn.id, title: btn.title.slice(0, 20) },
-        })),
-      },
+export async function sendWhatsAppReplyButtons({ accessToken, phoneNumberId, to, body, buttons, footer }: { accessToken: string; phoneNumberId: string; to: string; body: string; buttons: ReplyButton[]; footer?: string }) {
+  const interactive: Record<string, unknown> = {
+    type: "button",
+    body: { text: body },
+    action: {
+      buttons: buttons.slice(0, 3).map(btn => ({
+        type: "reply",
+        reply: { id: btn.id, title: btn.title.slice(0, 20) },
+      })),
     },
   };
+  if (footer) interactive.footer = { text: footer.slice(0, 60) };
+  const message = { type: "interactive", interactive };
   return sendWhatsAppMessage({ accessToken, phoneNumberId, to, message });
 }
 
