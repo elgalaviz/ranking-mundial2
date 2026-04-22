@@ -218,14 +218,14 @@ export async function POST(req: NextRequest) {
       console.log(`[DEBUG] - Condición a evaluar: ${consultasActuales} > ${limiteDiario}`);
 
 
-      if (consultasActuales > limiteDiario) {
-        console.log(`[DEBUG] Condición (>) CUMPLIDA. Entrando al bloque de límite.`);
+      if (consultasActuales >= limiteDiario) {
+        console.log(`[DEBUG] Condición (>=) CUMPLIDA. Entrando al bloque de límite.`);
         // Si no ha jugado la trivia hoy, se la ofrecemos.
         if (!contactoActualizado.jugo_trivia_hoy) {
             console.log(`[DEBUG] Ofreciendo trivia porque 'jugo_trivia_hoy' es false.`);
             console.log(`🚫 Límite de 3 consultas alcanzado para ${from}. Ofreciendo trivia generada por IA.`);
         const triviaSystemPrompt = "Eres un asistente que genera trivias de fútbol en formato JSON.";
-          const triviaUserPrompt = `Genera una trivia de opción múltiple sobre la Selección Mexicana de Fútbol. La pregunta debe ser de dificultad media para un aficionado. La respuesta correcta debe tener el id 'trivia_correcta' y las otras dos 'trivia_incorrecta'. Las opciones deben venir en orden aleatorio. Devuelve únicamente el objeto JSON con la siguiente estructura:
+          const triviaUserPrompt = `Genera una trivia de opción múltiple sobre la Selección Mexicana de Fútbol. La pregunta debe ser de dificultad media para un aficionado. La respuesta correcta debe tener el id 'trivia_correcta' y las otras dos 'trivia_incorrecta'. Las opciones deben venir en orden aleatorio. Devuelve únicamente el objeto JSON con la siguiente estructura: // RECOMENDACIÓN: Considera cambiar "tus 3 mensajes diarios se terminaron" a "has alcanzado tu límite de mensajes gratuitos" para que sea más preciso.
           {
             "body": "Lo siento, tus 3 mensajes diarios se terminaron. ¡Pero te propongo algo! Una trivia patrocinada por Strendus: si aciertas, ganas 2 mensajes más.\\n\\n*AQUÍ LA PREGUNTA*",
             "buttons": [
@@ -257,7 +257,7 @@ export async function POST(req: NextRequest) {
             }
           } catch (e) {
             console.error("❌ Error generando trivia con IA, enviando trivia fija de respaldo.", e);
-            const fallbackTriviaBody = "Lo siento, tus 3 mensajes diarios se terminaron. ¡Pero te propongo algo! Una trivia patrocinada por Strendus: si aciertas, ganas 2 mensajes más.\n\n*¿Quién es el máximo goleador histórico de la Selección Mexicana?* ⚽";
+            const fallbackTriviaBody = "Lo siento, has alcanzado tu límite de mensajes gratuitos por hoy. ¡Pero te propongo algo! Una trivia patrocinada por Strendus: si aciertas, ganas 2 mensajes más.\n\n*¿Quién es el máximo goleador histórico de la Selección Mexicana?* ⚽";
             const fallbackButtons = [{ id: 'trivia_correcta', title: 'Javier Hernández' }, { id: 'trivia_incorrecta', title: 'Hugo Sánchez' }, { id: 'trivia_incorrecta', title: 'Cuauhtémoc Blanco' }];
             await sendWhatsAppReplyButtons({ accessToken, phoneNumberId, to: from, body: fallbackTriviaBody, buttons: fallbackButtons });
             await supabase.from("mensajes_recibidos").insert({
@@ -277,7 +277,7 @@ export async function POST(req: NextRequest) {
       }
       return new NextResponse("ok", { status: 200 });
       } else {
-        console.log(`[DEBUG] Condición (>) NO CUMPLIDA. Procesando mensaje normalmente.`);
+        console.log(`[DEBUG] Condición (>=) NO CUMPLIDA. Procesando mensaje normalmente.`);
       }
 
       user = contactoActualizado;
