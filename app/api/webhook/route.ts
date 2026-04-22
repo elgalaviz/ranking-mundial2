@@ -41,7 +41,16 @@ export async function POST(req: NextRequest) {
     const value = change?.value;
     const message = value?.messages?.[0];
 
-    if (!message) return new NextResponse("No message", { status: 200 });
+    if (!message) {
+      // Si es una actualización de estado (ej. 'delivered', 'read'), lo registramos y terminamos.
+      if (value?.statuses?.[0]) {
+        console.log(`✅ Estado de mensaje recibido: ${value.statuses[0].status} para ${value.statuses[0].recipient_id}`);
+        return new NextResponse("ok", { status: 200 });
+      }
+      // Si es otro tipo de payload que no manejamos, lo registramos para depuración.
+      console.log("⚠️ Payload no contiene mensajes ni estados, ignorando.");
+      return new NextResponse("ok", { status: 200 });
+    }
 
     const phoneNumberId = String(value?.metadata?.phone_number_id || "").trim();
     const from = message.from;

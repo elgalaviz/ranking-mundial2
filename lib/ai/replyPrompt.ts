@@ -1,7 +1,7 @@
 type Contacto = {
   resumen?: string | null;
   ultimo_tema?: string | null;
-  necesidad?: string | null;
+  nombre?: string | null;
 };
 
 export function buildReplyPrompt({
@@ -12,17 +12,16 @@ export function buildReplyPrompt({
   incomingMessage: string;
 }) {
   return `
-Cliente escribió:
+El fanático escribió:
 "${incomingMessage}"
 
-Resumen previo:
-${contacto.resumen || "Sin historial"}
+---
+Breve resumen de la conversación hasta ahora:
+${contacto.resumen || "Sin historial."}
 
 Último tema:
-${contacto.ultimo_tema || "Sin tema"}
-
-Necesidad detectada:
-${contacto.necesidad || "Sin necesidad"}
+${contacto.ultimo_tema || "Sin tema."}
+---
 
 Genera solo la respuesta que se enviará por WhatsApp.
 `;
