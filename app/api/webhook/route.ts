@@ -238,9 +238,9 @@ export async function POST(req: NextRequest) {
           {
             "body": "Lo siento, tus 3 mensajes diarios se terminaron. ¡Pero te propongo algo! Una trivia patrocinada por Strendus: si aciertas, ganas 2 mensajes más.\\n\\n*AQUÍ LA PREGUNTA*",
             "buttons": [
-              {"id": "id_aleatorio_1", "title": "Opción 1"},
-              {"id": "id_aleatorio_2", "title": "Opción 2"},
-              {"id": "id_aleatorio_3", "title": "Opción 3"}
+              {"id": "trivia_incorrecta", "title": "Respuesta Incorrecta A"},
+              {"id": "trivia_correcta", "title": "Respuesta Correcta"},
+              {"id": "trivia_incorrecta", "title": "Respuesta Incorrecta B"}
             ]
           }`;
 

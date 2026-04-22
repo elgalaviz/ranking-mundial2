@@ -14,8 +14,9 @@ export async function sendWhatsAppText({
   }
 
   try {
+    const apiVersion = process.env.META_API_VERSION || "v19.0";
     const res = await fetch(
-      `https://graph.facebook.com/v23.0/${phoneNumberId}/messages`,
+      `https://graph.facebook.com/${apiVersion}/${phoneNumberId}/messages`,
       {
         method: "POST",
         headers: {
