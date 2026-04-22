@@ -52,7 +52,7 @@ export async function sendWhatsAppReplyButtons({ accessToken, phoneNumberId, to,
       action: {
         buttons: buttons.slice(0, 3).map(btn => ({
           type: "reply",
-          reply: { id: btn.id, title: btn.title },
+          reply: { id: btn.id, title: btn.title.slice(0, 20) },
         })),
       },
     },

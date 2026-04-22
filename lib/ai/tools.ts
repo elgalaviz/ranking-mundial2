@@ -13,7 +13,7 @@ export async function getPartidos(equipo?: string) {
   console.log(`🛠️ Ejecutando herramienta 'getPartidos' para el equipo: ${equipo || "todos"}`);
   const supabase = getSupabase();
   try {
-    let query = supabase.from('partidos').select('equipo_local, equipo_visitante, fecha_utc, estadio').limit(10);
+    let query = supabase.from('partidos').select('equipo_local, equipo_visitante, fecha_utc, estadio, ciudad, fase, grupo, goles_local, goles_visitante').limit(20);
 
     if (equipo) {
       // Busca partidos donde el equipo es local O visitante
@@ -36,12 +36,20 @@ export async function getPartidos(equipo?: string) {
     
     // Formateamos la fecha para que sea más legible para la IA
     const formattedData = data.map(partido => ({
-      ...partido,
+      equipo_local: partido.equipo_local,
+      equipo_visitante: partido.equipo_visitante,
       fecha: new Date(partido.fecha_utc).toLocaleString('es-MX', {
         timeZone: 'America/Mexico_City',
         weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
         hour: '2-digit', minute: '2-digit',
-      }) + ' (Hora CDMX)'
+      }) + ' (Hora CDMX)',
+      estadio: partido.estadio || null,
+      ciudad: partido.ciudad || null,
+      fase: partido.fase || null,
+      grupo: partido.grupo || null,
+      resultado: (partido.goles_local !== null && partido.goles_visitante !== null)
+        ? `${partido.goles_local}-${partido.goles_visitante}`
+        : 'Por jugar',
     }));
 
     return JSON.stringify(formattedData);

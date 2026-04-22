@@ -231,7 +231,7 @@ export async function POST(req: NextRequest) {
       console.log(`[DEBUG] - Consultas extra: ${contactoActualizado.consultas_extra_hoy || 0}`);
       console.log(`[DEBUG] - Límite diario total: ${limiteDiario}`);
       console.log(`[DEBUG] - ¿Ha jugado trivia hoy?: ${contactoActualizado.jugo_trivia_hoy}`);
-      console.log(`[DEBUG] - Condición a evaluar: ${consultasActuales} > ${limiteDiario}`);
+      console.log(`[DEBUG] - Condición a evaluar: ${consultasActuales} >= ${limiteDiario}`);
 
 
       if (consultasActuales >= limiteDiario) {
@@ -317,12 +317,25 @@ export async function POST(req: NextRequest) {
       { role: "user", content: text },
     ];
 
+    // Forzar la herramienta cuando el mensaje claramente pide datos de partidos,
+    // para evitar que el modelo responda desde su conocimiento de entrenamiento.
+    const MATCH_TRIGGERS = ['partido', 'juego', 'juega', 'jugará', 'jugaran', 'fecha', 'horario',
+      'estadio', 'calendario', 'grupo', 'cuándo', 'cuando', 'cuand', 'primer partido',
+      'próximo partido', 'proximo partido', 'resultado', 'marcador', 'jornada', 'fase'];
+    const textLower = text.toLowerCase();
+    const forceMatchTool = MATCH_TRIGGERS.some(kw => textLower.includes(kw));
+    const toolChoice = forceMatchTool
+      ? ({ type: "function", function: { name: "getPartidos" } } as const)
+      : ("auto" as const);
+
+    if (forceMatchTool) console.log("🛠️ Forzando herramienta getPartidos por keywords en el mensaje.");
+
     // --- Lógica de Herramientas ---
     let response = await openai.chat.completions.create({
       model: process.env.OPENAI_MODEL || "gpt-4o-mini",
       messages: messages,
       tools: tools,
-      tool_choice: "auto",
+      tool_choice: toolChoice,
     });
 
     let responseMessage = response.choices[0].message;
