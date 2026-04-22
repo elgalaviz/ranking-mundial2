@@ -4,6 +4,7 @@ import { getSystemPrompt } from "@/lib/ai/systemPrompt";
 import { sendWhatsAppText } from "@/lib/ai/sendWhatsAppText";
 import { sendWhatsAppReplyButtons } from "@/lib/ai/sendWhatsAppInteractive";
 import { tools, getPartidos } from "@/lib/ai/tools"; // Asegúrate que la importación de getPartidos sea correcta
+import { limitReachedMessage } from "@/lib/fanbot/messages";
 import OpenAI from "openai";
 
 export const runtime = "nodejs";
@@ -165,6 +166,13 @@ export async function POST(req: NextRequest) {
       console.log("👤 Usuario creado:", profileName ?? "sin nombre");
     } else {
       // Lógica para el límite diario de consultas
+      console.log("[DEBUG] Datos del usuario ANTES del reseteo diario:", {
+        consultas_hoy: user.consultas_hoy,
+        jugo_trivia_hoy: user.jugo_trivia_hoy,
+        fecha_ultima_consulta: user.fecha_ultima_consulta,
+        consultas_reset: user.consultas_reset, // Incluido para depuración de usuarios legacy
+      });
+
       const hoy = new Date();
       // HACK: Se añade fallback a `consultas_reset` para dar soporte a usuarios legacy
       // que no tienen `fecha_ultima_consulta`.
@@ -281,7 +289,7 @@ export async function POST(req: NextRequest) {
           // Si ya jugó, se le informa que alcanzó el límite final.
           console.log(`[DEBUG] Enviando mensaje de límite final porque 'jugo_trivia_hoy' es true.`);
           console.log(`🚫 Límite de ${limiteDiario} consultas diarias excedido para ${from}.`);
-          const respuestaLimite = "Has alcanzado tu límite de consultas por hoy. ¡Nos vemos mañana! ⭐";
+          const respuestaLimite = limitReachedMessage();
           
           await sendWhatsAppText({ accessToken, phoneNumberId, to: from, body: respuestaLimite });
           await supabase.from("mensajes_recibidos").insert({

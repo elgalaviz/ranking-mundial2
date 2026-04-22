@@ -3,13 +3,11 @@ export function welcomeMessage(name: string): string {
 
 Ya te inscribí a las alertas — 15 min antes de cada partido te aviso con info del juego y jugadores a seguir.
 
-¿Tienes alguna pregunta del mundial? Tienes 3 consultas gratis al día 🎯`;
+¿Tienes alguna pregunta del mundial? Tienes 5 consultas gratis al día 🎯`;
 }
 
 export function limitReachedMessage(): string {
-  return `Hoy ya usaste tus 3 consultas gratis 😅
-
-Mañana se reinician automáticamente. Si quieres acceso ilimitado escribe *PREMIUM* y te cuento cómo.`;
+  return `Has alcanzado tu límite de consultas por hoy. ¡Nos vemos mañana! ⭐`;
 }
 
 export function unknownMessage(): string {
