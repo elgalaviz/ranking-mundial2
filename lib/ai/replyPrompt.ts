@@ -19,7 +19,7 @@ El fanático escribió:
 Breve resumen de la conversación hasta ahora:
 ${contacto.resumen || "Sin historial."}
 
-Último tema:
+Último tema de la conversación:
 ${contacto.ultimo_tema || "Sin tema."}
 ---
 

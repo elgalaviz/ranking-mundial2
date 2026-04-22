@@ -9,7 +9,8 @@ interface SendMessageParams {
 }
 
 async function sendWhatsAppMessage({ accessToken, phoneNumberId, to, message }: SendMessageParams) {
-  const url = `<https://graph.facebook.com/v19.0/${phoneNumberId}/messages>`;
+  const apiVersion = process.env.META_API_VERSION || "v19.0";
+  const url = `https://graph.facebook.com/${apiVersion}/${phoneNumberId}/messages`;
   try {
     const response = await fetch(url, {
       method: "POST",

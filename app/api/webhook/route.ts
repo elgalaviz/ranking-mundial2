@@ -233,7 +233,7 @@ export async function POST(req: NextRequest) {
         // Si no ha jugado la trivia hoy, se la ofrecemos.
         if (!contactoActualizado.jugo_trivia_hoy) {
             console.log(`🚫 Límite de 3 consultas alcanzado para ${from}. Ofreciendo trivia generada por IA.`);
-        const triviaSystemPrompt = "Eres un asistente que genera trivias de fútbol en formato JSON.";
+            const triviaSystemPrompt = "Eres un asistente que genera trivias de fútbol en formato JSON.";
           const triviaUserPrompt = `Genera una trivia de opción múltiple sobre la Selección Mexicana de Fútbol. La pregunta debe ser de dificultad media para un aficionado. La respuesta correcta debe tener el id 'trivia_correcta' y las otras dos 'trivia_incorrecta'. Las opciones deben venir en orden aleatorio. Devuelve únicamente el objeto JSON con la siguiente estructura:
           {
             "body": "Lo siento, tus 3 mensajes diarios se terminaron. ¡Pero te propongo algo! Una trivia patrocinada por Strendus: si aciertas, ganas 2 mensajes más.\\n\\n*AQUÍ LA PREGUNTA*",
