@@ -104,7 +104,7 @@ export default function CondicionesPage() {
 
           <h2>5. FanBot — Límite de consultas</h2>
           <p>
-            El FanBot está disponible de forma gratuita con un límite de <strong>3 consultas por día</strong>{" "}
+            El FanBot está disponible de forma gratuita con un límite de <strong>5 consultas por día</strong>{" "}
             por usuario. Este límite puede modificarse en el futuro con previo aviso. El límite se reinicia
             a medianoche hora de México (CDMX).
           </p>
