@@ -10,7 +10,7 @@ import OpenAI from "openai";
 export const runtime = "nodejs";
 
 const VERIFY_TOKEN = process.env.META_VERIFY_TOKEN || "";
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://rankingmundial26.com";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://mifanbot.com";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY || "" });
 
