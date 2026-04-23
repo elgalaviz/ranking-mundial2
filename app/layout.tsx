@@ -76,6 +76,13 @@ export const metadata: Metadata = {
     follow: true,
   },
 
+  // ── Verificación ─────────────────────────────────────────────────
+  verification: {
+    other: {
+      "facebook-domain-verification": ["mgobguy3092h6pyec2l05lycd321an"],
+    },
+  },
+
   // ── PWA / Icons ──────────────────────────────────────────────────
   // manifest: "/manifest.json",
   icons: {
