@@ -324,6 +324,9 @@ export default async function LandingPage() {
           </div>
           <p className="text-xs text-gray-400">© 2026 Ranking Mundial 26</p>
         </div>
+        <div className="max-w-6xl mx-auto mt-4 text-center">
+          <p className="text-xs text-gray-400">Rene Alejandro Galaviz Badillo · Ranking Mundial 26</p>
+        </div>
       </footer>
     </main>
   );

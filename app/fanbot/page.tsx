@@ -69,7 +69,7 @@ export default function FanbotLandingPage() {
               <p className="text-xs font-bold text-gray-400 mb-3">GRATIS</p>
               <ul className="space-y-2 text-sm text-gray-600">
                 <li className="flex gap-2"><span className="text-green-500">✓</span> Alertas de partidos</li>
-                <li className="flex gap-2"><span className="text-green-500">✓</span> 3 consultas/día</li>
+                <li className="flex gap-2"><span className="text-green-500">✓</span> 5 consultas/día</li>
                 <li className="flex gap-2"><span className="text-gray-300">✗</span> <span className="text-gray-400">Estadísticas y alineaciones</span></li>
                 <li className="flex gap-2"><span className="text-gray-300">✗</span> <span className="text-gray-400">Info detallada de partidos</span></li>
               </ul>
@@ -152,6 +152,9 @@ export default function FanbotLandingPage() {
             <Link href="/condiciones" className="hover:text-gray-900">Condiciones</Link>
           </div>
           <p className="text-xs text-gray-400">© 2026 Ranking Mundial 26</p>
+        </div>
+        <div className="max-w-6xl mx-auto mt-4 text-center">
+          <p className="text-xs text-gray-400">Rene Alejandro Galaviz Badillo · Ranking Mundial 26</p>
         </div>
       </footer>
     </main>
