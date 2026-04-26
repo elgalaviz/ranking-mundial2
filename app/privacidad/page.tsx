@@ -2,8 +2,8 @@ import { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Política de Privacidad — Ranking Mundial 26",
-  description: "Política de privacidad de Ranking Mundial 26. Conoce cómo recopilamos, usamos y protegemos tu información personal.",
+  title: "Política de Privacidad — Mi FanBot",
+  description: "Política de privacidad de Mi FanBot. Conoce cómo recopilamos, usamos y protegemos tu información personal.",
   alternates: { canonical: "/privacidad" },
 };
 
@@ -43,7 +43,7 @@ export default function PrivacidadPage() {
         <div className="disclaimer-box">
           <p>
             <strong>⚠️ Aviso importante sobre mensajes de WhatsApp:</strong> Al proporcionar tu número de WhatsApp
-            y registrarte en Ranking Mundial 26, otorgas tu consentimiento expreso para recibir mensajes de
+            y registrarte en Mi FanBot, otorgas tu consentimiento expreso para recibir mensajes de
             WhatsApp que incluyen: alertas de partidos del Mundial 2026, información deportiva, y mensajes
             promocionales o publicitarios de patrocinadores y marcas aliadas. Puedes cancelar en cualquier
             momento respondiendo <strong>STOP</strong> o <strong>BAJA</strong> a cualquier mensaje.
@@ -52,15 +52,15 @@ export default function PrivacidadPage() {
 
         <div className="prose">
           <p>
-            En <strong>Ranking Agencia</strong> ("nosotros", "nuestro" o "el servicio"), respetamos tu privacidad
+            En <strong>Mi FanBot</strong> ("nosotros", "nuestro" o "el servicio"), respetamos tu privacidad
             y nos comprometemos a proteger la información personal que compartes con nosotros a través de
-            <strong> Ranking Mundial 26</strong>. Esta Política de Privacidad describe qué datos recopilamos,
+            <strong>Mi FanBot</strong>. Esta Política de Privacidad describe qué datos recopilamos,
             cómo los usamos y cuáles son tus derechos.
           </p>
 
           <h2>1. Responsable del tratamiento</h2>
           <p>
-            <strong>Ranking Agencia</strong> es el responsable del tratamiento de tus datos personales.<br />
+            <strong>Mi FanBot</strong> es el responsable del tratamiento de tus datos personales.<br />
             Teléfono: <a href="tel:8112993097">811 299 3097</a><br />
             Correo: <a href="mailto:admin@rankingagencia.com">admin@rankingagencia.com</a>
           </p>
@@ -101,7 +101,7 @@ export default function PrivacidadPage() {
 
           <h2>5. Uso de inteligencia artificial</h2>
           <p>
-            Ranking Mundial 26 utiliza modelos de lenguaje de OpenAI (gpt-4o-mini) para procesar consultas
+            Mi FanBot utiliza modelos de lenguaje de OpenAI (gpt-4o-mini) para procesar consultas
             en el FanBot. Los mensajes se envían a la API de OpenAI de forma cifrada. No utilizamos estos
             datos para entrenar modelos externos.
           </p>
@@ -178,7 +178,7 @@ export default function PrivacidadPage() {
           <Link href="/privacidad" style={{ color: "#006847", textDecoration: "none" }}>Política de Privacidad</Link>
           <Link href="/eliminacion-datos" style={{ color: "#9ca3af", textDecoration: "none" }}>Eliminación de Datos</Link>
         </div>
-        <p style={{ fontSize: 12, color: "#d1d5db", marginTop: 16 }}>© 2026 Ranking Agencia · admin@rankingagencia.com · 811 299 3097</p>
+        <p style={{ fontSize: 12, color: "#d1d5db", marginTop: 16 }}>© 2026 Mi FanBot · admin@rankingagencia.com · 811 299 3097</p>
       </footer>
     </main>
   );

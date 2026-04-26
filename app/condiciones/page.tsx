@@ -2,8 +2,8 @@ import { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Condiciones del Servicio — Ranking Mundial 26",
-  description: "Condiciones del servicio de Ranking Mundial 26. Lee los términos que rigen el uso del servicio de alertas del Mundial 2026.",
+  title: "Condiciones del Servicio — Mi FanBot",
+  description: "Condiciones del servicio de Mi FanBot. Lee los términos que rigen el uso del servicio de alertas del Mundial 2026.",
   alternates: { canonical: "/condiciones" },
 };
 
@@ -42,7 +42,7 @@ export default function CondicionesPage() {
 
         <div className="disclaimer-box">
           <p>
-            <strong>⚠️ Consentimiento de mensajes WhatsApp:</strong> Al registrarte en Ranking Mundial 26
+            <strong>⚠️ Consentimiento de mensajes WhatsApp:</strong> Al registrarte en Mi FanBot
             proporcionando tu número de WhatsApp, aceptas expresamente recibir mensajes vía WhatsApp que
             incluyen alertas de partidos, información del Mundial 2026, y mensajes publicitarios de
             patrocinadores. Puedes cancelar en cualquier momento respondiendo <strong>STOP</strong> o{" "}
@@ -52,14 +52,14 @@ export default function CondicionesPage() {
 
         <div className="prose">
           <p>
-            Bienvenido a <strong>Ranking Mundial 26</strong>, operado por <strong>Ranking Agencia</strong>.
+            Bienvenido a <strong>Mi FanBot</strong>, operado por <strong>Mi FanBot</strong>.
             Al registrarte y usar este servicio, aceptas las presentes Condiciones del Servicio. Si no estás
             de acuerdo, te pedimos no utilizar el servicio.
           </p>
 
           <h2>1. Descripción del servicio</h2>
           <p>
-            Ranking Mundial 26 es un servicio gratuito de alertas deportivas vía WhatsApp para el
+            Mi FanBot es un servicio gratuito de alertas deportivas vía WhatsApp para el
             Mundial de Fútbol 2026. Incluye: alertas automáticas 15 minutos antes de cada partido, acceso
             a un FanBot con hasta 5 consultas diarias gratuitas, calendario descargable (.ics),
             y contenido patrocinado de marcas aliadas.
@@ -111,14 +111,14 @@ export default function CondicionesPage() {
 
           <h2>6. Integración con WhatsApp / Meta</h2>
           <p>
-            Este servicio opera mediante la API oficial de WhatsApp Business (Meta Cloud API). Ranking Mundial 26
+            Este servicio opera mediante la API oficial de WhatsApp Business (Meta Cloud API). Mi FanBot
             no es un producto de Meta y Meta no respalda ni es responsable de este servicio. Meta puede
             suspender el acceso a la API en cualquier momento por razones fuera de nuestro control.
           </p>
 
           <h2>7. Contenido patrocinado</h2>
           <p>
-            Ranking Mundial 26 puede incluir mensajes publicitarios de patrocinadores en las alertas de
+            Mi FanBot puede incluir mensajes publicitarios de patrocinadores en las alertas de
             partidos y comunicaciones del servicio. Este contenido estará claramente identificado como
             patrocinado cuando sea posible. Los patrocinadores no tienen acceso a tus datos personales
             identificables.
@@ -126,7 +126,7 @@ export default function CondicionesPage() {
 
           <h2>8. Propiedad intelectual</h2>
           <p>
-            El código, diseño, marca y contenido de Ranking Mundial 26 son propiedad de Ranking Agencia.
+            El código, diseño, marca y contenido de Mi FanBot son propiedad de Mi FanBot.
             Los datos del Mundial 2026 son de dominio público (FIFA). No adquieres ningún derecho sobre
             el servicio al usarlo.
           </p>
@@ -141,7 +141,7 @@ export default function CondicionesPage() {
 
           <h2>10. Limitación de responsabilidad</h2>
           <p>
-            Ranking Agencia no será responsable por daños derivados de: alertas entregadas fuera de
+            Mi FanBot no será responsable por daños derivados de: alertas entregadas fuera de
             tiempo, información incorrecta sobre partidos (sujeta a cambios por FIFA), interrupciones
             del servicio de WhatsApp, o decisiones tomadas con base en el contenido del FanBot.
           </p>
@@ -182,7 +182,7 @@ export default function CondicionesPage() {
           <Link href="/privacidad" style={{ color: "#9ca3af", textDecoration: "none" }}>Política de Privacidad</Link>
           <Link href="/eliminacion-datos" style={{ color: "#9ca3af", textDecoration: "none" }}>Eliminación de Datos</Link>
         </div>
-        <p style={{ fontSize: 12, color: "#d1d5db", marginTop: 16 }}>© 2026 Ranking Agencia · admin@rankingagencia.com · 811 299 3097</p>
+        <p style={{ fontSize: 12, color: "#d1d5db", marginTop: 16 }}>© 2026 Mi FanBot · admin@rankingagencia.com · 811 299 3097</p>
       </footer>
     </main>
   );

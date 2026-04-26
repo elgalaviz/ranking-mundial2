@@ -44,8 +44,28 @@ export default function PartidosAdminPage() {
   const [showNew, setShowNew] = useState(false);
   const [newForm, setNewForm] = useState<Partial<Partido>>({ fase: "Grupos", jornada: 1, alerta_enviada: false });
   const [openDays, setOpenDays] = useState<Set<string>>(new Set());
+  const [syncing, setSyncing] = useState(false);
 
   useEffect(() => { fetchPartidos(); }, []);
+
+  async function syncDesdeApi() {
+    if (!confirm("¿Sincronizar calendario desde API-Football? Esto insertará o actualizará todos los partidos del Mundial 2026.")) return;
+    setSyncing(true);
+    try {
+      const res = await fetch("/api/admin/sync-partidos", { method: "POST" });
+      const data = await res.json();
+      if (data.ok) {
+        alert(`✅ Sincronización completa: ${data.sincronizados} partidos procesados.`);
+        await fetchPartidos();
+      } else {
+        alert(`❌ Error: ${data.error || data.msg}`);
+      }
+    } catch (e) {
+      alert("❌ Error de red al sincronizar.");
+    } finally {
+      setSyncing(false);
+    }
+  }
 
   async function fetchPartidos() {
     setLoading(true);
@@ -130,12 +150,21 @@ export default function PartidosAdminPage() {
       <div className="max-w-5xl mx-auto">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold text-gray-800">⚽ Partidos Mundial 2026</h1>
-          <button
-            onClick={() => setShowNew(true)}
-            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-sm font-medium"
-          >
-            + Nuevo partido
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={syncDesdeApi}
+              disabled={syncing}
+              className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white px-4 py-2 rounded text-sm font-medium"
+            >
+              {syncing ? "Sincronizando..." : "⟳ Sync API-Football"}
+            </button>
+            <button
+              onClick={() => setShowNew(true)}
+              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-sm font-medium"
+            >
+              + Nuevo partido
+            </button>
+          </div>
         </div>
 
         {/* Filtros */}

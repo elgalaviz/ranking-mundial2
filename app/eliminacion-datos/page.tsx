@@ -2,8 +2,8 @@ import { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Eliminación de Datos — Ranking Mundial 26",
-  description: "Instrucciones para solicitar la eliminación de tus datos personales y baja del servicio de Ranking Mundial 26.",
+  title: "Eliminación de Datos — Mi FanBot",
+  description: "Instrucciones para solicitar la eliminación de tus datos personales y baja del servicio Mi FanBot.",
   alternates: { canonical: "/eliminacion-datos" },
 };
 
@@ -47,7 +47,7 @@ export default function EliminacionDatosPage() {
 
         <div className="prose">
           <p>
-            En <strong>Ranking Mundial 26</strong> respetamos tu derecho a la privacidad y te facilitamos el proceso para solicitar la eliminación permanente de tu información personal de nuestras bases de datos, en cumplimiento con la Ley Federal de Protección de Datos Personales en Posesión de los Particulares.
+            En <strong>Mi FanBot</strong> respetamos tu derecho a la privacidad y te facilitamos el proceso para solicitar la eliminación permanente de tu información personal de nuestras bases de datos, en cumplimiento con la Ley Federal de Protección de Datos Personales en Posesión de los Particulares.
           </p>
 
           <h2>¿Qué datos se eliminan?</h2>
@@ -73,7 +73,7 @@ export default function EliminacionDatosPage() {
           <ul>
             <li><strong>Correo:</strong> <a href="mailto:admin@rankingagencia.com">admin@rankingagencia.com</a></li>
             <li><strong>Asunto:</strong> Solicitud de Eliminación de Datos - [Tu número de WhatsApp incluyendo código de país]</li>
-            <li><strong>Cuerpo del correo:</strong> Por favor, indica tu número de WhatsApp y menciona que deseas eliminar todos tus datos del servicio "Ranking Mundial 26".</li>
+            <li><strong>Cuerpo del correo:</strong> Por favor, indica tu número de WhatsApp y menciona que deseas eliminar todos tus datos del servicio "Mi FanBot".</li>
           </ul>
           <p>
             Procesaremos tu solicitud y te enviaremos una confirmación en un plazo máximo de 20 días hábiles.
@@ -93,7 +93,7 @@ export default function EliminacionDatosPage() {
           <Link href="/privacidad" style={{ color: "#9ca3af", textDecoration: "none" }}>Política de Privacidad</Link>
           <Link href="/eliminacion-datos" style={{ color: "#006847", textDecoration: "none" }}>Eliminación de Datos</Link>
         </div>
-        <p style={{ fontSize: 12, color: "#d1d5db", marginTop: 16 }}>© 2026 Ranking Agencia · admin@rankingagencia.com · 811 299 3097</p>
+        <p style={{ fontSize: 12, color: "#d1d5db", marginTop: 16 }}>© 2026 Mi FanBot · admin@rankingagencia.com · 811 299 3097</p>
       </footer>
     </main>
   );
