@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { ChatCompletionTool } from 'openai/resources/chat/completions';
+import { getWorldCupOdds, findEventByTeam } from '@/lib/odds/client';
 
 function getSupabase() {
   return createClient(
@@ -59,6 +60,51 @@ export async function getPartidos(equipo?: string) {
   }
 }
 
+// --- getMomios ---
+export async function getMomios(equipo?: string) {
+  console.log(`🛠️ Ejecutando herramienta 'getMomios' para: ${equipo || "todos"}`);
+  try {
+    const events = await getWorldCupOdds();
+
+    if (!events || events.length === 0) {
+      return JSON.stringify({ message: "No hay momios disponibles en este momento." });
+    }
+
+    const targets = equipo ? [findEventByTeam(events, equipo)].filter(Boolean) : events.slice(0, 8);
+
+    if (equipo && targets.length === 0) {
+      return JSON.stringify({ message: `No se encontraron momios para '${equipo}'. Puede que el partido aún no tenga línea.` });
+    }
+
+    const resultado = (targets as typeof events).map((e) => {
+      // Tomar la casa con más mercados, o la primera
+      const bookmaker = e.bookmakers[0];
+      const h2h = bookmaker?.markets.find((m) => m.key === "h2h");
+      const outcomes = h2h?.outcomes ?? [];
+
+      return {
+        partido: `${e.home_team} vs ${e.away_team}`,
+        fecha: new Date(e.commence_time).toLocaleString("es-MX", {
+          timeZone: "America/Mexico_City",
+          weekday: "long", month: "long", day: "numeric",
+          hour: "2-digit", minute: "2-digit",
+        }) + " (Hora CDMX)",
+        casa_apuestas: bookmaker?.title ?? "N/A",
+        momios: outcomes.map((o) => ({
+          resultado: o.name,
+          paga: o.price.toFixed(2),
+        })),
+        casas_disponibles: e.bookmakers.length,
+      };
+    });
+
+    return JSON.stringify(resultado);
+  } catch (e) {
+    console.error("Excepción en getMomios:", e);
+    return JSON.stringify({ error: "No se pudieron obtener los momios en este momento." });
+  }
+}
+
 // --- Definición de la herramienta para OpenAI ---
 export const tools: ChatCompletionTool[] = [
   {
@@ -72,6 +118,23 @@ export const tools: ChatCompletionTool[] = [
           equipo: {
             type: 'string',
             description: 'El nombre del equipo a buscar (ej. "México", "Argentina"). Si se omite, devuelve los próximos partidos generales.',
+          },
+        },
+        required: [],
+      },
+    },
+  },
+  {
+    type: 'function',
+    function: {
+      name: 'getMomios',
+      description: 'Obtiene los momios/cuotas de apuestas de partidos del Mundial 2026 desde casas de apuestas reales. Úsala cuando el usuario pregunte por momios, cuotas, qué pagan, favoritos o apuestas de algún partido.',
+      parameters: {
+        type: 'object',
+        properties: {
+          equipo: {
+            type: 'string',
+            description: 'Nombre del equipo para filtrar (ej. "Mexico", "Argentina"). Si se omite, devuelve los próximos partidos con momios.',
           },
         },
         required: [],

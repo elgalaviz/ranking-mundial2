@@ -6,6 +6,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { getFinishedFixtures, getLiveFixtures } from "@/lib/api-football/client";
 import { fixtureToResultado } from "@/lib/api-football/mappers";
+import { sendWhatsAppText } from "@/lib/ai/sendWhatsAppText";
+import { pronoAcertoMessage, pronoFalloMessage } from "@/lib/fanbot/messages";
 
 const CRON_SECRET = process.env.CRON_SECRET || "";
 
@@ -61,7 +63,57 @@ export async function POST(req: NextRequest) {
         .update(resultado)
         .eq("id", partido.id);
 
-      if (!error) actualizados++;
+      if (!error) {
+        actualizados++;
+
+        // Solo evaluar pronósticos cuando el partido terminó (score completo, no en vivo)
+        const status = f.fixture.status.short;
+        const esFinal = status === "FT" || status === "AET" || status === "PEN";
+        if (esFinal) {
+          const winner =
+            resultado.goles_local > resultado.goles_visitante ? "local"
+            : resultado.goles_visitante > resultado.goles_local ? "visitante"
+            : "empate";
+
+          const { data: pronos } = await supabase
+            .from("pronosticos")
+            .select("id, whatsapp_id, pronostico, momio")
+            .ilike("equipo_local", `%${f.teams.home.name.slice(0, 5)}%`)
+            .ilike("equipo_visitante", `%${f.teams.away.name.slice(0, 5)}%`)
+            .is("acerto", null);
+
+          if (pronos && pronos.length > 0) {
+            const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN || "";
+            const PHONE_NUMBER_ID = process.env.WHATSAPP_PHONE_NUMBER_ID || "";
+            const PRONO_SPONSOR = process.env.PRONO_SPONSOR || "";
+            const nombrePartido = `${partido.equipo_local} ${resultado.goles_local}-${resultado.goles_visitante} ${partido.equipo_visitante}`;
+            const labelGanador =
+              winner === "local" ? partido.equipo_local
+              : winner === "visitante" ? partido.equipo_visitante
+              : "Empate";
+
+            for (const prono of pronos) {
+              const acerto = prono.pronostico === winner;
+              await supabase.from("pronosticos").update({ acerto, notificado: true }).eq("id", prono.id);
+
+              const labelElegido =
+                prono.pronostico === "local" ? partido.equipo_local
+                : prono.pronostico === "visitante" ? partido.equipo_visitante
+                : "Empate";
+
+              const msg = acerto
+                ? pronoAcertoMessage(nombrePartido, labelElegido, prono.momio, 200, PRONO_SPONSOR)
+                : pronoFalloMessage(nombrePartido, labelElegido, labelGanador);
+
+              try {
+                await sendWhatsAppText({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: prono.whatsapp_id, body: msg });
+              } catch (e) {
+                console.error(`Error notificando pronóstico a ${prono.whatsapp_id}:`, e);
+              }
+            }
+          }
+        }
+      }
     }
 
     return NextResponse.json({ ok: true, revisados: todos.length, actualizados });

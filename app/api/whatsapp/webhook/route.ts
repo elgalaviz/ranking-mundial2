@@ -4,8 +4,9 @@ import OpenAI from "openai";
 import { sendWhatsAppText } from "@/lib/ai/sendWhatsAppText";
 import { sendWhatsAppReplyButtons } from "@/lib/ai/sendWhatsAppInteractive";
 import { getSystemPrompt } from "@/lib/ai/systemPrompt";
-import { tools, getPartidos } from "@/lib/ai/tools";
-import { welcomeMessage, limitReachedMessage } from "@/lib/fanbot/messages";
+import { tools, getPartidos, getMomios } from "@/lib/ai/tools";
+import { getWorldCupOdds, findEventByTeam } from "@/lib/odds/client";
+import { welcomeMessage, limitReachedMessage, pronoGuardadoMessage } from "@/lib/fanbot/messages";
 
 export const runtime = "nodejs";
 
@@ -13,6 +14,7 @@ const VERIFY_TOKEN = process.env.META_VERIFY_TOKEN || "";
 const PHONE_NUMBER_ID = process.env.WHATSAPP_PHONE_NUMBER_ID || "";
 const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN || "";
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://rankingmundial26.com";
+const PRONO_SPONSOR = process.env.PRONO_SPONSOR || "";
 const MAX_FREE_QUERIES = 5;
 
 const MATCH_TRIGGERS = [
@@ -99,6 +101,61 @@ export async function POST(req: NextRequest) {
     const incomingText = text.toLowerCase();
     console.log(`📩 Mensaje de ${from} (${profileName}): "${text}"`);
 
+    // --- Respuesta de pronóstico (no cuenta como consulta) ---
+    if (text.startsWith("prono_") && text.split("_").length === 4) {
+      const [, outcome, momio100Str, idShort] = text.split("_");
+      const momio = parseInt(momio100Str) / 100;
+      const partidoId = [
+        idShort.slice(0, 8), idShort.slice(8, 12),
+        idShort.slice(12, 16), idShort.slice(16, 20), idShort.slice(20),
+      ].join("-");
+
+      const { data: partido } = await supabase
+        .from("partidos")
+        .select("id, equipo_local, equipo_visitante, fecha_utc, goles_local, goles_visitante")
+        .eq("id", partidoId)
+        .single();
+
+      if (!partido) {
+        await sendWhatsAppText({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from, body: "No encontré ese partido. 😕" });
+        return new NextResponse("ok", { status: 200 });
+      }
+
+      if (new Date(partido.fecha_utc) < new Date()) {
+        await sendWhatsAppText({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from, body: "⏱️ Ese partido ya comenzó, solo se puede pronosticar antes del pitazo inicial." });
+        return new NextResponse("ok", { status: 200 });
+      }
+
+      const { data: existing } = await supabase
+        .from("pronosticos")
+        .select("id, pronostico")
+        .eq("whatsapp_id", waId)
+        .eq("equipo_local", partido.equipo_local)
+        .eq("equipo_visitante", partido.equipo_visitante)
+        .maybeSingle();
+
+      if (existing) {
+        const labels: Record<string, string> = { local: partido.equipo_local, empate: "Empate", visitante: partido.equipo_visitante };
+        await sendWhatsAppText({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from, body: `Ya tienes guardado: *${labels[existing.pronostico]}*. ¡Suerte! ⚽` });
+        return new NextResponse("ok", { status: 200 });
+      }
+
+      const pronostico = outcome === "L" ? "local" : outcome === "E" ? "empate" : "visitante";
+      const equipoElegido = outcome === "L" ? partido.equipo_local : outcome === "E" ? "Empate" : partido.equipo_visitante;
+
+      await supabase.from("pronosticos").insert({
+        whatsapp_id: waId,
+        equipo_local: partido.equipo_local,
+        equipo_visitante: partido.equipo_visitante,
+        pronostico,
+        momio,
+        fecha_partido: partido.fecha_utc,
+      });
+
+      await sendWhatsAppText({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from, body: pronoGuardadoMessage(equipoElegido, momio, 200, PRONO_SPONSOR) });
+      return new NextResponse("ok", { status: 200 });
+    }
+
     // --- Respuesta de trivia ---
     if (text === "trivia_correcta" || text.startsWith("trivia_incorrecta")) {
       const { data: u } = await supabase
@@ -133,6 +190,32 @@ export async function POST(req: NextRequest) {
       await sendWhatsAppText({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from, body: "👍 Entendido, no te mandaré alertas de partidos. ⚽" });
       return new NextResponse("ok", { status: 200 });
     }
+    if (incomingText === "mis pronósticos" || incomingText === "mis pronosticos" || incomingText === "mis predicciones") {
+      const { data: pronos } = await supabase
+        .from("pronosticos")
+        .select("equipo_local, equipo_visitante, pronostico, momio, acerto, fecha_partido")
+        .eq("whatsapp_id", waId)
+        .order("fecha_partido", { ascending: true });
+
+      if (!pronos || pronos.length === 0) {
+        await sendWhatsAppText({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from, body: "Aún no tienes pronósticos guardados. Pregúntame por un partido y te mando los botones para pronosticar. ⚽" });
+        return new NextResponse("ok", { status: 200 });
+      }
+
+      const labels: Record<string, string> = { local: "🏠 Local", empate: "🤝 Empate", visitante: "✈️ Visitante" };
+      const estado = (acerto: boolean | null) => acerto === null ? "⏳ Pendiente" : acerto ? "✅ Acertaste" : "❌ Fallaste";
+      const lineas = pronos.map(p =>
+        `${p.equipo_local} vs ${p.equipo_visitante}\n  Pronóstico: ${labels[p.pronostico]} (${p.momio}x) — ${estado(p.acerto)}`
+      ).join("\n\n");
+
+      const acertados = pronos.filter(p => p.acerto === true).length;
+      const total = pronos.filter(p => p.acerto !== null).length;
+      const resumen = total > 0 ? `\n\n🏆 Aciertos: ${acertados}/${total}` : "";
+
+      await sendWhatsAppText({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from, body: `🎯 *Mis Pronósticos*\n\n${lineas}${resumen}` });
+      return new NextResponse("ok", { status: 200 });
+    }
+
     if (incomingText === "baja" || incomingText === "stop") {
       await sendWhatsAppText({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from, body: "⚠️ ¿Confirmas que quieres eliminar tu cuenta y todos tus datos?\n\nResponde *CONFIRMAR BAJA* para proceder.\n\nSi fue un error, ignora este mensaje." });
       return new NextResponse("ok", { status: 200 });
@@ -248,6 +331,9 @@ export async function POST(req: NextRequest) {
 
     let responseMessage = aiResponse.choices[0].message;
 
+    // Datos del partido próximo para mostrar botones de pronóstico
+    let pronoMatch: { id: string; equipo_local: string; equipo_visitante: string } | null = null;
+
     if (responseMessage.tool_calls) {
       messages.push(responseMessage);
       for (const toolCall of responseMessage.tool_calls) {
@@ -255,6 +341,25 @@ export async function POST(req: NextRequest) {
           const args = JSON.parse(toolCall.function.arguments);
           const result = await getPartidos(args.equipo);
           console.log(`🛠️ getPartidos(${args.equipo || "todos"}) →`, result.slice(0, 120));
+          messages.push({ tool_call_id: toolCall.id, role: "tool", content: result });
+
+          // Buscar el próximo partido sin resultado para los botones de pronóstico
+          if (args.equipo) {
+            const { data: next } = await supabase
+              .from("partidos")
+              .select("id, equipo_local, equipo_visitante, fecha_utc")
+              .or(`equipo_local.ilike.%${args.equipo}%,equipo_visitante.ilike.%${args.equipo}%`)
+              .is("goles_local", null)
+              .gt("fecha_utc", new Date().toISOString())
+              .order("fecha_utc", { ascending: true })
+              .limit(1)
+              .maybeSingle();
+            if (next) pronoMatch = { id: next.id, equipo_local: next.equipo_local, equipo_visitante: next.equipo_visitante };
+          }
+        } else if (toolCall.type === "function" && toolCall.function.name === "getMomios") {
+          const args = JSON.parse(toolCall.function.arguments);
+          const result = await getMomios(args.equipo);
+          console.log(`🛠️ getMomios(${args.equipo || "todos"}) →`, result.slice(0, 120));
           messages.push({ tool_call_id: toolCall.id, role: "tool", content: result });
         }
       }
@@ -271,14 +376,51 @@ export async function POST(req: NextRequest) {
     let parsed: any;
     try { parsed = JSON.parse(reply); } catch { parsed = { body: reply }; }
 
+    const sinDatos = parsed.no_data === true;
+
     if (parsed.type === "buttons" && parsed.buttons) {
       await sendWhatsAppReplyButtons({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from, body: parsed.body, buttons: parsed.buttons });
     } else {
       await sendWhatsAppText({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from, body: parsed.body || reply });
     }
 
-    // Incrementar contador DESPUÉS de responder
-    await supabase.from("users").update({ consultas_hoy: consultasHoy + 1 }).eq("id", user.id);
+    // --- Botones de pronóstico (si el mensaje fue sobre un partido próximo) ---
+    if (pronoMatch) {
+      try {
+        const events = await getWorldCupOdds();
+        const event = findEventByTeam(events, pronoMatch.equipo_local);
+        if (event) {
+          const h2h = event.bookmakers[0]?.markets.find((m) => m.key === "h2h");
+          const outcomes = h2h?.outcomes ?? [];
+          const homeOdds = outcomes.find((o) => o.name === event.home_team);
+          const awayOdds = outcomes.find((o) => o.name === event.away_team);
+          const drawOdds = outcomes.find((o) => o.name === "Draw");
+
+          if (homeOdds && awayOdds && drawOdds) {
+            const idShort = pronoMatch.id.replace(/-/g, "");
+            const short = (name: string) => name.split(" ")[0].slice(0, 9);
+            const buttons = [
+              { id: `prono_L_${Math.round(homeOdds.price * 100)}_${idShort}`, title: `${short(pronoMatch.equipo_local)} ${homeOdds.price.toFixed(2)}x`.slice(0, 20) },
+              { id: `prono_E_${Math.round(drawOdds.price * 100)}_${idShort}`, title: `Empate ${drawOdds.price.toFixed(2)}x`.slice(0, 20) },
+              { id: `prono_V_${Math.round(awayOdds.price * 100)}_${idShort}`, title: `${short(pronoMatch.equipo_visitante)} ${awayOdds.price.toFixed(2)}x`.slice(0, 20) },
+            ];
+            await sendWhatsAppReplyButtons({
+              accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from,
+              body: `¿Cómo crees que quede ${pronoMatch.equipo_local} vs ${pronoMatch.equipo_visitante}? 🎯`,
+              buttons,
+              footer: "🎮 Solo entretenimiento · Sin dinero real",
+            });
+          }
+        }
+      } catch (e) {
+        console.error("Error al enviar botones de pronóstico:", e);
+      }
+    }
+
+    // Incrementar contador solo si el bot tuvo información que dar
+    if (!sinDatos) {
+      await supabase.from("users").update({ consultas_hoy: consultasHoy + 1 }).eq("id", user.id);
+    }
     await supabase.from("registros_whatsapp").insert({ user_id: user.id, tipo_mensaje: "chatbot" });
 
     return new NextResponse("ok", { status: 200 });
