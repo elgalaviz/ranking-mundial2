@@ -389,11 +389,17 @@ export async function POST(req: NextRequest) {
       { role: "user", content: text },
     ];
 
+    // Solo forzar getPartidos cuando la pregunta claramente pide el calendario/horario 2026,
+    // no en preguntas históricas que usan palabras como "juego", "resultado", "fase", etc.
     const MATCH_TRIGGERS = [
-      "partido", "juego", "juega", "jugará", "jugaran", "fecha", "horario",
-      "estadio", "calendario", "grupo", "cuándo", "cuando", "cuand",
-      "primer partido", "próximo partido", "proximo partido",
-      "resultado", "marcador", "jornada", "fase",
+      "cuándo juega", "cuando juega",
+      "cuándo juegan", "cuando juegan",
+      "próximo partido", "proximo partido",
+      "primer partido",
+      "a qué hora", "a que hora",
+      "horario del partido", "horario del mundial",
+      "calendario del mundial", "calendario 2026",
+      "fixture", "jornada 2026",
     ];
     const textLower = text.toLowerCase();
     const forceMatchTool = MATCH_TRIGGERS.some((kw) => textLower.includes(kw));
