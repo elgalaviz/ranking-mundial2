@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
       // Buscar en Supabase por equipos (tolerante a diferencias de nombre)
       const { data: partido } = await supabase
         .from("partidos")
-        .select("id, goles_local, goles_visitante")
+        .select("id, equipo_local, equipo_visitante, goles_local, goles_visitante")
         .ilike("equipo_local", `%${f.teams.home.name}%`)
         .ilike("equipo_visitante", `%${f.teams.away.name}%`)
         .single();
