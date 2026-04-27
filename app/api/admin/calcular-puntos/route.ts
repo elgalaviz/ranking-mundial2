@@ -86,12 +86,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true, actualizados: 0 });
   }
 
-  // Actualizar puntos de todos los picks
+  // Calcular puntos una vez por pick y actualizar en DB
+  const puntosMap = new Map<string, number>();
   for (const pick of picks) {
     const puntos = calcularPuntos(
       partido.goles_local, partido.goles_visitante,
       pick.pick_local, pick.pick_visit
     );
+    puntosMap.set(pick.id, puntos);
     await supabase.from("quiniela_picks").update({ puntos }).eq("id", pick.id);
   }
 
@@ -113,10 +115,7 @@ export async function POST(req: NextRequest) {
     const phone = phoneMap[pick.user_id];
     if (!phone) continue;
 
-    const puntos = calcularPuntos(
-      partido.goles_local, partido.goles_visitante,
-      pick.pick_local, pick.pick_visit
-    );
+    const puntos = puntosMap.get(pick.id) ?? 0;
 
     // Total acumulado del usuario
     const { data: allPicks } = await supabase
