@@ -87,10 +87,6 @@ export const metadata: Metadata = {
     },
   },
 
-  // ── Facebook ─────────────────────────────────────────────────────
-  other: {
-    "fb:app_id": "1682649832859575",
-  },
 
   // ── Icons ────────────────────────────────────────────────────────
   icons: {
@@ -101,6 +97,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="es" suppressHydrationWarning>
+      <head>
+        <meta property="fb:app_id" content="1682649832859575" />
+      </head>
       <body className="bg-white text-gray-900 antialiased" suppressHydrationWarning>
         {/* Google Tag Manager (noscript) */}
         <noscript>
