@@ -402,7 +402,16 @@ export async function POST(req: NextRequest) {
     user = contactoActualizado;
 
     // ── 9. RESPUESTA DE IA ────────────────────────────────────────────
-    const systemPrompt = getSystemPrompt({ contacto: user || {} });
+    const { data: botConfig } = await supabase
+      .from("bot_config")
+      .select("prompt")
+      .eq("id", "singleton")
+      .maybeSingle();
+
+    const systemPrompt = getSystemPrompt({
+      contacto: user || {},
+      promptOverride: botConfig?.prompt ?? null,
+    });
 
     const messages: OpenAI.Chat.ChatCompletionMessageParam[] = [
       { role: "system", content: systemPrompt },

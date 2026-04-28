@@ -10,7 +10,7 @@ export function limitReachedMessage(_appUrl?: string): string {
   return (
     `Has alcanzado tu límite de consultas gratuitas por hoy. 😔\n\n` +
     `Próximamente podrás comprar *FanBot Premium* en:\n` +
-    `👉 www.mifanbot.com/premium\n\n` +
+    `👉 www.mifanbot.com/fanbot/\n\n` +
     `¡Nos vemos mañana!`
   );
 }

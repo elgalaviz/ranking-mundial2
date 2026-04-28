@@ -11,6 +11,8 @@ import {
   Trophy,
   Swords,
   DollarSign,
+  Bot,
+  Megaphone,
   LogOut,
   User,
 } from "lucide-react";
@@ -22,6 +24,8 @@ const navigation = [
   { name: "Quiniela", href: "/god/quiniela", icon: Trophy },
   { name: "Fantasy", href: "/god/fantasy", icon: Swords },
   { name: "Pagos", href: "/god/pagos", icon: DollarSign },
+  { name: "Patrocinios", href: "/god/patrocinadores", icon: Megaphone },
+  { name: "Bot", href: "/god/bot", icon: Bot },
 ];
 
 function classNames(...classes: string[]) {
