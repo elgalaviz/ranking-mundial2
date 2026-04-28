@@ -2,39 +2,41 @@ import "./globals.css";
 import { Metadata } from "next";
 import ClientLayout from "@/components/layout/ClientLayout";
 
-const BASE_URL = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000";
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://www.mifanbot.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
 
   // ── Títulos ──────────────────────────────────────────────────────
   title: {
-    default: "Ranking Mundial 26 — Alertas y Chatbot de WhatsApp",
-    template: "%s | Ranking Mundial 26",
+    default: "MiFanBot — Alertas del Mundial 2026 gratis por WhatsApp",
+    template: "%s | MiFanBot",
   },
 
   // ── Descripción ──────────────────────────────────────────────────
   description:
-    "Recibe alertas de partidos del Mundial 2026 15 minutos antes de que empiecen, y pregunta lo que quieras a nuestro FanBot de IA. Todo por WhatsApp, gratis y sin apps.",
+    "Recibe alertas de partidos del Mundial 2026 por WhatsApp 15 minutos antes. Quiniela gratis, chatbot de fútbol con IA. Sin app, sin registro. Solo WhatsApp.",
 
   // ── Keywords ─────────────────────────────────────────────────────
   keywords: [
+    "MiFanBot",
+    "alertas Mundial 2026 WhatsApp",
+    "bot WhatsApp Mundial 2026",
+    "quiniela Mundial 2026 gratis",
+    "chatbot fútbol WhatsApp",
+    "alertas partidos WhatsApp",
     "Mundial 2026",
-    "alertas WhatsApp",
-    "bot WhatsApp",
-    "chatbot Mundial",
-    "calendario Mundial 2026",
-    "partidos Mundial 2026",
     "Copa del Mundo 2026",
-    "FanBot",
-    "notificaciones fútbol",
-    "WhatsApp API",
+    "calendario Mundial 2026",
+    "fanbot mundial",
+    "bot fútbol gratis",
+    "notificaciones fútbol WhatsApp",
   ],
 
   // ── Autores / Categoría ──────────────────────────────────────────
-  authors: [{ name: "Ranking Agencia", url: "https://rankingagencia.com" }],
+  authors: [{ name: "MiFanBot", url: "https://www.mifanbot.com" }],
   category: "sports",
-  applicationName: "Ranking Mundial 26",
+  applicationName: "MiFanBot",
 
   // ── Canonical ────────────────────────────────────────────────────
   alternates: {
@@ -47,16 +49,16 @@ export const metadata: Metadata = {
     type: "website",
     locale: "es_MX",
     url: BASE_URL,
-    siteName: "Ranking Mundial 26",
-    title: "Ranking Mundial 26 — Alertas y Chatbot de WhatsApp",
+    siteName: "MiFanBot",
+    title: "MiFanBot — Alertas del Mundial 2026 gratis por WhatsApp",
     description:
-      "Recibe alertas de partidos 15 minutos antes, y pregunta lo que quieras a nuestro FanBot de IA. Todo por WhatsApp.",
+      "Alertas 15 min antes de cada partido, quiniela gratis y chatbot de fútbol con IA. Todo por WhatsApp. Sin app, sin registro.",
     images: [
       {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Ranking Mundial 26 — Alertas de WhatsApp",
+        alt: "MiFanBot — Alertas del Mundial 2026 por WhatsApp",
       },
     ],
   },
@@ -64,9 +66,9 @@ export const metadata: Metadata = {
   // ── Twitter / X ──────────────────────────────────────────────────
   twitter: {
     card: "summary_large_image",
-    title: "Ranking Mundial 26 — Alertas y Chatbot de WhatsApp",
+    title: "MiFanBot — Alertas del Mundial 2026 gratis por WhatsApp",
     description:
-      "Recibe alertas de partidos 15 minutos antes, y pregunta lo que quieras a nuestro FanBot de IA. Todo por WhatsApp.",
+      "Alertas 15 min antes de cada partido, quiniela gratis y chatbot de fútbol con IA. Todo por WhatsApp.",
     images: ["/og-image.png"],
   },
 
@@ -83,12 +85,9 @@ export const metadata: Metadata = {
     },
   },
 
-  // ── PWA / Icons ──────────────────────────────────────────────────
-  // manifest: "/manifest.json",
+  // ── Icons ────────────────────────────────────────────────────────
   icons: {
     icon: "/favicon.ico",
-    // shortcut: "/shortcut-icon.png",
-    // apple: "/apple-icon.png",
   },
 };
 

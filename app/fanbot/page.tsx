@@ -94,7 +94,7 @@ export default function FanbotLandingPage() {
             <h2 className="text-2xl font-black text-gray-900 mb-2">Próximamente</h2>
             <p className="text-gray-500 text-sm leading-relaxed">
               FanBot Premium estará disponible muy pronto.<br />
-              Podrás activarlo en <span className="font-semibold text-gray-700">www.mifanbot.com/premium</span>
+              
             </p>
           </div>
           <Link
@@ -154,10 +154,7 @@ export default function FanbotLandingPage() {
             <Link href="/privacidad" className="hover:text-gray-900">Privacidad</Link>
             <Link href="/condiciones" className="hover:text-gray-900">Condiciones</Link>
           </div>
-          <p className="text-xs text-gray-400">© 2026 Ranking Mundial 26</p>
-        </div>
-        <div className="max-w-6xl mx-auto mt-4 text-center">
-          <p className="text-xs text-gray-400">Rene Alejandro Galaviz Badillo · Ranking Mundial 26</p>
+          <p className="text-xs text-gray-400">© 2026 <Link href="https://www.rankingagencia.com" target="_blank" rel="noopener noreferrer" className="hover:text-gray-600 transition-colors">Ranking Mundial 26</Link></p>
         </div>
       </footer>
     </main>

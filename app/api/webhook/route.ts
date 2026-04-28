@@ -467,6 +467,18 @@ export async function POST(req: NextRequest) {
       respuestaParsed = { type: "text", body: aiResponseText };
     }
 
+    // Pregunta de aclaración: revertir el contador (no cuenta como consulta)
+    if (respuestaParsed.type === "clarify") {
+      await supabase.from("users")
+        .update({ consultas_hoy: Math.max(0, consultasActuales - 1) })
+        .eq("id", user.id);
+      await sendWhatsAppText({
+        accessToken, phoneNumberId, to: from,
+        body: respuestaParsed.body || "¿Puedes reformular tu pregunta?",
+      });
+      return new NextResponse("ok", { status: 200 });
+    }
+
     if (respuestaParsed.type === "buttons" && respuestaParsed.buttons) {
       await sendWhatsAppReplyButtons({
         accessToken, phoneNumberId, to: from,

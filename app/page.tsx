@@ -40,7 +40,7 @@ export default async function LandingPage() {
             <img src="/mifanbot-h.svg" alt="MiFanBot" width={140} height={36} />
           </a>
           <a
-            href={`https://wa.me/${WA_NUMBER}`}
+            href={`https://wa.me/${WA_NUMBER}?text=Hola%20FanBot%2C%20quiero%20mis%20alertas%20del%20Mundial%202026`}
             target="_blank"
             rel="noopener noreferrer"
             className="text-sm border border-white text-white px-4 py-2 rounded-full hover:bg-white hover:text-black transition-all font-medium"
@@ -148,8 +148,8 @@ export default async function LandingPage() {
           <div className="grid sm:grid-cols-3 gap-8">
             {[
               { n: "1", icon: "💬", title: "Escríbenos", desc: "Manda un mensaje al número de FanBot. En segundos quedas registrado." },
-              { n: "2", icon: "⚽", title: "Recibe alertas", desc: "15 minutos antes de cada partido te mandamos info del juego y jugadores a seguir." },
-              { n: "3", icon: "🤖", title: "Pregunta lo que quieras", desc: "Nuestro chatbot responde todo sobre el Mundial 2026 y la historia del fútbol." },
+              { n: "2", icon: "⚽", title: "Recibe alertas", desc: "15 minutos antes de cada partido te mandamos info del juego." },
+              { n: "3", icon: "🤖", title: "Pregunta lo que quieras", desc: "Nuestro chatbot responde todo sobre el Mundial 2026 y la historia de los mudniales." },
             ].map(s => (
               <div key={s.n} className="text-center">
                 <div className="w-14 h-14 bg-white/10 border border-white/20 rounded-2xl flex items-center justify-center text-2xl mx-auto mb-4">
@@ -283,7 +283,7 @@ export default async function LandingPage() {
                 href="/fanbot"
                 className="block w-full py-3.5 bg-white text-amber-600 font-bold rounded-xl hover:bg-amber-50 transition-colors"
               >
-                Obtener Premium →
+                Proximamente Premium →
               </a>
               <p className="text-amber-100 text-xs mt-4">Gratis: 3 consultas al día · Premium: ilimitadas</p>
             </div>
@@ -322,10 +322,7 @@ export default async function LandingPage() {
             <a href="/condiciones" className="hover:text-gray-900">Condiciones</a>
             <a href="/eliminacion-datos" className="hover:text-gray-900">Eliminar datos</a>
           </div>
-          <p className="text-xs text-gray-400">© 2026 Ranking Mundial 26</p>
-        </div>
-        <div className="max-w-6xl mx-auto mt-4 text-center">
-          <p className="text-xs text-gray-400">Rene Alejandro Galaviz Badillo · Ranking Mundial 26</p>
+          <p className="text-xs text-gray-400">© 2026 <a href="https://www.rankingagencia.com" target="_blank" rel="noopener noreferrer" className="hover:text-gray-600 transition-colors">Ranking Mundial 26</a></p>
         </div>
       </footer>
     </main>
