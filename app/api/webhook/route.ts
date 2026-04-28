@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { getSystemPrompt } from "@/lib/ai/systemPrompt";
-import { sendWhatsAppText } from "@/lib/ai/sendWhatsAppText";
+import { sendWhatsAppText, sendWhatsAppDocument } from "@/lib/ai/sendWhatsAppText";
 import { sendWhatsAppReplyButtons } from "@/lib/ai/sendWhatsAppInteractive";
 import { tools, getPartidos, getMomios } from "@/lib/ai/tools";
 import { limitReachedMessage, pronoGuardadoMessage } from "@/lib/fanbot/messages";
@@ -279,6 +279,26 @@ export async function POST(req: NextRequest) {
       await sendWhatsAppText({
         accessToken, phoneNumberId, to: from,
         body: `Entendido. 👍 Tienes *5 consultas gratis al día*. ¿Qué quieres saber del Mundial?`,
+      });
+      return new NextResponse("ok", { status: 200 });
+    }
+
+    // ── 6a. DESCARGA DE CALENDARIO ICS (no cuenta como consulta) ──────
+    const CALENDAR_TRIGGERS = [
+      "quiero mi calendario", "quiero el calendario",
+      "dame mi calendario", "dame el calendario",
+      "descargar calendario", "bajar calendario",
+      "descargar el calendario", "bajar el calendario",
+    ];
+    const textLow = text.toLowerCase();
+    const esDescargaCalendario = CALENDAR_TRIGGERS.some((kw) => textLow.includes(kw));
+
+    if (esDescargaCalendario) {
+      await sendWhatsAppDocument({
+        accessToken, phoneNumberId, to,
+        link: `${APP_URL}/api/calendario`,
+        filename: "Mundial2026.ics",
+        caption: "📅 Aquí está tu calendario del Mundial 2026. Ábrelo para agregar todos los partidos a tu celular con alertas 15 min antes. ⚽🏆",
       });
       return new NextResponse("ok", { status: 200 });
     }
