@@ -1,3 +1,7 @@
+// ⚠️ WEBHOOK LEGACY — NO ACTIVO
+// Meta llama /api/whatsapp/webhook (no este endpoint).
+// Este archivo está desactualizado. No editar aquí.
+
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { getSystemPrompt } from "@/lib/ai/systemPrompt";
