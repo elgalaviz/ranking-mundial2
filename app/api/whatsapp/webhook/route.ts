@@ -309,7 +309,8 @@ export async function POST(req: NextRequest) {
 
     // --- Generar respuesta con IA ---
     const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
-    const systemPrompt = getSystemPrompt({ contacto: { name: user.name } });
+    const { data: botConfig } = await supabase.from("bot_config").select("prompt").eq("id", 1).maybeSingle();
+    const systemPrompt = getSystemPrompt({ contacto: { name: user.name }, promptOverride: botConfig?.prompt ?? null });
     const messages: OpenAI.Chat.ChatCompletionMessageParam[] = [
       { role: "system", content: systemPrompt },
       { role: "user", content: text },
@@ -386,6 +387,10 @@ export async function POST(req: NextRequest) {
 
     // --- Botones de pronóstico (si el mensaje fue sobre un partido próximo) ---
     if (pronoMatch) {
+      const idShort = pronoMatch.id.replace(/-/g, "");
+      const short = (name: string) => name.split(" ")[0].slice(0, 9);
+      let buttons: { id: string; title: string }[] = [];
+
       try {
         const events = await getWorldCupOdds();
         const event = findEventByTeam(events, pronoMatch.equipo_local);
@@ -397,24 +402,32 @@ export async function POST(req: NextRequest) {
           const drawOdds = outcomes.find((o) => o.name === "Draw");
 
           if (homeOdds && awayOdds && drawOdds) {
-            const idShort = pronoMatch.id.replace(/-/g, "");
-            const short = (name: string) => name.split(" ")[0].slice(0, 9);
-            const buttons = [
+            buttons = [
               { id: `prono_L_${Math.round(homeOdds.price * 100)}_${idShort}`, title: `${short(pronoMatch.equipo_local)} ${homeOdds.price.toFixed(2)}x`.slice(0, 20) },
               { id: `prono_E_${Math.round(drawOdds.price * 100)}_${idShort}`, title: `Empate ${drawOdds.price.toFixed(2)}x`.slice(0, 20) },
               { id: `prono_V_${Math.round(awayOdds.price * 100)}_${idShort}`, title: `${short(pronoMatch.equipo_visitante)} ${awayOdds.price.toFixed(2)}x`.slice(0, 20) },
             ];
-            await sendWhatsAppReplyButtons({
-              accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from,
-              body: `¿Cómo crees que quede ${pronoMatch.equipo_local} vs ${pronoMatch.equipo_visitante}? 🎯`,
-              buttons,
-              footer: "🎮 Solo entretenimiento · Sin dinero real",
-            });
           }
         }
       } catch (e) {
-        console.error("Error al enviar botones de pronóstico:", e);
+        console.error("Error obteniendo momios:", e);
       }
+
+      // Fallback sin momios
+      if (buttons.length === 0) {
+        buttons = [
+          { id: `prono_L_100_${idShort}`, title: short(pronoMatch.equipo_local).slice(0, 20) },
+          { id: `prono_E_100_${idShort}`, title: "Empate" },
+          { id: `prono_V_100_${idShort}`, title: short(pronoMatch.equipo_visitante).slice(0, 20) },
+        ];
+      }
+
+      await sendWhatsAppReplyButtons({
+        accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from,
+        body: `¿Cómo crees que quede ${pronoMatch.equipo_local} vs ${pronoMatch.equipo_visitante}? 🎯`,
+        buttons,
+        footer: "🎮 Solo entretenimiento · Sin dinero real",
+      });
     }
 
     // Incrementar contador solo si el bot tuvo información que dar

@@ -35,25 +35,37 @@ export async function getPartidos(equipo?: string) {
       return JSON.stringify({ message: `No se encontraron partidos para '${equipo || 'los equipos solicitados'}'.` });
     }
     
-    // Formateamos la fecha para que sea más legible para la IA
-    const formattedData = data.map(partido => ({
-      equipo_local: partido.equipo_local,
-      equipo_visitante: partido.equipo_visitante,
-      fecha: new Date(partido.fecha_utc).toLocaleString('es-MX', {
-        timeZone: 'America/Mexico_City',
-        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
-        hour: '2-digit', minute: '2-digit',
-      }) + ' (Hora CDMX)',
-      estadio: partido.estadio || null,
-      ciudad: partido.ciudad || null,
-      fase: partido.fase || null,
-      grupo: partido.grupo || null,
-      resultado: (partido.goles_local !== null && partido.goles_visitante !== null)
-        ? `${partido.goles_local}-${partido.goles_visitante}`
-        : 'Por jugar',
-    }));
+    const now = new Date();
+    const nowCDMX = now.toLocaleString('es-MX', {
+      timeZone: 'America/Mexico_City',
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+      hour: '2-digit', minute: '2-digit',
+    });
 
-    return JSON.stringify(formattedData);
+    // Formateamos la fecha para que sea más legible para la IA
+    const formattedData = data.map(partido => {
+      const fechaPartido = new Date(partido.fecha_utc);
+      const jugado = partido.goles_local !== null && partido.goles_visitante !== null;
+      const hoy = fechaPartido.toDateString() === now.toDateString();
+      const estado = jugado ? 'Jugado' : hoy ? 'Hoy' : fechaPartido < now ? 'Jugado (sin resultado)' : 'Próximo';
+      return {
+        equipo_local: partido.equipo_local,
+        equipo_visitante: partido.equipo_visitante,
+        fecha: fechaPartido.toLocaleString('es-MX', {
+          timeZone: 'America/Mexico_City',
+          weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+          hour: '2-digit', minute: '2-digit',
+        }) + ' (Hora CDMX)',
+        estadio: partido.estadio || null,
+        ciudad: partido.ciudad || null,
+        fase: partido.fase || null,
+        grupo: partido.grupo || null,
+        estado,
+        resultado: jugado ? `${partido.goles_local}-${partido.goles_visitante}` : null,
+      };
+    });
+
+    return JSON.stringify({ ahora_cdmx: nowCDMX, partidos: formattedData });
   } catch (e) {
     console.error("Excepción en getPartidos:", e);
     return JSON.stringify({ error: "Ocurrió una excepción al procesar la solicitud de partidos." });
