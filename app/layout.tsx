@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
   // ── Títulos ──────────────────────────────────────────────────────
   title: {
-    default: "MiFanBot — Alertas del Mundial 2026 gratis por WhatsApp",
+    default: "MiFanBot — Información y Alertas del Mundial 2026 gratis por WhatsApp",
     template: "%s | MiFanBot",
   },
 
@@ -52,7 +52,7 @@ export const metadata: Metadata = {
     locale: "es_MX",
     url: BASE_URL,
     siteName: "MiFanBot",
-    title: "MiFanBot — Alertas del Mundial 2026 gratis por WhatsApp",
+    title: "MiFanBot — Información y Alertas del Mundial 2026 gratis por WhatsApp",
     description:
       "Alertas 15 min antes de cada partido, quiniela gratis y chatbot de fútbol con IA. Todo por WhatsApp. Sin app, sin registro.",
     images: [
@@ -68,7 +68,7 @@ export const metadata: Metadata = {
   // ── Twitter / X ──────────────────────────────────────────────────
   twitter: {
     card: "summary_large_image",
-    title: "MiFanBot — Alertas del Mundial 2026 gratis por WhatsApp",
+    title: "MiFanBot — Información y Alertas del Mundial 2026 gratis por WhatsApp",
     description:
       "Alertas 15 min antes de cada partido, quiniela gratis y chatbot de fútbol con IA. Todo por WhatsApp.",
     images: ["/og-image.png"],
