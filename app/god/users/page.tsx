@@ -121,7 +121,7 @@ export default async function GodUsersPage({
                     {u.country_code || "XX"}
                   </span>
                 </td>
-                <td className="px-6 py-4 font-mono">{u.phone}</td>
+                <td className="px-6 py-4 font-mono">{u.phone ? `+${u.phone.slice(0, 2)} ****${u.phone.slice(-4)}` : "—"}</td>
                 <td className="px-6 py-4">{formatDate(u.created_at)}</td>
                 <td className="px-6 py-4 text-center">{u.consultas_hoy}</td>
               </tr>

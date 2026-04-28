@@ -2,9 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { jwtVerify } from "jose";
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "ranking-mundial-26-secret-key-change-in-production"
-);
+if (!process.env.JWT_SECRET) throw new Error("JWT_SECRET env var is required");
+const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET);
 
 function getSupabaseAdmin() {
   return createClient(

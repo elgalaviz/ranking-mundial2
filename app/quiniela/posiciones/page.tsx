@@ -6,9 +6,8 @@ import Link from "next/link";
 import Image from "next/image";
 import PosicionesTabla from "./PosicionesTabla";
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "ranking-mundial-26-secret-key-change-in-production"
-);
+if (!process.env.JWT_SECRET) throw new Error("JWT_SECRET env var is required");
+const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET);
 
 async function getSession() {
   const cookieStore = await cookies();
