@@ -27,12 +27,12 @@ export function pronoGuardadoMessage(
 ): string {
   const ganancia = Math.round(apuesta * momio);
   const sponsorPart = sponsor
-    ? `En *${sponsor}* hubieras ganado *$${ganancia} pesos* 💰`
-    : `Si apuestas $${apuesta} y aciertas, hubieras ganado *$${ganancia} pesos* 💰`;
+    ? `Si apostaras $${apuesta} en *${sponsor}*, podrías ganar hasta *$${ganancia} pesos* 🎰`
+    : `Con un momio de *x${momio.toFixed(2)}*, en tu casa de apuestas favorita $200 se convertirían en *$${ganancia}* 🎰`;
   return (
-    `🔒 ¡Pronóstico guardado! Apostaste por *${equipoElegido}*.\n\n` +
+    `🔒 ¡Pronóstico guardado! Tu pick: *${equipoElegido}*.\n\n` +
     `${sponsorPart}\n\n` +
-    `_🎮 Solo entretenimiento · Sin dinero real_\n\n` +
+    `_Solo entretenimiento · Apuesta responsablemente_ 🎮\n\n` +
     `Te aviso cuando termine el partido. ⚽`
   );
 }
