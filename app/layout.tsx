@@ -1,8 +1,10 @@
 import "./globals.css";
 import { Metadata } from "next";
+import Script from "next/script";
 import ClientLayout from "@/components/layout/ClientLayout";
 
-const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://www.mifanbot.com";
+const rawUrl = process.env.NEXT_PUBLIC_APP_URL || "https://www.mifanbot.com";
+const BASE_URL = rawUrl.startsWith("http") ? rawUrl : `https://${rawUrl}`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
@@ -95,7 +97,23 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="es" suppressHydrationWarning>
       <body className="bg-white text-gray-900 antialiased" suppressHydrationWarning>
+        {/* Google Tag Manager (noscript) */}
+        <noscript>
+          <iframe
+            src="https://www.googletagmanager.com/ns.html?id=GTM-PG7M3LPP"
+            height="0" width="0"
+            style={{ display: "none", visibility: "hidden" }}
+          />
+        </noscript>
         <ClientLayout>{children}</ClientLayout>
+        {/* Google Tag Manager */}
+        <Script id="gtm" strategy="afterInteractive">
+          {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-PG7M3LPP');`}
+        </Script>
       </body>
     </html>
   );
