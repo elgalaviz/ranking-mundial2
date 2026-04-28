@@ -37,11 +37,15 @@ export default async function BotConfigPage() {
   if (user.email !== GOD_EMAIL) redirect("/god/dashboard");
 
   const db = getSupabaseAdmin();
-  const { data: config } = await db
-    .from("bot_config")
-    .select("prompt, updated_at")
-    .eq("id", "singleton")
-    .maybeSingle();
+  let config: { prompt: string; updated_at: string } | null = null;
+  try {
+    const { data } = await db
+      .from("bot_config")
+      .select("prompt, updated_at")
+      .eq("id", "singleton")
+      .maybeSingle();
+    config = data;
+  } catch { /* tabla aún no creada */ }
 
   const currentPrompt = config?.prompt ?? DEFAULT_SYSTEM_PROMPT;
   const isCustom = !!config?.prompt;

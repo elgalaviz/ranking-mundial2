@@ -523,19 +523,22 @@ export async function POST(req: NextRequest) {
 
     // ── 11. OFRECER PREDICCIÓN (si el bot respondió sobre un partido) ─
     if (firstPendingGame) {
+      const { equipo_local, equipo_visitante } = firstPendingGame;
+      const mkId = (res: string, price: number) =>
+        `prono~${res}~${equipo_local}~${equipo_visitante}~${price.toFixed(2)}`;
+
+      let buttons: { id: string; title: string }[] = [];
+
+      // Intentar obtener momios reales
       try {
         const events = await getWorldCupOdds();
-        const { equipo_local, equipo_visitante } = firstPendingGame;
-
         const event =
           findEventByTeamNormalized(events, equipo_local) ||
           findEventByTeamNormalized(events, equipo_visitante);
 
         if (event) {
-          const bookmaker = event.bookmakers[0];
-          const h2h = bookmaker?.markets.find((m) => m.key === "h2h");
+          const h2h = event.bookmakers[0]?.markets.find((m) => m.key === "h2h");
           const outcomes = h2h?.outcomes ?? [];
-
           const homeOut = outcomes.find((o) => o.name !== "Draw" &&
             normalizeStr(o.name).includes(normalizeStr(event.home_team).slice(0, 4))) ?? outcomes[0];
           const awayOut = outcomes.find((o) => o.name !== "Draw" && o !== homeOut) ?? outcomes[1];
@@ -544,27 +547,31 @@ export async function POST(req: NextRequest) {
           if (homeOut && awayOut) {
             const mkTitle = (name: string, price: number) =>
               `${name} (x${price.toFixed(2)})`.slice(0, 20);
-            const mkId = (res: string, price: number) =>
-              `prono~${res}~${equipo_local}~${equipo_visitante}~${price.toFixed(2)}`;
-
-            const buttons: { id: string; title: string }[] = [
+            buttons = [
               { id: mkId("local", homeOut.price), title: mkTitle(homeOut.name, homeOut.price) },
               { id: mkId("visitante", awayOut.price), title: mkTitle(awayOut.name, awayOut.price) },
             ];
-            if (drawOut) {
-              buttons.push({ id: mkId("empate", drawOut.price), title: mkTitle("Empate", drawOut.price) });
-            }
-
-            await sendWhatsAppReplyButtons({
-              accessToken, phoneNumberId, to: from,
-              body: `¿Quién crees que gane? 🎯`,
-              buttons: buttons.slice(0, 3),
-            });
+            if (drawOut) buttons.push({ id: mkId("empate", drawOut.price), title: mkTitle("Empate", drawOut.price) });
           }
         }
       } catch (e) {
         console.log("Sin momios para predicción:", e);
       }
+
+      // Fallback: botones sin momios
+      if (buttons.length === 0) {
+        buttons = [
+          { id: mkId("local", 1), title: equipo_local.slice(0, 20) },
+          { id: mkId("empate", 1), title: "Empate" },
+          { id: mkId("visitante", 1), title: equipo_visitante.slice(0, 20) },
+        ];
+      }
+
+      await sendWhatsAppReplyButtons({
+        accessToken, phoneNumberId, to: from,
+        body: `¿Quién crees que gane? 🎯`,
+        buttons: buttons.slice(0, 3),
+      });
     }
 
     return new NextResponse("ok", { status: 200 });
