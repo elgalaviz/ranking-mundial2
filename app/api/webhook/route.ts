@@ -295,7 +295,7 @@ export async function POST(req: NextRequest) {
 
     if (esDescargaCalendario) {
       await sendWhatsAppDocument({
-        accessToken, phoneNumberId, to,
+        accessToken, phoneNumberId, to: from,
         link: `${APP_URL}/api/calendario`,
         filename: "Mundial2026.ics",
         caption: "📅 Aquí está tu calendario del Mundial 2026. Ábrelo para agregar todos los partidos a tu celular con alertas 15 min antes. ⚽🏆",
