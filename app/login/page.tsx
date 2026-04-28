@@ -46,27 +46,21 @@ export default function LoginPage() {
         
         {/* ✅ Logo agregado */}
         <div className="mb-6 flex justify-center">
-          <div className="rounded-2xl bg-white p-3 shadow-lg ring-1 ring-black/5">
-            <Image
-              src="/Prospekt-app.png"
-              alt="Prospekto"
-              width={64}
-              height={64}
-              priority
-              className="h-16 w-16 object-contain"
-            />
-          </div>
+          <Image
+            src="/mifanbot-h.svg"
+            alt="MiFanBot"
+            width={160}
+            height={42}
+            priority
+          />
         </div>
 
         <div className="mb-8 text-center">
-          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#7d679f]">
-            Sistema
-          </p>
-          <h1 className="mt-3 text-3xl font-bold tracking-tight text-slate-900">
-            Prospekto
+          <h1 className="mt-3 text-2xl font-bold tracking-tight text-slate-900">
+            Panel de administración
           </h1>
           <p className="mt-2 text-sm text-slate-600">
-            Accede a tu panel para revisar leads, conversaciones y seguimiento comercial.
+            Accede con tu cuenta para gestionar MiFanBot.
           </p>
         </div>
 

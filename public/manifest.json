@@ -1,14 +1,14 @@
 {
-  "name": "Prospekto",
-  "short_name": "Prospekto",
-  "description": "SaaS que automatiza respuestas con IA y organiza leads para equipos de ventas",
-  "start_url": "/dashboard",
+  "name": "MiFanBot",
+  "short_name": "MiFanBot",
+  "description": "Alertas del Mundial 2026 y chatbot de fútbol gratis por WhatsApp",
+  "start_url": "/",
   "display": "standalone",
-  "background_color": "#f7f5fb",
-  "theme_color": "#8c7ac6",
+  "background_color": "#ffffff",
+  "theme_color": "#006847",
   "icons": [
     {
-      "src": "/Prospekt-app.png",
+      "src": "/mifanbot.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
