@@ -392,20 +392,27 @@ export async function POST(req: NextRequest) {
       let buttons: { id: string; title: string }[] = [];
 
       try {
+        const normTeam = (s: string) =>
+          s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").split(" ")[0];
+
         const events = await getWorldCupOdds();
-        const event = findEventByTeam(events, pronoMatch.equipo_local);
+        const event = findEventByTeam(events, pronoMatch.equipo_local) ?? findEventByTeam(events, pronoMatch.equipo_visitante);
         if (event) {
           const h2h = event.bookmakers[0]?.markets.find((m) => m.key === "h2h");
           const outcomes = h2h?.outcomes ?? [];
-          const homeOdds = outcomes.find((o) => o.name === event.home_team);
-          const awayOdds = outcomes.find((o) => o.name === event.away_team);
           const drawOdds = outcomes.find((o) => o.name === "Draw");
 
-          if (homeOdds && awayOdds && drawOdds) {
+          // Buscar por nombre, no por posición home/away de la API
+          const localNorm = normTeam(pronoMatch.equipo_local);
+          const visitanteNorm = normTeam(pronoMatch.equipo_visitante);
+          const localOdds = outcomes.find((o) => normTeam(o.name).startsWith(localNorm) || localNorm.startsWith(normTeam(o.name)));
+          const visitanteOdds = outcomes.find((o) => normTeam(o.name).startsWith(visitanteNorm) || visitanteNorm.startsWith(normTeam(o.name)));
+
+          if (localOdds && visitanteOdds && drawOdds) {
             buttons = [
-              { id: `prono_L_${Math.round(homeOdds.price * 100)}_${idShort}`, title: `${short(pronoMatch.equipo_local)} ${homeOdds.price.toFixed(2)}x`.slice(0, 20) },
+              { id: `prono_L_${Math.round(localOdds.price * 100)}_${idShort}`, title: `${short(pronoMatch.equipo_local)} ${localOdds.price.toFixed(2)}x`.slice(0, 20) },
               { id: `prono_E_${Math.round(drawOdds.price * 100)}_${idShort}`, title: `Empate ${drawOdds.price.toFixed(2)}x`.slice(0, 20) },
-              { id: `prono_V_${Math.round(awayOdds.price * 100)}_${idShort}`, title: `${short(pronoMatch.equipo_visitante)} ${awayOdds.price.toFixed(2)}x`.slice(0, 20) },
+              { id: `prono_V_${Math.round(visitanteOdds.price * 100)}_${idShort}`, title: `${short(pronoMatch.equipo_visitante)} ${visitanteOdds.price.toFixed(2)}x`.slice(0, 20) },
             ];
           }
         }
