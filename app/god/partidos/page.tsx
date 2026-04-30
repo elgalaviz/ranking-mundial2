@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Pencil } from "lucide-react";
 
 type Partido = {
   id: string;
@@ -29,7 +30,7 @@ function formatFecha(utc: string) {
 
 function getDayKey(utc: string) {
   return new Date(utc).toLocaleDateString("es-MX", {
-    timeZone: "America/Mexico_City",
+    timeZone: "UTC",
     weekday: "long", day: "numeric", month: "long", year: "numeric",
   });
 }
@@ -275,7 +276,7 @@ export default function PartidosAdminPage() {
                               <span className={`text-xs px-2 py-0.5 rounded-full ${p.alerta_enviada ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"}`}>
                                 {p.alerta_enviada ? "✓ Alerta" : "Pendiente"}
                               </span>
-                              <button onClick={() => startEdit(p)} className="text-xs border border-gray-300 hover:bg-gray-100 px-3 py-1 rounded text-gray-600">Editar</button>
+                              <button onClick={() => startEdit(p)} className="p-1.5 rounded hover:bg-gray-100 text-gray-400 hover:text-gray-700" title="Editar"><Pencil className="w-3.5 h-3.5" /></button>
                               <button onClick={() => calcularPuntos(p.id)} className="text-xs border border-blue-200 hover:bg-blue-50 px-3 py-1 rounded text-blue-600">Pts</button>
                               <button onClick={() => deletePartido(p.id)} className="text-xs border border-red-200 hover:bg-red-50 px-3 py-1 rounded text-red-500">✕</button>
                             </div>
