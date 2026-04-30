@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Pencil } from "lucide-react";
+import { Pencil, Send } from "lucide-react";
 
 type Partido = {
   id: string;
@@ -103,6 +103,16 @@ export default function PartidosAdminPage() {
       body: JSON.stringify({ id }),
     });
     fetchPartidos();
+  }
+
+  async function testAlerta(partidoId: string) {
+    const res = await fetch("/api/admin/test-alerta", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ partido_id: partidoId }),
+    });
+    const data = await res.json();
+    alert(res.ok ? `✅ Alerta de prueba enviada a ${data.enviado_a}` : `❌ Error: ${data.error}`);
   }
 
   async function calcularPuntos(partidoId: string) {
@@ -269,6 +279,7 @@ export default function PartidosAdminPage() {
                               <span className={`text-xs px-2 py-0.5 rounded-full ${p.alerta_enviada ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"}`}>
                                 {p.alerta_enviada ? "✓ Alerta" : "Pendiente"}
                               </span>
+                              <button onClick={() => testAlerta(p.id)} className="p-1.5 rounded hover:bg-blue-50 text-gray-400 hover:text-blue-600" title="Enviar alerta de prueba"><Send className="w-3.5 h-3.5" /></button>
                               <button onClick={() => startEdit(p)} className="p-1.5 rounded hover:bg-gray-100 text-gray-400 hover:text-gray-700" title="Editar"><Pencil className="w-3.5 h-3.5" /></button>
                               <button onClick={() => calcularPuntos(p.id)} className="text-xs border border-blue-200 hover:bg-blue-50 px-3 py-1 rounded text-blue-600">Pts</button>
                               <button onClick={() => deletePartido(p.id)} className="text-xs border border-red-200 hover:bg-red-50 px-3 py-1 rounded text-red-500">✕</button>
