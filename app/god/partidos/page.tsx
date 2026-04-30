@@ -226,9 +226,18 @@ export default function PartidosAdminPage() {
                               <input value={editForm.equipo_visitante || ""} onChange={e => setEditForm(f => ({ ...f, equipo_visitante: e.target.value }))} className="border border-gray-300 rounded px-2 py-1 text-sm w-full" />
                             </div>
                             <div>
-                              <label className="text-xs text-gray-500 block mb-1">Fecha/hora UTC</label>
-                              <input type="datetime-local" value={editForm.fecha_utc ? new Date(editForm.fecha_utc).toISOString().slice(0, 16) : ""} onChange={e => setEditForm(f => ({ ...f, fecha_utc: new Date(e.target.value).toISOString() }))} className="border border-gray-300 rounded px-2 py-1 text-sm w-full" />
+                              <label className="text-xs text-gray-500 block mb-1">Fecha UTC</label>
+                              <input type="date" value={editForm.fecha_utc ? new Date(editForm.fecha_utc).toISOString().slice(0, 10) : ""} onChange={e => setEditForm(f => {
+                                const hora = f.fecha_utc ? new Date(f.fecha_utc).toISOString().slice(11, 16) : "00:00";
+                                return { ...f, fecha_utc: new Date(`${e.target.value}T${hora}:00Z`).toISOString() };
+                              })} className="border border-gray-300 rounded px-2 py-1 text-sm w-full" />
                             </div>
+                            <div>
+                              <label className="text-xs text-gray-500 block mb-1">Hora UTC</label>
+                              <input type="time" value={editForm.fecha_utc ? new Date(editForm.fecha_utc).toISOString().slice(11, 16) : ""} onChange={e => setEditForm(f => {
+                                const fecha = f.fecha_utc ? new Date(f.fecha_utc).toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10);
+                                return { ...f, fecha_utc: new Date(`${fecha}T${e.target.value}:00Z`).toISOString() };
+                              })} className="border border-gray-300 rounded px-2 py-1 text-sm w-full" /></div>
                             <div>
                               <label className="text-xs text-gray-500 block mb-1">Ciudad</label>
                               <input value={editForm.ciudad || ""} onChange={e => setEditForm(f => ({ ...f, ciudad: e.target.value }))} className="border border-gray-300 rounded px-2 py-1 text-sm w-full" />
