@@ -20,17 +20,10 @@ type Partido = {
 
 const FASES = ["Grupos", "Dieciseisavos", "Octavos", "Cuartos", "Semifinal", "Tercer lugar", "Final"];
 
-function formatFecha(utc: string) {
-  return new Date(utc).toLocaleString("es-MX", {
-    timeZone: "America/Mexico_City",
-    day: "2-digit", month: "short",
-    hour: "2-digit", minute: "2-digit",
-  });
-}
 
 function getDayKey(utc: string) {
   return new Date(utc).toLocaleDateString("es-MX", {
-    timeZone: "UTC",
+    timeZone: "America/Mexico_City",
     weekday: "long", day: "numeric", month: "long", year: "numeric",
   });
 }
