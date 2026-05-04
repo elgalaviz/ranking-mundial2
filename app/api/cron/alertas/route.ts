@@ -1,18 +1,31 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { sendWhatsAppText } from "@/lib/ai/sendWhatsAppText";
+import { sendWhatsAppTemplate } from "@/lib/ai/sendWhatsAppInteractive";
 
 export const runtime = "nodejs";
 
 const CRON_SECRET = process.env.CRON_SECRET || "";
 const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN || "";
 const PHONE_NUMBER_ID = process.env.WHATSAPP_PHONE_NUMBER_ID || "";
+const ALERT_TEMPLATE_NAME = process.env.ALERT_TEMPLATE_NAME || "";
 
 function getSupabase() {
   return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
+}
+
+function buildTemplateParams(partido: Record<string, string>, patrocinador: string | null): string[] {
+  return [
+    partido.equipo_local,                                                              // {{1}}
+    partido.equipo_visitante,                                                          // {{2}}
+    partido.estadio || "",                                                             // {{3}}
+    partido.ciudad || "",                                                              // {{4}}
+    partido.fase ? `${partido.fase}${partido.grupo ? ` · Grupo ${partido.grupo}` : ""}` : "", // {{5}}
+    patrocinador || "",                                                                // {{6}}
+  ];
 }
 
 function formatAlertMessage(partido: Record<string, string>, patrocinador: string | null): string {
@@ -84,14 +97,28 @@ export async function POST(req: NextRequest) {
     for (const partido of partidos) {
       const mensaje = formatAlertMessage(partido, mensajePatrocinador);
 
+      const idShort = partido.id.replace(/-/g, "");
+      const buttonPayload = `quiero_pronostico_${idShort}`;
+
       // Enviar a todos los usuarios
-      const envios = usuarios.map((user: Record<string, string>) =>
-        sendWhatsAppText({
-          accessToken: WHATSAPP_TOKEN,
-          phoneNumberId: PHONE_NUMBER_ID,
-          to: user.phone,
-          body: mensaje,
-        }).then(async (result) => {
+      const envios = usuarios.map((user: Record<string, string>) => {
+        const send = ALERT_TEMPLATE_NAME
+          ? sendWhatsAppTemplate({
+              accessToken: WHATSAPP_TOKEN,
+              phoneNumberId: PHONE_NUMBER_ID,
+              to: user.phone,
+              templateName: ALERT_TEMPLATE_NAME,
+              bodyParams: buildTemplateParams(partido, mensajePatrocinador),
+              buttonPayload,
+            })
+          : sendWhatsAppText({
+              accessToken: WHATSAPP_TOKEN,
+              phoneNumberId: PHONE_NUMBER_ID,
+              to: user.phone,
+              body: mensaje,
+            });
+
+        return send.then(async (result) => {
           if (result.ok) {
             await supabase.from("registros_whatsapp").insert({
               user_id: user.id,
@@ -100,8 +127,8 @@ export async function POST(req: NextRequest) {
             });
             totalEnviadas++;
           }
-        })
-      );
+        });
+      });
 
       await Promise.allSettled(envios);
 

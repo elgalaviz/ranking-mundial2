@@ -2,17 +2,30 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { createClient as createServerClient } from "@/lib/supabase/server";
 import { sendWhatsAppText } from "@/lib/ai/sendWhatsAppText";
+import { sendWhatsAppTemplate } from "@/lib/ai/sendWhatsAppInteractive";
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "rene.galaviz@gmail.com";
 const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN || "";
 const PHONE_NUMBER_ID = process.env.WHATSAPP_PHONE_NUMBER_ID || "";
 const ADMIN_PHONE = process.env.ADMIN_PHONE || "";
+const ALERT_TEMPLATE_NAME = process.env.ALERT_TEMPLATE_NAME || "";
 
 function getSupabase() {
   return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
+}
+
+function buildTemplateParams(partido: Record<string, string>, patrocinador: string | null): string[] {
+  return [
+    partido.equipo_local,
+    partido.equipo_visitante,
+    partido.estadio || "",
+    partido.ciudad || "",
+    partido.fase ? `${partido.fase}${partido.grupo ? ` · Grupo ${partido.grupo}` : ""}` : "",
+    patrocinador || "",
+  ];
 }
 
 function formatAlertMessage(partido: Record<string, string>, patrocinador: string | null): string {
@@ -71,14 +84,24 @@ export async function POST(req: NextRequest) {
     .limit(1)
     .maybeSingle();
 
-  const mensaje = formatAlertMessage(partido, patrocinador?.mensaje_texto || null);
+  const mensajePatrocinador = patrocinador?.mensaje_texto || null;
+  const idShort = partido.id.replace(/-/g, "");
 
-  const result = await sendWhatsAppText({
-    accessToken: WHATSAPP_TOKEN,
-    phoneNumberId: PHONE_NUMBER_ID,
-    to: ADMIN_PHONE,
-    body: mensaje,
-  });
+  const result = ALERT_TEMPLATE_NAME
+    ? await sendWhatsAppTemplate({
+        accessToken: WHATSAPP_TOKEN,
+        phoneNumberId: PHONE_NUMBER_ID,
+        to: ADMIN_PHONE,
+        templateName: ALERT_TEMPLATE_NAME,
+        bodyParams: buildTemplateParams(partido, mensajePatrocinador),
+        buttonPayload: `quiero_pronostico_${idShort}`,
+      })
+    : await sendWhatsAppText({
+        accessToken: WHATSAPP_TOKEN,
+        phoneNumberId: PHONE_NUMBER_ID,
+        to: ADMIN_PHONE,
+        body: formatAlertMessage(partido, mensajePatrocinador),
+      });
 
   if (!result.ok) {
     return NextResponse.json({ error: "Error enviando WhatsApp", detail: result }, { status: 500 });

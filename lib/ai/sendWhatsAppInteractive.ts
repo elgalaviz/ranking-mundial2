@@ -59,6 +59,54 @@ export async function sendWhatsAppReplyButtons({ accessToken, phoneNumberId, to,
   return sendWhatsAppMessage({ accessToken, phoneNumberId, to, message });
 }
 
+// --- Función para enviar plantilla con botón de respuesta rápida ---
+export async function sendWhatsAppTemplate({
+  accessToken,
+  phoneNumberId,
+  to,
+  templateName,
+  languageCode = "es_MX",
+  bodyParams = [],
+  buttonPayload,
+}: {
+  accessToken: string;
+  phoneNumberId: string;
+  to: string;
+  templateName: string;
+  languageCode?: string;
+  bodyParams?: string[];
+  buttonPayload?: string;
+}) {
+  const components: object[] = [];
+
+  if (bodyParams.length > 0) {
+    components.push({
+      type: "body",
+      parameters: bodyParams.map((p) => ({ type: "text", text: p })),
+    });
+  }
+
+  if (buttonPayload) {
+    components.push({
+      type: "button",
+      sub_type: "quick_reply",
+      index: "0",
+      parameters: [{ type: "payload", payload: buttonPayload }],
+    });
+  }
+
+  const message = {
+    type: "template",
+    template: {
+      name: templateName,
+      language: { code: languageCode },
+      components,
+    },
+  };
+
+  return sendWhatsAppMessage({ accessToken, phoneNumberId, to, message });
+}
+
 // --- Función específica para Mensajes de Lista (List Messages) ---
 interface ListRow {
     id: string;
