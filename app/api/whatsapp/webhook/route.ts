@@ -91,6 +91,9 @@ export async function POST(req: NextRequest) {
       if (iType === "button_reply") text = message.interactive.button_reply.id;
       else if (iType === "list_reply") text = message.interactive.list_reply.id;
       else return new NextResponse("ok", { status: 200 });
+    } else if (message.type === "button") {
+      // Quick reply desde plantilla de template
+      text = message.button?.payload || "";
     } else if (message.type === "text") {
       text = (message.text?.body || "").trim();
     } else {
