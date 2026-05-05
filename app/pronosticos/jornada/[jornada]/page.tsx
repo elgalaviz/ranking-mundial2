@@ -249,6 +249,7 @@ export default function JornadaPage() {
 
   const totalPicks = pronos.size;
   const totalPartidos = partidos.length;
+  const puntosObtenidos = Array.from(pronos.values()).filter(p => p.acerto === true).length * 3;
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -264,6 +265,14 @@ export default function JornadaPage() {
       </nav>
 
       <div className="max-w-2xl mx-auto px-4 py-6">
+        {/* Puntos obtenidos */}
+        {!loading && puntosObtenidos > 0 && (
+          <div className="bg-[#006847] text-white rounded-2xl px-5 py-3 mb-4 flex items-center justify-between">
+            <span className="text-sm font-medium opacity-90">Puntos obtenidos</span>
+            <span className="text-2xl font-black">{puntosObtenidos} pts</span>
+          </div>
+        )}
+
         {/* Tabs jornadas */}
         <div className="flex gap-2 mb-6">
           {[1, 2, 3].map((j) => (
