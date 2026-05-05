@@ -33,22 +33,52 @@ export async function POST() {
     }
 
     const supabase = getSupabase();
-    const rows = fixtures.map(fixtureToPartido);
 
-    // upsert: si el partido ya existe (por fecha+equipos), lo actualiza
-    const { error, count } = await supabase
+    // Traer partidos existentes para comparar por equipos
+    const { data: existentes } = await supabase
       .from("partidos")
-      .upsert(rows, {
-        onConflict: "equipo_local,equipo_visitante,fecha_utc",
-        ignoreDuplicates: false,
-      });
+      .select("id, equipo_local, equipo_visitante");
 
-    if (error) throw error;
+    const existentesMap = new Map(
+      (existentes ?? []).map((p) => [`${p.equipo_local}|${p.equipo_visitante}`, p.id])
+    );
+
+    let actualizados = 0;
+    let insertados = 0;
+
+    for (const f of fixtures) {
+      const row = fixtureToPartido(f);
+      const key = `${row.equipo_local}|${row.equipo_visitante}`;
+      const idExistente = existentesMap.get(key);
+
+      if (idExistente) {
+        // Solo actualizar jornada, fase, estadio, ciudad — NO tocar fecha_utc ni alerta_enviada
+        const { error } = await supabase
+          .from("partidos")
+          .update({
+            jornada: row.jornada,
+            fase: row.fase,
+            estadio: row.estadio,
+            ciudad: row.ciudad,
+          })
+          .eq("id", idExistente);
+
+        if (!error) actualizados++;
+      } else {
+        // Nuevo partido: insertar completo
+        const { error } = await supabase
+          .from("partidos")
+          .insert(row);
+
+        if (!error) insertados++;
+      }
+    }
 
     return NextResponse.json({
       ok: true,
-      sincronizados: fixtures.length,
-      insertados_o_actualizados: count,
+      total_api: fixtures.length,
+      actualizados,
+      insertados,
     });
   } catch (err) {
     console.error("sync-partidos error:", err);
