@@ -23,7 +23,8 @@ export function pronoGuardadoMessage(
   equipoElegido: string,
   momio: number,
   apuesta = 200,
-  sponsor?: string
+  sponsor?: string,
+  appUrl?: string
 ): string {
   const tieneOdds = momio > 1.0;
   let sponsorPart = "";
@@ -33,10 +34,12 @@ export function pronoGuardadoMessage(
       ? `Si apostaras $${apuesta} en *${sponsor}*, podrías ganar hasta *$${ganancia} pesos* 🎰\n\n_Solo entretenimiento · Apuesta responsablemente_ 🎮\n\n`
       : `Con un momio de *x${momio.toFixed(2)}*, en tu casa de apuestas favorita $${apuesta} se convertirían en *$${ganancia}* 🎰\n\n_Solo entretenimiento · Apuesta responsablemente_ 🎮\n\n`;
   }
+  const verLink = appUrl ? `\n\n📋 Ver mis pronósticos: ${appUrl}/pronosticos` : "";
   return (
     `🔒 ¡Pronóstico guardado! Tu pick: *${equipoElegido}*.\n\n` +
     sponsorPart +
-    `Te aviso cuando termine el partido. ⚽`
+    `Te aviso cuando termine el partido. ⚽` +
+    verLink
   );
 }
 

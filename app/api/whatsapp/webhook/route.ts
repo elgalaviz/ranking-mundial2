@@ -15,6 +15,7 @@ const PHONE_NUMBER_ID = process.env.WHATSAPP_PHONE_NUMBER_ID || "";
 const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN || "";
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://rankingmundial26.com";
 const PRONO_SPONSOR = process.env.PRONO_SPONSOR || "";
+const WA_BOT_NUMBER = process.env.WA_BOT_NUMBER || "5218112993097";
 const MAX_FREE_QUERIES = 5;
 
 const MATCH_TRIGGERS = [
@@ -104,6 +105,102 @@ export async function POST(req: NextRequest) {
     const incomingText = text.toLowerCase();
     console.log(`📩 Mensaje de ${from} (${profileName}): "${text}"`);
 
+    // --- Botón "Retar a un amigo" ---
+    if (text.startsWith("retar_") && text.length === 38) {
+      const idShort = text.replace("retar_", "");
+      const partidoId = [
+        idShort.slice(0, 8), idShort.slice(8, 12),
+        idShort.slice(12, 16), idShort.slice(16, 20), idShort.slice(20),
+      ].join("-");
+
+      const { data: partido } = await supabase
+        .from("partidos")
+        .select("equipo_local, equipo_visitante")
+        .eq("id", partidoId)
+        .single();
+
+      if (!partido) {
+        await sendWhatsAppText({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from, body: "No encontré el partido 😕" });
+        return new NextResponse("ok", { status: 200 });
+      }
+
+      const retoTexto = encodeURIComponent(`Hola FanBot, me retaron y quiero pronosticar el juego de ${partido.equipo_local} vs ${partido.equipo_visitante}`);
+      const retoLink = `https://wa.me/${WA_BOT_NUMBER}?text=${retoTexto}`;
+
+      await sendWhatsAppText({
+        accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from,
+        body: `🏆 *¡Reta a un amigo!*\n\nMándale este link y que se atreva a ganarle a tu pronóstico de *${partido.equipo_local} vs ${partido.equipo_visitante}*:\n\n👉 ${retoLink}\n\nAl abrirlo, solo tiene que tocar Enviar y el bot le manda los botones para pronosticar. ⚽`,
+      });
+      return new NextResponse("ok", { status: 200 });
+    }
+
+    // --- Amigo retado llega al bot ---
+    if (incomingText.includes("me retaron y quiero pronosticar el juego de")) {
+      const match = text.match(/el juego de (.+?) vs (.+)/i);
+      if (!match) {
+        await sendWhatsAppText({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from, body: "¡Bienvenido al reto! 🏆 Dime qué partido quieres pronosticar." });
+        return new NextResponse("ok", { status: 200 });
+      }
+
+      const [, localRaw, visitanteRaw] = match;
+      const { data: partido } = await supabase
+        .from("partidos")
+        .select("id, equipo_local, equipo_visitante, fecha_utc")
+        .ilike("equipo_local", `%${localRaw.trim().slice(0, 6)}%`)
+        .ilike("equipo_visitante", `%${visitanteRaw.trim().slice(0, 6)}%`)
+        .maybeSingle();
+
+      if (!partido || new Date(partido.fecha_utc) < new Date()) {
+        await sendWhatsAppText({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from, body: "¡Bienvenido al reto! 🏆 Ese partido ya comenzó o no lo encontré, pero puedes pronosticar cualquier otro partido preguntándome por él. ⚽" });
+        return new NextResponse("ok", { status: 200 });
+      }
+
+      const idShortClean = partido.id.replace(/-/g, "");
+      const short = (name: string) => name.split(" ")[0].slice(0, 9);
+      let buttons: { id: string; title: string }[] = [];
+
+      try {
+        const { getWorldCupOdds, findEventByTeam } = await import("@/lib/odds/client");
+        const normTeam = (s: string) => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").split(" ")[0];
+        const events = await getWorldCupOdds();
+        const event = findEventByTeam(events, partido.equipo_local) ?? findEventByTeam(events, partido.equipo_visitante);
+        if (event) {
+          const h2h = event.bookmakers[0]?.markets.find((m: { key: string }) => m.key === "h2h");
+          const outcomes = h2h?.outcomes ?? [];
+          const drawOdds = outcomes.find((o: { name: string }) => o.name === "Draw");
+          const localNorm = normTeam(partido.equipo_local);
+          const visitanteNorm = normTeam(partido.equipo_visitante);
+          const localOdds = outcomes.find((o: { name: string }) => normTeam(o.name).startsWith(localNorm) || localNorm.startsWith(normTeam(o.name)));
+          const visitanteOdds = outcomes.find((o: { name: string }) => normTeam(o.name).startsWith(visitanteNorm) || visitanteNorm.startsWith(normTeam(o.name)));
+          if (localOdds && visitanteOdds && drawOdds) {
+            buttons = [
+              { id: `prono_L_${Math.round(localOdds.price * 100)}_${idShortClean}`, title: `${short(partido.equipo_local)} ${localOdds.price.toFixed(2)}x`.slice(0, 20) },
+              { id: `prono_E_${Math.round(drawOdds.price * 100)}_${idShortClean}`, title: `Empate ${drawOdds.price.toFixed(2)}x`.slice(0, 20) },
+              { id: `prono_V_${Math.round(visitanteOdds.price * 100)}_${idShortClean}`, title: `${short(partido.equipo_visitante)} ${visitanteOdds.price.toFixed(2)}x`.slice(0, 20) },
+            ];
+          }
+        }
+      } catch (e) {
+        console.error("Error obteniendo momios para reto:", e);
+      }
+
+      if (buttons.length === 0) {
+        buttons = [
+          { id: `prono_L_100_${idShortClean}`, title: short(partido.equipo_local).slice(0, 20) },
+          { id: `prono_E_100_${idShortClean}`, title: "Empate" },
+          { id: `prono_V_100_${idShortClean}`, title: short(partido.equipo_visitante).slice(0, 20) },
+        ];
+      }
+
+      await sendWhatsAppReplyButtons({
+        accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from,
+        body: `🏆 *¡Te aceptamos el reto!*\n\n¿Cómo crees que quede *${partido.equipo_local} vs ${partido.equipo_visitante}*?`,
+        buttons,
+        footer: "🎮 Solo entretenimiento · Sin dinero real",
+      });
+      return new NextResponse("ok", { status: 200 });
+    }
+
     // --- Confirmar cambio de pronóstico ---
     if (text.startsWith("cambiar_prono_") && text.split("_").length === 5) {
       const [, , outcome, momio100Str, idShort] = text.split("_");
@@ -134,7 +231,12 @@ export async function POST(req: NextRequest) {
         .eq("equipo_local", partido.equipo_local)
         .eq("equipo_visitante", partido.equipo_visitante);
 
-      await sendWhatsAppText({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from, body: pronoGuardadoMessage(equipoElegido, momio, 200, PRONO_SPONSOR) });
+      const idShortCleanCambio = partido.id.replace(/-/g, "");
+      await sendWhatsAppReplyButtons({
+        accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from,
+        body: pronoGuardadoMessage(equipoElegido, momio, 200, PRONO_SPONSOR, APP_URL),
+        buttons: [{ id: `retar_${idShortCleanCambio}`, title: "🏆 Retar a un amigo" }],
+      });
       return new NextResponse("ok", { status: 200 });
     }
 
@@ -180,6 +282,11 @@ export async function POST(req: NextRequest) {
         .maybeSingle();
 
       if (existing) {
+        if (existing.pronostico === pronostico) {
+          const labels: Record<string, string> = { local: partido.equipo_local, empate: "Empate", visitante: partido.equipo_visitante };
+          await sendWhatsAppText({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from, body: `Ya tienes guardado ese mismo pronóstico: *${labels[existing.pronostico]}* 👍 ¡Suerte!\n\n📋 Ver mis pronósticos: ${APP_URL}/pronosticos` });
+          return new NextResponse("ok", { status: 200 });
+        }
         const labels: Record<string, string> = { local: partido.equipo_local, empate: "Empate", visitante: partido.equipo_visitante };
         const idShortClean = partido.id.replace(/-/g, "");
         await sendWhatsAppReplyButtons({
@@ -202,7 +309,12 @@ export async function POST(req: NextRequest) {
         fecha_partido: partido.fecha_utc,
       });
 
-      await sendWhatsAppText({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from, body: pronoGuardadoMessage(equipoElegido, momio, 200, PRONO_SPONSOR) });
+      const idShortClean2 = partido.id.replace(/-/g, "");
+      await sendWhatsAppReplyButtons({
+        accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from,
+        body: pronoGuardadoMessage(equipoElegido, momio, 200, PRONO_SPONSOR, APP_URL),
+        buttons: [{ id: `retar_${idShortClean2}`, title: "🏆 Retar a un amigo" }],
+      });
       return new NextResponse("ok", { status: 200 });
     }
 
