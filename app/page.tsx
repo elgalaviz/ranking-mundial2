@@ -164,7 +164,7 @@ export default async function LandingPage() {
         </div>
       </section>
 
-      {/* ── QUINIELA ──────────────────────────────────── */}
+      {/* ── PRONÓSTICOS ───────────────────────────────── */}
       <section className="bg-gray-50 py-20 border-y border-gray-100">
         <div className="max-w-6xl mx-auto px-6">
 
@@ -173,26 +173,26 @@ export default async function LandingPage() {
               <span className="w-2 h-2 bg-[#006847] rounded-full animate-pulse" />
               Ya disponible
             </div>
-            <h2 className="text-3xl font-black text-gray-900">Quiniela Mundial 2026</h2>
-            <p className="text-gray-500 mt-2 text-sm">Predice resultados, gana puntos y compite con todos</p>
+            <h2 className="text-3xl font-black text-gray-900">Pronósticos Mundial 2026</h2>
+            <p className="text-gray-500 mt-2 text-sm">Pronostica cada partido por WhatsApp y ve tu historial en la web</p>
           </div>
 
           <div className="grid lg:grid-cols-2 gap-8 items-start">
 
-            {/* Quiniela pública */}
+            {/* Pronósticos */}
             <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm">
-              <div className="text-4xl mb-4">🏆</div>
+              <div className="text-4xl mb-4">🎯</div>
               <div className="inline-block bg-[#006847]/10 text-[#006847] text-xs font-bold px-2 py-1 rounded-full mb-3">GRATIS</div>
-              <h3 className="text-xl font-black text-gray-900 mb-2">Quiniela Global</h3>
+              <h3 className="text-xl font-black text-gray-900 mb-2">Pronostica por WhatsApp</h3>
               <p className="text-gray-500 text-sm mb-6 leading-relaxed">
-                Ingresa con tu número de WhatsApp, predice los marcadores de cada partido y compite contra todos los participantes en el ranking general.
+                Antes de cada partido te mandamos los momios y con un toque das tu pronóstico. Al terminar te avisamos si acertaste y ves todo tu historial en la web.
               </p>
               <ul className="space-y-2 mb-8">
                 {[
-                  "6 pts por marcador exacto",
-                  "3 pts por resultado correcto",
-                  "Ranking en tiempo real",
-                  "Notificaciones por WhatsApp",
+                  "Momios en tiempo real por partido",
+                  "Pronóstico con un toque: Local, Empate o Visita",
+                  "Notificación al terminar el partido",
+                  "Historial completo en mifanbot.com",
                 ].map(item => (
                   <li key={item} className="flex items-center gap-2 text-sm text-gray-700">
                     <span className="text-[#006847] font-bold">✓</span> {item}
@@ -200,20 +200,20 @@ export default async function LandingPage() {
                 ))}
               </ul>
               <a
-                href="/quiniela"
+                href="/pronosticos"
                 className="block w-full py-3 bg-[#006847] hover:bg-green-800 text-white font-bold text-center rounded-xl transition-colors"
               >
-                Entrar a la Quiniela →
+                Ver mis pronósticos →
               </a>
             </div>
 
-            {/* Ligas privadas */}
+            {/* Grupos privados */}
             <div className="bg-white border-2 border-[#006847] rounded-2xl p-8 shadow-md relative overflow-hidden">
               <div className="absolute top-4 right-4 bg-[#006847] text-white text-xs font-bold px-3 py-1 rounded-full">NUEVO</div>
-              <div className="text-4xl mb-4">⚽</div>
-              <h3 className="text-xl font-black text-gray-900 mb-2">Liga Privada</h3>
+              <div className="text-4xl mb-4">👥</div>
+              <h3 className="text-xl font-black text-gray-900 mb-2">Grupos Privados</h3>
               <p className="text-gray-500 text-sm mb-6 leading-relaxed">
-                Crea tu propia quiniela con familia o amigos. Código exclusivo, ranking privado y resultados por WhatsApp después de cada partido.
+                Compite con familia o amigos. Código exclusivo, ranking privado y resultados por WhatsApp después de cada partido.
               </p>
 
               <div className="grid grid-cols-2 gap-3 mb-8">
@@ -233,7 +233,7 @@ export default async function LandingPage() {
                 href="/quiniela/ligas/nueva"
                 className="block w-full py-3 bg-[#006847] hover:bg-green-800 text-white font-bold text-center rounded-xl transition-colors"
               >
-                Crear mi Liga Privada →
+                Crear mi Grupo →
               </a>
               <p className="text-center text-xs text-gray-400 mt-3">Pago único · Válido todo el Mundial</p>
             </div>
