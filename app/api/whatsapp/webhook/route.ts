@@ -124,19 +124,22 @@ export async function POST(req: NextRequest) {
         return new NextResponse("ok", { status: 200 });
       }
 
-      const retoTexto = encodeURIComponent(`Hola FanBot, me retaron y quiero pronosticar el juego de ${partido.equipo_local} vs ${partido.equipo_visitante}`);
-      const retoLink = `https://wa.me/${WA_BOT_NUMBER}?text=${retoTexto}`;
+      const retoLink = `${APP_URL}/reto/${idShort}`;
 
       await sendWhatsAppText({
         accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from,
-        body: `🏆 *¡Reta a un amigo!*\n\nMándale este link y que se atreva a ganarle a tu pronóstico de *${partido.equipo_local} vs ${partido.equipo_visitante}*:\n\n👉 ${retoLink}\n\nAl abrirlo, solo tiene que tocar Enviar y el bot le manda los botones para pronosticar. ⚽`,
+        body: `👇 Reenvía el siguiente mensaje a tu amigo para retarlo:`,
+      });
+      await sendWhatsAppText({
+        accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from,
+        body: `🏆 Te reto a pronosticar el *${partido.equipo_local} vs ${partido.equipo_visitante}*\n\n¿Quién acierta? Da clic aquí y elige tu pronóstico:\n\n👉 ${retoLink}\n\nSolo toca el link, elige y veamos quién gana ⚽`,
       });
       return new NextResponse("ok", { status: 200 });
     }
 
     // --- Amigo retado llega al bot ---
-    if (incomingText.includes("me retaron y quiero pronosticar el juego de")) {
-      const match = text.match(/el juego de (.+?) vs (.+)/i);
+    if (incomingText.includes("me retaron y quiero pronosticar el")) {
+      const match = text.match(/pronosticar el (.+?) vs (.+)/i);
       if (!match) {
         await sendWhatsAppText({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from, body: "¡Bienvenido al reto! 🏆 Dime qué partido quieres pronosticar." });
         return new NextResponse("ok", { status: 200 });
@@ -197,6 +200,15 @@ export async function POST(req: NextRequest) {
         body: `🏆 *¡Te aceptamos el reto!*\n\n¿Cómo crees que quede *${partido.equipo_local} vs ${partido.equipo_visitante}*?`,
         buttons,
         footer: "🎮 Solo entretenimiento · Sin dinero real",
+      });
+
+      await sendWhatsAppReplyButtons({
+        accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from,
+        body: `🔔 ¿Quieres que te avise 15 minutos antes de cada partido del Mundial?`,
+        buttons: [
+          { id: "si alertas", title: "✅ Sí, quiero alertas" },
+          { id: "no alertas", title: "❌ No gracias" },
+        ],
       });
       return new NextResponse("ok", { status: 200 });
     }
