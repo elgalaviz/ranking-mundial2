@@ -13,7 +13,7 @@ export const runtime = "nodejs";
 const VERIFY_TOKEN = process.env.META_VERIFY_TOKEN || "";
 const PHONE_NUMBER_ID = process.env.WHATSAPP_PHONE_NUMBER_ID || "";
 const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN || "";
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://rankingmundial26.com";
+const APP_URL = (process.env.NEXT_PUBLIC_APP_URL || "https://rankingmundial26.com").replace(/\/$/, "");
 const PRONO_SPONSOR = process.env.PRONO_SPONSOR || "";
 const WA_BOT_NUMBER = process.env.WA_BOT_NUMBER || "5218112993097";
 const MAX_FREE_QUERIES = 5;
@@ -284,7 +284,12 @@ export async function POST(req: NextRequest) {
       if (existing) {
         if (existing.pronostico === pronostico) {
           const labels: Record<string, string> = { local: partido.equipo_local, empate: "Empate", visitante: partido.equipo_visitante };
-          await sendWhatsAppText({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from, body: `Ya tienes guardado ese mismo pronóstico: *${labels[existing.pronostico]}* 👍 ¡Suerte!\n\n📋 Ver mis pronósticos: ${APP_URL}/pronosticos` });
+          const idShortCleanSame = partido.id.replace(/-/g, "");
+          await sendWhatsAppReplyButtons({
+            accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from,
+            body: `Ya tienes guardado ese mismo pronóstico: *${labels[existing.pronostico]}* 👍 ¡Suerte!\n\n📋 Ver mis pronósticos: ${APP_URL}/pronosticos`,
+            buttons: [{ id: `retar_${idShortCleanSame}`, title: "🏆 Retar a un amigo" }],
+          });
           return new NextResponse("ok", { status: 200 });
         }
         const labels: Record<string, string> = { local: partido.equipo_local, empate: "Empate", visitante: partido.equipo_visitante };

@@ -65,8 +65,8 @@ export default function PronosticosPage() {
           <Link href="/">
             <Image src="/mifanbot-h.svg" alt="MiFanBot" width={120} height={32} />
           </Link>
-          <Link href="/quiniela" className="text-white text-sm font-medium hover:underline">
-            Quiniela
+          <Link href="/" className="text-white text-sm font-medium hover:underline">
+            Inicio
           </Link>
         </div>
       </nav>

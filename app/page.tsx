@@ -203,7 +203,7 @@ export default async function LandingPage() {
                 href="/pronosticos"
                 className="block w-full py-3 bg-[#006847] hover:bg-green-800 text-white font-bold text-center rounded-xl transition-colors"
               >
-                Ver mis pronósticos →
+                Pronosticar 1er Jornada →
               </a>
             </div>
 
