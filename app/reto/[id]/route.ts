@@ -8,8 +8,8 @@ function getSupabase() {
   );
 }
 
-export async function GET(_: NextRequest, { params }: { params: { id: string } }) {
-  const idShort = params.id;
+export async function GET(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id: idShort } = await params;
   const waNumber = process.env.WA_BOT_NUMBER || "";
 
   if (!idShort || idShort.length !== 32) {
