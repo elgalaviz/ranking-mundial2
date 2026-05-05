@@ -16,6 +16,7 @@ type Partido = {
   grupo: string | null;
   goles_local: number | null;
   goles_visitante: number | null;
+  canales: string | null;
 };
 
 type PronoExistente = {
@@ -145,6 +146,9 @@ function PartidoCard({
 
       {partido.ciudad && (
         <p className="text-xs text-gray-400 text-center pb-1">{partido.estadio ? `${partido.estadio} · ` : ""}{partido.ciudad}</p>
+      )}
+      {partido.canales && (
+        <p className="text-xs text-gray-500 text-center pb-1 font-medium">📺 {partido.canales}</p>
       )}
 
       <div className="px-4 pb-4 pt-2">

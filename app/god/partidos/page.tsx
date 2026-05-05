@@ -16,6 +16,7 @@ type Partido = {
   goles_local: number | null;
   goles_visitante: number | null;
   alerta_enviada: boolean;
+  canales: string | null;
 };
 
 const FASES = ["Grupos", "Dieciseisavos", "Octavos", "Cuartos", "Semifinal", "Tercer lugar", "Final"];
@@ -272,6 +273,10 @@ export default function PartidosAdminPage() {
                               <label className="text-xs text-gray-500 block mb-1">Estadio</label>
                               <input value={editForm.estadio || ""} onChange={e => setEditForm(f => ({ ...f, estadio: e.target.value }))} className="border border-gray-300 rounded px-2 py-1 text-sm w-full" />
                             </div>
+                            <div className="col-span-2">
+                              <label className="text-xs text-gray-500 block mb-1">📺 Canales</label>
+                              <input value={editForm.canales || ""} onChange={e => setEditForm(f => ({ ...f, canales: e.target.value }))} className="border border-gray-300 rounded px-2 py-1 text-sm w-full" placeholder="TUDN, Canal 5, Televisa Deportes" />
+                            </div>
                             <div>
                               <label className="text-xs text-gray-500 block mb-1">Fase</label>
                               <select value={editForm.fase || ""} onChange={e => setEditForm(f => ({ ...f, fase: e.target.value }))} className="border border-gray-300 rounded px-2 py-1 text-sm w-full">
@@ -428,6 +433,10 @@ export default function PartidosAdminPage() {
                 <div>
                   <label className="text-xs text-gray-500 block mb-1">Estadio</label>
                   <input value={newForm.estadio || ""} onChange={e => setNewForm(f => ({ ...f, estadio: e.target.value }))} className="border border-gray-300 rounded px-3 py-2 text-sm w-full" placeholder="Estadio Azteca" />
+                </div>
+                <div>
+                  <label className="text-xs text-gray-500 block mb-1">📺 Canales</label>
+                  <input value={newForm.canales || ""} onChange={e => setNewForm(f => ({ ...f, canales: e.target.value }))} className="border border-gray-300 rounded px-3 py-2 text-sm w-full" placeholder="TUDN, Canal 5, Televisa Deportes" />
                 </div>
               </div>
               <div className="flex gap-3 mt-5">
