@@ -303,17 +303,51 @@ export default function JornadaPage() {
           </div>
         )}
 
-        {!loading && !error && (
-          <div className="space-y-3">
-            {partidos.map((p) => (
-              <PartidoCard
-                key={p.id}
-                partido={p}
-                prono={pronos.get(pronoKey(p.equipo_local, p.equipo_visitante)) ?? null}
-                onPick={handlePick}
-              />
+        {!loading && !error && partidos.length > 0 && (
+          <>
+            {/* Barra de progreso */}
+            <div className="bg-white rounded-2xl border border-gray-200 shadow-sm px-4 py-3 mb-4">
+              <div className="flex justify-between text-xs text-gray-500 mb-1.5">
+                <span>Progreso</span>
+                <span className="font-bold text-[#006847]">{totalPicks} / {totalPartidos}</span>
+              </div>
+              <div className="w-full bg-gray-100 rounded-full h-2">
+                <div
+                  className="bg-[#006847] h-2 rounded-full transition-all"
+                  style={{ width: totalPartidos > 0 ? `${(totalPicks / totalPartidos) * 100}%` : "0%" }}
+                />
+              </div>
+            </div>
+
+            {/* Agrupados por día */}
+            {Object.entries(
+              partidos.reduce<Record<string, Partido[]>>((acc, p) => {
+                const key = new Date(p.fecha_utc).toLocaleDateString("es-MX", {
+                  timeZone: "America/Mexico_City",
+                  weekday: "long", day: "numeric", month: "long",
+                });
+                if (!acc[key]) acc[key] = [];
+                acc[key].push(p);
+                return acc;
+              }, {})
+            ).map(([dia, juegos]) => (
+              <div key={dia} className="mb-6">
+                <h2 className="text-xs font-bold text-gray-400 tracking-wider mb-3 capitalize">
+                  {dia}
+                </h2>
+                <div className="space-y-3">
+                  {juegos.map((p) => (
+                    <PartidoCard
+                      key={p.id}
+                      partido={p}
+                      prono={pronos.get(pronoKey(p.equipo_local, p.equipo_visitante)) ?? null}
+                      onPick={handlePick}
+                    />
+                  ))}
+                </div>
+              </div>
             ))}
-          </div>
+          </>
         )}
       </div>
     </main>
