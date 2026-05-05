@@ -65,8 +65,8 @@ export default function PronosticosPage() {
           <Link href="/">
             <Image src="/mifanbot-h.svg" alt="MiFanBot" width={120} height={32} />
           </Link>
-          <Link href="/" className="text-white text-sm font-medium hover:underline">
-            Inicio
+          <Link href="/quiniela" className="text-white text-sm font-bold bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded-lg transition-colors">
+            Pronosticar 1er Jornada
           </Link>
         </div>
       </nav>
