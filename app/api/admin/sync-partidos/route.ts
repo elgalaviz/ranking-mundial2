@@ -80,8 +80,9 @@ export async function POST() {
       actualizados,
       insertados,
     });
-  } catch (err) {
+  } catch (err: any) {
     console.error("sync-partidos error:", err);
-    return NextResponse.json({ error: String(err) }, { status: 500 });
+    const msg = err?.message || err?.details || err?.hint || JSON.stringify(err);
+    return NextResponse.json({ error: msg }, { status: 500 });
   }
 }
