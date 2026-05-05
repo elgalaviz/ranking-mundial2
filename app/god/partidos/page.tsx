@@ -318,6 +318,8 @@ export default function PartidosAdminPage() {
                                 )}
                                 <span className="text-gray-700">{p.equipo_visitante}</span>
                                 {p.grupo && <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full shrink-0">Gr. {p.grupo}</span>}
+                                {p.jornada && <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full shrink-0">J{p.jornada}</span>}
+                                {!p.jornada && p.fase && <span className="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full shrink-0">{p.fase}</span>}
                               </div>
                               {/* Fila secundaria: estadio · ciudad · canales */}
                               {(p.estadio || p.ciudad || p.canales) && (
