@@ -18,6 +18,70 @@ function getSupabase() {
   );
 }
 
+export async function GET() {
+  const auth = await createServerClient();
+  const { data: { user } } = await auth.auth.getUser();
+  if (!user || user.email !== ADMIN_EMAIL) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    const fixtures = await getFixtures();
+    if (!fixtures || fixtures.length === 0) {
+      return NextResponse.json({ ok: false, msg: "API-Football no devolvió partidos." });
+    }
+
+    const supabase = getSupabase();
+    const { data: existentes } = await supabase
+      .from("partidos")
+      .select("id, equipo_local, equipo_visitante, jornada, fase, estadio, ciudad");
+
+    const existentesMap = new Map(
+      (existentes ?? []).map((p) => [`${p.equipo_local}|${p.equipo_visitante}`, p])
+    );
+
+    const diffs: {
+      partido_id: string | null;
+      equipo_local: string;
+      equipo_visitante: string;
+      es_nuevo: boolean;
+      cambios: { campo: string; anterior: string | null; nuevo: string | null }[];
+    }[] = [];
+
+    for (const f of fixtures) {
+      const row = fixtureToPartido(f);
+      const key = `${row.equipo_local}|${row.equipo_visitante}`;
+      const existente = existentesMap.get(key);
+
+      if (existente) {
+        const cambios: { campo: string; anterior: string | null; nuevo: string | null }[] = [];
+        const campos = ["jornada", "fase", "estadio", "ciudad"] as const;
+        for (const campo of campos) {
+          const ant = String(existente[campo] ?? "");
+          const nvo = String(row[campo] ?? "");
+          if (ant !== nvo) cambios.push({ campo, anterior: existente[campo] ?? null, nuevo: (row as any)[campo] ?? null });
+        }
+        if (cambios.length > 0) {
+          diffs.push({ partido_id: existente.id, equipo_local: row.equipo_local, equipo_visitante: row.equipo_visitante, es_nuevo: false, cambios });
+        }
+      } else {
+        diffs.push({
+          partido_id: null,
+          equipo_local: row.equipo_local,
+          equipo_visitante: row.equipo_visitante,
+          es_nuevo: true,
+          cambios: [],
+        });
+      }
+    }
+
+    return NextResponse.json({ ok: true, total_api: fixtures.length, diffs });
+  } catch (err: any) {
+    const msg = err?.message || err?.details || err?.hint || JSON.stringify(err);
+    return NextResponse.json({ error: msg }, { status: 500 });
+  }
+}
+
 export async function POST() {
   const auth = await createServerClient();
   const { data: { user } } = await auth.auth.getUser();

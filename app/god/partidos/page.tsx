@@ -39,25 +39,51 @@ export default function PartidosAdminPage() {
   const [newForm, setNewForm] = useState<Partial<Partido>>({ fase: "Grupos", jornada: 1, alerta_enviada: false });
   const [openDays, setOpenDays] = useState<Set<string>>(new Set());
   const [syncing, setSyncing] = useState(false);
+  const [preview, setPreview] = useState<null | {
+    total_api: number;
+    diffs: {
+      partido_id: string | null;
+      equipo_local: string;
+      equipo_visitante: string;
+      es_nuevo: boolean;
+      cambios: { campo: string; anterior: string | null; nuevo: string | null }[];
+    }[];
+  }>(null);
+  const [previewLoading, setPreviewLoading] = useState(false);
+  const [applying, setApplying] = useState(false);
 
   useEffect(() => { fetchPartidos(); }, []);
 
-  async function syncDesdeApi() {
-    if (!confirm("¿Sincronizar calendario desde API-Football? Esto insertará o actualizará todos los partidos del Mundial 2026.")) return;
-    setSyncing(true);
+  async function loadPreview() {
+    setPreviewLoading(true);
+    try {
+      const res = await fetch("/api/admin/sync-partidos");
+      const data = await res.json();
+      if (!res.ok) { alert(`❌ Error: ${data.error || data.msg}`); return; }
+      setPreview(data);
+    } catch {
+      alert("❌ Error de red al cargar preview.");
+    } finally {
+      setPreviewLoading(false);
+    }
+  }
+
+  async function aplicarSync() {
+    setApplying(true);
     try {
       const res = await fetch("/api/admin/sync-partidos", { method: "POST" });
       const data = await res.json();
       if (data.ok) {
-        alert(`✅ Sincronización completa: ${data.sincronizados} partidos procesados.`);
+        setPreview(null);
         await fetchPartidos();
+        alert(`✅ Sync completo: ${data.actualizados} actualizados, ${data.insertados} nuevos.`);
       } else {
         alert(`❌ Error: ${data.error || data.msg}`);
       }
-    } catch (e) {
+    } catch {
       alert("❌ Error de red al sincronizar.");
     } finally {
-      setSyncing(false);
+      setApplying(false);
     }
   }
 
@@ -156,11 +182,11 @@ export default function PartidosAdminPage() {
           <h1 className="text-2xl font-bold text-gray-800">⚽ Partidos Mundial 2026</h1>
           <div className="flex gap-2">
             <button
-              onClick={syncDesdeApi}
-              disabled={syncing}
+              onClick={loadPreview}
+              disabled={previewLoading}
               className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white px-4 py-2 rounded text-sm font-medium"
             >
-              {syncing ? "Sincronizando..." : "⟳ Sync API-Football"}
+              {previewLoading ? "Cargando..." : "⟳ Sync API-Football"}
             </button>
             <button
               onClick={() => setShowNew(true)}
@@ -253,6 +279,10 @@ export default function PartidosAdminPage() {
                               </select>
                             </div>
                             <div>
+                              <label className="text-xs text-gray-500 block mb-1">Grupo</label>
+                              <input value={editForm.grupo || ""} onChange={e => setEditForm(f => ({ ...f, grupo: e.target.value }))} className="border border-gray-300 rounded px-2 py-1 text-sm w-full" placeholder="A" maxLength={2} />
+                            </div>
+                            <div>
                               <label className="text-xs text-gray-500 block mb-1">Jornada</label>
                               <input type="number" min={1} value={editForm.jornada ?? ""} onChange={e => setEditForm(f => ({ ...f, jornada: parseInt(e.target.value) || null }))} className="border border-gray-300 rounded px-2 py-1 text-sm w-full" placeholder="1" />
                             </div>
@@ -301,6 +331,57 @@ export default function PartidosAdminPage() {
                 )}
               </div>
             ))}
+          </div>
+        )}
+
+        {/* Modal preview sync */}
+        {preview && (
+          <div className="fixed inset-0 bg-black/50 flex items-start justify-center z-50 overflow-y-auto py-8 px-4">
+            <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl">
+              <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg font-bold text-gray-800">Preview del Sync</h2>
+                  <p className="text-sm text-gray-500 mt-0.5">{preview.total_api} partidos en la API · {preview.diffs.length} con cambios</p>
+                </div>
+                <button onClick={() => setPreview(null)} className="text-gray-400 hover:text-gray-600 text-xl font-bold">✕</button>
+              </div>
+
+              <div className="px-6 py-4 max-h-[60vh] overflow-y-auto">
+                {preview.diffs.length === 0 ? (
+                  <p className="text-center text-gray-500 py-8">✅ Todo está al día, no hay cambios que aplicar.</p>
+                ) : (
+                  <div className="space-y-3">
+                    {preview.diffs.map((d, i) => (
+                      <div key={i} className={`rounded-lg border p-3 ${d.es_nuevo ? "border-green-200 bg-green-50" : "border-yellow-200 bg-yellow-50"}`}>
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${d.es_nuevo ? "bg-green-200 text-green-800" : "bg-yellow-200 text-yellow-800"}`}>
+                            {d.es_nuevo ? "NUEVO" : "ACTUALIZAR"}
+                          </span>
+                          <span className="font-semibold text-sm text-gray-800">{d.equipo_local} vs {d.equipo_visitante}</span>
+                        </div>
+                        {!d.es_nuevo && d.cambios.map((c, j) => (
+                          <div key={j} className="flex items-center gap-2 text-xs text-gray-600 ml-1">
+                            <span className="font-medium text-gray-500 w-16">{c.campo}:</span>
+                            <span className="line-through text-red-500">{c.anterior || "—"}</span>
+                            <span className="text-gray-400">→</span>
+                            <span className="text-green-700 font-medium">{c.nuevo || "—"}</span>
+                          </div>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="px-6 py-4 border-t border-gray-200 flex gap-3 justify-end">
+                <button onClick={() => setPreview(null)} className="px-4 py-2 rounded text-sm bg-gray-100 hover:bg-gray-200 text-gray-700">Cancelar</button>
+                {preview.diffs.length > 0 && (
+                  <button onClick={aplicarSync} disabled={applying} className="px-4 py-2 rounded text-sm bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-medium">
+                    {applying ? "Aplicando..." : `Aplicar ${preview.diffs.length} cambios`}
+                  </button>
+                )}
+              </div>
+            </div>
           </div>
         )}
 
