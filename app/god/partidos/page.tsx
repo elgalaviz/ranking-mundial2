@@ -305,21 +305,35 @@ export default function PartidosAdminPage() {
                             </div>
                           </div>
                         ) : (
-                          <div className="flex items-center justify-between gap-4">
-                            <div className="flex items-center gap-4 min-w-0">
-                              <span className="text-xs text-gray-400 w-12 shrink-0">{new Date(p.fecha_utc).toLocaleTimeString("es-MX", { timeZone: "America/Mexico_City", hour: "2-digit", minute: "2-digit" })}</span>
-                              <span className="font-medium text-gray-800 truncate">{p.equipo_local}</span>
-                              <span className="text-gray-400 text-xs">vs</span>
-                              <span className="text-gray-700 truncate">{p.equipo_visitante}</span>
-                              {p.grupo && <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full shrink-0">Gr. {p.grupo}</span>}
-                              <span className="text-xs text-gray-400 truncate hidden sm:block">{p.ciudad}</span>
+                          <div className="flex items-start justify-between gap-4">
+                            <div className="min-w-0 flex-1">
+                              {/* Fila principal: hora · equipos · grupo · marcador */}
+                              <div className="flex items-center gap-3 flex-wrap">
+                                <span className="text-xs text-gray-400 w-12 shrink-0">{new Date(p.fecha_utc).toLocaleTimeString("es-MX", { timeZone: "America/Mexico_City", hour: "2-digit", minute: "2-digit" })}</span>
+                                <span className="font-medium text-gray-800">{p.equipo_local}</span>
+                                {p.goles_local !== null && p.goles_visitante !== null ? (
+                                  <span className="text-sm font-black text-gray-800 bg-gray-100 px-2 py-0.5 rounded shrink-0">{p.goles_local} – {p.goles_visitante}</span>
+                                ) : (
+                                  <span className="text-gray-400 text-xs shrink-0">vs</span>
+                                )}
+                                <span className="text-gray-700">{p.equipo_visitante}</span>
+                                {p.grupo && <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full shrink-0">Gr. {p.grupo}</span>}
+                              </div>
+                              {/* Fila secundaria: estadio · ciudad · canales */}
+                              {(p.estadio || p.ciudad || p.canales) && (
+                                <div className="flex items-center gap-2 mt-1 flex-wrap">
+                                  {(p.estadio || p.ciudad) && (
+                                    <span className="text-xs text-gray-400">
+                                      🏟 {[p.estadio, p.ciudad].filter(Boolean).join(" · ")}
+                                    </span>
+                                  )}
+                                  {p.canales && (
+                                    <span className="text-xs text-gray-500">📺 {p.canales}</span>
+                                  )}
+                                </div>
+                              )}
                             </div>
                             <div className="flex items-center gap-2 shrink-0">
-                              {p.goles_local !== null && p.goles_visitante !== null && (
-                                <span className="text-xs font-bold bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">
-                                  {p.goles_local} – {p.goles_visitante}
-                                </span>
-                              )}
                               <span className={`text-xs px-2 py-0.5 rounded-full ${p.alerta_enviada ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"}`}>
                                 {p.alerta_enviada ? "✓ Alerta" : "Pendiente"}
                               </span>
