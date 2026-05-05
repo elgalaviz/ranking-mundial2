@@ -23,8 +23,9 @@ function buildTemplateParams(partido: Record<string, string>, patrocinador: stri
     partido.equipo_visitante,
     partido.estadio || "",
     partido.ciudad || "",
-    partido.fase ? `${partido.fase}${partido.grupo ? ` · Grupo ${partido.grupo}` : ""}` : "",
+    partido.grupo ? `Grupo ${partido.grupo}` : (partido.fase || ""),
     patrocinador || "",
+    partido.canales || "",
   ];
 }
 
@@ -39,12 +40,11 @@ function formatAlertMessage(partido: Record<string, string>, patrocinador: strin
 
   let msg = `🧪 *[PRUEBA]* ⚽ *¡En 15 minutos arranca!*\n\n`;
   msg += `🆚 *${partido.equipo_local}* vs *${partido.equipo_visitante}*\n`;
-  if (partido.estadio) msg += `🏟 ${partido.estadio}\n`;
-  if (partido.ciudad) msg += `📍 ${partido.ciudad}\n`;
-  msg += `🕐 ${fecha} hrs CDMX\n`;
+  if (partido.estadio) msg += `🏟 ${partido.estadio} en ${partido.ciudad || ""}\n`;
+  if (partido.grupo) msg += `👥 Grupo ${partido.grupo}\n`;
+  if (partido.canales) msg += `📺 Donde ver: ${partido.canales}\n`;
   msg += `🗄 DB: ${fechaUTC}\n`;
-  if (partido.fase) msg += `\n🏆 ${partido.fase}${partido.grupo ? ` · Grupo ${partido.grupo}` : ""}`;
-  if (patrocinador) msg += `\n\n${patrocinador}`;
+  if (patrocinador) msg += `\n🎯 ${patrocinador}`;
 
   return msg;
 }
