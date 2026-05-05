@@ -104,6 +104,45 @@ export async function POST(req: NextRequest) {
     const incomingText = text.toLowerCase();
     console.log(`📩 Mensaje de ${from} (${profileName}): "${text}"`);
 
+    // --- Confirmar cambio de pronóstico ---
+    if (text.startsWith("cambiar_prono_") && text.split("_").length === 5) {
+      const [, , outcome, momio100Str, idShort] = text.split("_");
+      const momio = parseInt(momio100Str) / 100;
+      const partidoId = [
+        idShort.slice(0, 8), idShort.slice(8, 12),
+        idShort.slice(12, 16), idShort.slice(16, 20), idShort.slice(20),
+      ].join("-");
+
+      const { data: partido } = await supabase
+        .from("partidos")
+        .select("id, equipo_local, equipo_visitante, fecha_utc")
+        .eq("id", partidoId)
+        .single();
+
+      if (!partido || new Date(partido.fecha_utc) < new Date()) {
+        await sendWhatsAppText({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from, body: "⏱️ Ya no es posible cambiar el pronóstico, el partido comenzó." });
+        return new NextResponse("ok", { status: 200 });
+      }
+
+      const pronostico = outcome === "L" ? "local" : outcome === "E" ? "empate" : "visitante";
+      const equipoElegido = outcome === "L" ? partido.equipo_local : outcome === "E" ? "Empate" : partido.equipo_visitante;
+
+      await supabase
+        .from("pronosticos")
+        .update({ pronostico, momio })
+        .eq("whatsapp_id", waId)
+        .eq("equipo_local", partido.equipo_local)
+        .eq("equipo_visitante", partido.equipo_visitante);
+
+      await sendWhatsAppText({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from, body: pronoGuardadoMessage(equipoElegido, momio, 200, PRONO_SPONSOR) });
+      return new NextResponse("ok", { status: 200 });
+    }
+
+    if (text === "no_cambiar_prono") {
+      await sendWhatsAppText({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from, body: "👍 Ok, mantenemos tu pronóstico. ¡Suerte! ⚽" });
+      return new NextResponse("ok", { status: 200 });
+    }
+
     // --- Respuesta de pronóstico (no cuenta como consulta) ---
     if (text.startsWith("prono_") && text.split("_").length === 4) {
       const [, outcome, momio100Str, idShort] = text.split("_");
@@ -129,6 +168,9 @@ export async function POST(req: NextRequest) {
         return new NextResponse("ok", { status: 200 });
       }
 
+      const pronostico = outcome === "L" ? "local" : outcome === "E" ? "empate" : "visitante";
+      const equipoElegido = outcome === "L" ? partido.equipo_local : outcome === "E" ? "Empate" : partido.equipo_visitante;
+
       const { data: existing } = await supabase
         .from("pronosticos")
         .select("id, pronostico")
@@ -139,12 +181,17 @@ export async function POST(req: NextRequest) {
 
       if (existing) {
         const labels: Record<string, string> = { local: partido.equipo_local, empate: "Empate", visitante: partido.equipo_visitante };
-        await sendWhatsAppText({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from, body: `Ya tienes guardado: *${labels[existing.pronostico]}*. ¡Suerte! ⚽` });
+        const idShortClean = partido.id.replace(/-/g, "");
+        await sendWhatsAppReplyButtons({
+          accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from,
+          body: `Ya tienes guardado: *${labels[existing.pronostico]}*. ¿Quieres cambiarlo por *${equipoElegido}*?`,
+          buttons: [
+            { id: `cambiar_prono_${outcome}_${momio100Str}_${idShortClean}`, title: "✅ Sí, cambiarlo" },
+            { id: "no_cambiar_prono", title: "❌ No, dejarlo" },
+          ],
+        });
         return new NextResponse("ok", { status: 200 });
       }
-
-      const pronostico = outcome === "L" ? "local" : outcome === "E" ? "empate" : "visitante";
-      const equipoElegido = outcome === "L" ? partido.equipo_local : outcome === "E" ? "Empate" : partido.equipo_visitante;
 
       await supabase.from("pronosticos").insert({
         whatsapp_id: waId,
@@ -259,12 +306,12 @@ export async function POST(req: NextRequest) {
       await sendWhatsAppText({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from, body: "👍 Entendido, no te mandaré alertas de partidos. ⚽" });
       return new NextResponse("ok", { status: 200 });
     }
-    if (incomingText === "mis pronósticos" || incomingText === "mis pronosticos" || incomingText === "mis predicciones") {
+    if (incomingText.includes("mis pronósticos") || incomingText.includes("mis pronosticos") || incomingText.includes("mis predicciones") || incomingText === "pronósticos" || incomingText === "pronosticos") {
       const { data: pronos } = await supabase
         .from("pronosticos")
         .select("equipo_local, equipo_visitante, pronostico, momio, acerto, fecha_partido")
         .eq("whatsapp_id", waId)
-        .order("fecha_partido", { ascending: true });
+        .order("fecha_partido", { ascending: false });
 
       if (!pronos || pronos.length === 0) {
         await sendWhatsAppText({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from, body: "Aún no tienes pronósticos guardados. Pregúntame por un partido y te mando los botones para pronosticar. ⚽" });
@@ -273,15 +320,18 @@ export async function POST(req: NextRequest) {
 
       const labels: Record<string, string> = { local: "🏠 Local", empate: "🤝 Empate", visitante: "✈️ Visitante" };
       const estado = (acerto: boolean | null) => acerto === null ? "⏳ Pendiente" : acerto ? "✅ Acertaste" : "❌ Fallaste";
-      const lineas = pronos.map(p =>
-        `${p.equipo_local} vs ${p.equipo_visitante}\n  Pronóstico: ${labels[p.pronostico]} (${p.momio}x) — ${estado(p.acerto)}`
+
+      const ultimos3 = pronos.slice(0, 3);
+      const lineas = ultimos3.map(p =>
+        `${p.equipo_local} vs ${p.equipo_visitante}\n  ${labels[p.pronostico]} (${p.momio}x) — ${estado(p.acerto)}`
       ).join("\n\n");
 
       const acertados = pronos.filter(p => p.acerto === true).length;
       const total = pronos.filter(p => p.acerto !== null).length;
       const resumen = total > 0 ? `\n\n🏆 Aciertos: ${acertados}/${total}` : "";
+      const verTodos = pronos.length > 3 ? `\n\n📋 Ver todos tus ${pronos.length} pronósticos:\n${APP_URL}/pronosticos` : "";
 
-      await sendWhatsAppText({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from, body: `🎯 *Mis Pronósticos*\n\n${lineas}${resumen}` });
+      await sendWhatsAppText({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from, body: `🎯 *Últimos pronósticos*\n\n${lineas}${resumen}${verTodos}` });
       return new NextResponse("ok", { status: 200 });
     }
 

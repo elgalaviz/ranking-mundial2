@@ -58,7 +58,7 @@ export async function POST(req: Request) {
       accessToken: WHATSAPP_TOKEN,
       phoneNumberId: PHONE_NUMBER_ID,
       to: user.phone!,
-      body: `⚽ Tu código de acceso para la Quiniela de Ranking Mundial 26 es: *${otp_code}*\n\nEste código expira en 10 minutos.`,
+      body: `⚽ Tu código de acceso a MiFanBot es: *${otp_code}*\n\nEste código expira en 10 minutos.`,
     });
 
     return NextResponse.json({ success: true });

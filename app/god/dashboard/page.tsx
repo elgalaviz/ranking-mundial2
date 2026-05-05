@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createClient as createAdmin } from "@supabase/supabase-js";
-import { Users, Star, Trophy, Swords } from "lucide-react";
+import { Users, Star, Target } from "lucide-react";
 
 const GOD_EMAIL = process.env.ADMIN_EMAIL || "rene.galaviz@gmail.com";
 
@@ -30,22 +30,18 @@ export default async function GodDashboardPage() {
 
   const [
     { data: allUsers },
-    { data: quinielaUsers },
-    { data: fantasyUsers },
+    { data: pronosticosUsers },
   ] = await Promise.all([
     db.from("users").select("id, name, phone, country_code, plan, created_at").order("created_at", { ascending: false }),
-    db.from("quiniela_picks").select("user_id").limit(1000),
-    db.from("users").select("id").eq("plan", "fantasy"),
+    db.from("pronosticos").select("whatsapp_id").limit(5000),
   ]);
 
   const users = allUsers ?? [];
   const totalUsuarios = users.length;
   const totalPremium = users.filter((u) => u.plan === "premium").length;
-  const totalFree = users.filter((u) => !u.plan || u.plan === "free").length;
 
-  const quinielaIds = new Set((quinielaUsers ?? []).map((q) => q.user_id));
-  const totalQuiniela = users.filter((u) => quinielaIds.has(u.id)).length;
-  const totalFantasy = fantasyUsers?.length ?? 0;
+  const pronoIds = new Set((pronosticosUsers ?? []).map((p) => p.whatsapp_id));
+  const totalConPronos = users.filter((u) => pronoIds.has(u.id)).length || pronoIds.size;
 
   const ultimosFree = users.filter((u) => !u.plan || u.plan === "free").slice(0, 10);
   const ultimosPremium = users.filter((u) => u.plan === "premium").slice(0, 10);
@@ -53,14 +49,13 @@ export default async function GodDashboardPage() {
   const cards = [
     { label: "Usuarios totales", value: totalUsuarios, icon: Users, color: "bg-blue-50 text-blue-700 border-blue-200" },
     { label: "Premium", value: totalPremium, icon: Star, color: "bg-amber-50 text-amber-700 border-amber-200" },
-    { label: "En Quiniela", value: totalQuiniela, icon: Trophy, color: "bg-green-50 text-green-700 border-green-200" },
-    { label: "Fantasy", value: totalFantasy, icon: Swords, color: "bg-purple-50 text-purple-700 border-purple-200" },
+    { label: "Con Pronósticos", value: totalConPronos, icon: Target, color: "bg-green-50 text-green-700 border-green-200" },
   ];
 
   return (
     <div className="space-y-6">
       {/* Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {cards.map((c) => (
           <div key={c.label} className={`rounded-2xl border p-5 flex items-center gap-4 ${c.color}`}>
             <div className="w-10 h-10 rounded-xl bg-white/60 flex items-center justify-center shrink-0">

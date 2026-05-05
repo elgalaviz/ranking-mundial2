@@ -16,6 +16,7 @@ function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const next = searchParams.get("next") || "/quiniela";
+  const isPronosticos = next.includes("pronosticos");
 
   const handleSendCode = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -75,7 +76,9 @@ function LoginForm() {
           <Link href="/" className="inline-block">
             <Image src="/mifanbot-h.svg" alt="MiFanBot" width={160} height={40} className="mx-auto" />
           </Link>
-          <h1 className="text-2xl font-bold text-gray-800 mt-4">Inicia Sesión en la Quiniela</h1>
+          <h1 className="text-2xl font-bold text-gray-800 mt-4">
+            {isPronosticos ? "Ver mis Pronósticos" : "Inicia Sesión en la Quiniela"}
+          </h1>
           <p className="text-gray-500 mt-2">
             {step === "phone"
               ? "Ingresa tu número de WhatsApp para recibir un código de acceso."
