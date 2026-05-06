@@ -68,7 +68,7 @@ export default async function LandingPage() {
 
           <p className="text-gray-700 text-lg mb-8 leading-relaxed">
             Mi FanBot te responde todo sobre los mundiales, activa y recibe alertas <strong className="text-gray-900">15 minutos antes</strong> de cada partido,
-            y proximamente toda la info de los jugadores a seguir y mucho más.
+            y te avisa en <strong className="text-gray-900">qué canal ver cada juego</strong> y mucho más.
             Gratis. Sin app. Solo WhatsApp.
           </p>
 
@@ -185,11 +185,11 @@ export default async function LandingPage() {
               <div className="inline-block bg-[#006847]/10 text-[#006847] text-xs font-bold px-2 py-1 rounded-full mb-3">GRATIS</div>
               <h3 className="text-xl font-black text-gray-900 mb-2">Pronostica por WhatsApp</h3>
               <p className="text-gray-500 text-sm mb-6 leading-relaxed">
-                Antes de cada partido te mandamos los momios y con un toque das tu pronóstico. Al terminar te avisamos si acertaste y ves todo tu historial en la web.
+                Antes de cada partido  con un toque das tu pronóstico. Al terminar te avisamos si acertaste y ves todo tu historial en la web.
               </p>
               <ul className="space-y-2 mb-8">
                 {[
-                  "Momios en tiempo real por partido",
+                  
                   "Pronóstico con un toque: Local, Empate o Visita",
                   "Notificación al terminar el partido",
                   "Historial completo en mifanbot.com",
@@ -390,7 +390,7 @@ function PhoneMockup() {
             ⚽ <strong>¡En 15 minutos arranca!</strong><br />
             🇲🇽 <strong>México</strong> vs 🇿🇦 <strong>Sudáfrica</strong><br />
             🏟 Estadio Azteca · 19:00 CDMX<br />
-            👀 <strong>A seguir:</strong> Lozano, Giménez
+            📺 <strong>Donde ver:</strong> Vix, TUDN, Canal 5
           </ChatBubble>
 
           <ChatBubble from="user">
