@@ -1,6 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
 import { ChatCompletionTool } from 'openai/resources/chat/completions';
 import { getWorldCupOdds, findEventByTeam } from '@/lib/odds/client';
+import fs from 'fs';
+import path from 'path';
 
 function getSupabase() {
   return createClient(
@@ -117,6 +119,34 @@ export async function getMomios(equipo?: string) {
   }
 }
 
+// --- buscarHistorial ---
+type TipoHistorial = "mundial" | "mexico" | "memorable";
+
+const DATA_FILES: Record<TipoHistorial, string> = {
+  mundial: "mundiales.json",
+  mexico: "mexico_juegos.json",
+  memorable: "partidos_memorables.json",
+};
+
+export function buscarHistorial(tipo: TipoHistorial, año?: number): string {
+  console.log(`🛠️ buscarHistorial(tipo=${tipo}, año=${año ?? "todos"})`);
+  try {
+    const filePath = path.join(process.cwd(), "data", DATA_FILES[tipo]);
+    const raw = fs.readFileSync(filePath, "utf-8");
+    const data = JSON.parse(raw) as Array<Record<string, unknown>>;
+
+    if (!año) return JSON.stringify(data);
+
+    const yearKey = tipo === "mundial" ? "año" : "mundial_año";
+    const found = data.find((item) => item[yearKey] === año);
+    if (!found) return JSON.stringify({ message: `No hay datos para el mundial ${año} en la categoría '${tipo}'.` });
+    return JSON.stringify(found);
+  } catch (e) {
+    console.error("Error en buscarHistorial:", e);
+    return JSON.stringify({ error: "No se pudo leer el historial." });
+  }
+}
+
 // --- Definición de la herramienta para OpenAI ---
 export const tools: ChatCompletionTool[] = [
   {
@@ -133,6 +163,28 @@ export const tools: ChatCompletionTool[] = [
           },
         },
         required: [],
+      },
+    },
+  },
+  {
+    type: 'function',
+    function: {
+      name: 'buscarHistorial',
+      description: 'Busca datos históricos de los Mundiales FIFA. Úsala cuando el usuario pregunte sobre mundiales pasados, historial de México en mundiales, partidos memorables, goleadores históricos, campeones, resultados de años anteriores o cualquier dato de mundiales previos al 2026.',
+      parameters: {
+        type: 'object',
+        properties: {
+          tipo: {
+            type: 'string',
+            enum: ['mundial', 'mexico', 'memorable'],
+            description: '"mundial" para datos generales de un mundial (campeón, goleador, etc.), "mexico" para los partidos y goleadores de México, "memorable" para los partidos más memorables.',
+          },
+          año: {
+            type: 'number',
+            description: 'El año del mundial (ej. 1986, 2010, 2022). Si el usuario pregunta de forma general (ej. "todos los mundiales de México"), omite este parámetro.',
+          },
+        },
+        required: ['tipo'],
       },
     },
   },

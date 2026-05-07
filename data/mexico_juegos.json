@@ -1,0 +1,524 @@
+[
+  {
+    "mundial_año": 1930,
+    "sede": "Uruguay",
+    "partidos": [
+      {
+        "rival": "Francia",
+        "marcador": "1-4",
+        "anotadores_mexico": ["Juan Carreño"],
+        "eventos_ineditos": "Partido inaugural en la historia de las Copas del Mundo",
+        "expulsados": null
+      },
+      {
+        "rival": "Chile",
+        "marcador": "0-3",
+        "anotadores_mexico": [],
+        "eventos_ineditos": null,
+        "expulsados": null
+      },
+      {
+        "rival": "Argentina",
+        "marcador": "3-6",
+        "anotadores_mexico": ["Manuel Rosas (2)", "Roberto Gayón"],
+        "eventos_ineditos": "Manuel Rosas anotó el primer penal en la historia de los Mundiales",
+        "expulsados": null
+      }
+    ]
+  },
+  {
+    "mundial_año": 1950,
+    "sede": "Brasil",
+    "partidos": [
+      {
+        "rival": "Brasil",
+        "marcador": "0-4",
+        "anotadores_mexico": [],
+        "eventos_ineditos": "Inauguración del Estadio Maracaná en Mundiales",
+        "expulsados": null
+      },
+      {
+        "rival": "Yugoslavia",
+        "marcador": "1-4",
+        "anotadores_mexico": ["Héctor Ortiz"],
+        "eventos_ineditos": null,
+        "expulsados": null
+      },
+      {
+        "rival": "Suiza",
+        "marcador": "1-2",
+        "anotadores_mexico": ["Horacio Casarín"],
+        "eventos_ineditos": null,
+        "expulsados": null
+      }
+    ]
+  },
+  {
+    "mundial_año": 1954,
+    "sede": "Suiza",
+    "partidos": [
+      {
+        "rival": "Brasil",
+        "marcador": "0-5",
+        "anotadores_mexico": [],
+        "eventos_ineditos": null,
+        "expulsados": null
+      },
+      {
+        "rival": "Francia",
+        "marcador": "2-3",
+        "anotadores_mexico": ["José Luis Lamadrid", "Tomás Balcázar"],
+        "eventos_ineditos": null,
+        "expulsados": null
+      }
+    ]
+  },
+  {
+    "mundial_año": 1958,
+    "sede": "Suecia",
+    "partidos": [
+      {
+        "rival": "Suecia",
+        "marcador": "0-3",
+        "anotadores_mexico": [],
+        "eventos_ineditos": null,
+        "expulsados": null
+      },
+      {
+        "rival": "Gales",
+        "marcador": "1-1",
+        "anotadores_mexico": ["Jaime Belmonte"],
+        "eventos_ineditos": "México obtiene su primer punto en la historia de los Mundiales",
+        "expulsados": null
+      },
+      {
+        "rival": "Hungría",
+        "marcador": "0-4",
+        "anotadores_mexico": [],
+        "eventos_ineditos": null,
+        "expulsados": null
+      }
+    ]
+  },
+  {
+    "mundial_año": 1962,
+    "sede": "Chile",
+    "partidos": [
+      {
+        "rival": "Brasil",
+        "marcador": "0-2",
+        "anotadores_mexico": [],
+        "eventos_ineditos": null,
+        "expulsados": null
+      },
+      {
+        "rival": "España",
+        "marcador": "0-1",
+        "anotadores_mexico": [],
+        "eventos_ineditos": null,
+        "expulsados": null
+      },
+      {
+        "rival": "Checoslovaquia",
+        "marcador": "3-1",
+        "anotadores_mexico": ["Isidoro Díaz", "Alfredo del Águila", "Héctor Hernández"],
+        "eventos_ineditos": "Primera victoria de México en una Copa del Mundo",
+        "expulsados": null
+      }
+    ]
+  },
+  {
+    "mundial_año": 1966,
+    "sede": "Inglaterra",
+    "partidos": [
+      {
+        "rival": "Francia",
+        "marcador": "1-1",
+        "anotadores_mexico": ["Enrique Borja"],
+        "eventos_ineditos": null,
+        "expulsados": null
+      },
+      {
+        "rival": "Inglaterra",
+        "marcador": "0-2",
+        "anotadores_mexico": [],
+        "eventos_ineditos": null,
+        "expulsados": null
+      },
+      {
+        "rival": "Uruguay",
+        "marcador": "0-0",
+        "anotadores_mexico": [],
+        "eventos_ineditos": "Último partido de Antonio Carbajal, primer jugador con 5 Mundiales",
+        "expulsados": null
+      }
+    ]
+  },
+  {
+    "mundial_año": 1970,
+    "sede": "México",
+    "partidos": [
+      {
+        "rival": "Unión Soviética",
+        "marcador": "0-0",
+        "anotadores_mexico": [],
+        "eventos_ineditos": "Primer partido con cambios y tarjetas en la historia",
+        "expulsados": null
+      },
+      {
+        "rival": "El Salvador",
+        "marcador": "4-0",
+        "anotadores_mexico": ["Javier Valdivia (2)", "Javier Fragoso", "Ignacio Basaguren"],
+        "eventos_ineditos": null,
+        "expulsados": null
+      },
+      {
+        "rival": "Bélgica",
+        "marcador": "1-0",
+        "anotadores_mexico": ["Gustavo Peña"],
+        "eventos_ineditos": "México clasifica a su primera fase de eliminación directa",
+        "expulsados": null
+      },
+      {
+        "rival": "Italia",
+        "marcador": "1-4",
+        "anotadores_mexico": ["José Luis González"],
+        "eventos_ineditos": "Cuartos de final",
+        "expulsados": null
+      }
+    ]
+  },
+  {
+    "mundial_año": 1978,
+    "sede": "Argentina",
+    "partidos": [
+      {
+        "rival": "Túnez",
+        "marcador": "1-3",
+        "anotadores_mexico": ["Arturo Vázquez Ayala"],
+        "eventos_ineditos": null,
+        "expulsados": null
+      },
+      {
+        "rival": "Alemania Federal",
+        "marcador": "0-6",
+        "anotadores_mexico": [],
+        "eventos_ineditos": null,
+        "expulsados": null
+      },
+      {
+        "rival": "Polonia",
+        "marcador": "1-3",
+        "anotadores_mexico": ["Víctor Rangel"],
+        "eventos_ineditos": null,
+        "expulsados": null
+      }
+    ]
+  },
+  {
+    "mundial_año": 1986,
+    "sede": "México",
+    "partidos": [
+      {
+        "rival": "Bélgica",
+        "marcador": "2-1",
+        "anotadores_mexico": ["Fernando Quirarte", "Hugo Sánchez"],
+        "eventos_ineditos": null,
+        "expulsados": null
+      },
+      {
+        "rival": "Paraguay",
+        "marcador": "1-1",
+        "anotadores_mexico": ["Luis Flores"],
+        "eventos_ineditos": null,
+        "expulsados": null
+      },
+      {
+        "rival": "Irak",
+        "marcador": "1-0",
+        "anotadores_mexico": ["Fernando Quirarte"],
+        "eventos_ineditos": null,
+        "expulsados": null
+      },
+      {
+        "rival": "Bulgaria",
+        "marcador": "2-0",
+        "anotadores_mexico": ["Manuel Negrete", "Raúl Servín"],
+        "eventos_ineditos": "Gol de tijera de Negrete, considerado uno de los más bellos",
+        "expulsados": null
+      },
+      {
+        "rival": "Alemania Occidental",
+        "marcador": "0-0",
+        "anotadores_mexico": [],
+        "eventos_ineditos": "Eliminados en penales 1-4 en Cuartos de Final",
+        "expulsados": ["Thomas Berthold (ALE)"]
+      }
+    ]
+  },
+  {
+    "mundial_año": 1994,
+    "sede": "Estados Unidos",
+    "partidos": [
+      {
+        "rival": "Noruega",
+        "marcador": "0-1",
+        "anotadores_mexico": [],
+        "eventos_ineditos": null,
+        "expulsados": null
+      },
+      {
+        "rival": "Irlanda",
+        "marcador": "2-1",
+        "anotadores_mexico": ["Luis García (2)"],
+        "eventos_ineditos": null,
+        "expulsados": null
+      },
+      {
+        "rival": "Italia",
+        "marcador": "1-1",
+        "anotadores_mexico": ["Marcelino Bernal"],
+        "eventos_ineditos": "México avanza como primero de grupo",
+        "expulsados": null
+      },
+      {
+        "rival": "Bulgaria",
+        "marcador": "1-1",
+        "anotadores_mexico": ["Alberto García Aspe"],
+        "eventos_ineditos": "Eliminados en penales 1-3 en Octavos",
+        "expulsados": ["Luis García"]
+      }
+    ]
+  },
+  {
+    "mundial_año": 1998,
+    "sede": "Francia",
+    "partidos": [
+      {
+        "rival": "Corea del Sur",
+        "marcador": "3-1",
+        "anotadores_mexico": ["Ricardo Peláez", "Luis Hernández (2)"],
+        "eventos_ineditos": null,
+        "expulsados": null
+      },
+      {
+        "rival": "Bélgica",
+        "marcador": "2-2",
+        "anotadores_mexico": ["Alberto García Aspe", "Cuauhtémoc Blanco"],
+        "eventos_ineditos": "Gol acrobático de Cuauhtémoc Blanco",
+        "expulsados": ["Pavel Pardo"]
+      },
+      {
+        "rival": "Países Bajos",
+        "marcador": "2-2",
+        "anotadores_mexico": ["Ricardo Peláez", "Luis Hernández"],
+        "eventos_ineditos": "Empate al minuto 94 para calificar",
+        "expulsados": null
+      },
+      {
+        "rival": "Alemania",
+        "marcador": "1-2",
+        "anotadores_mexico": ["Luis Hernández"],
+        "eventos_ineditos": "México ganaba hasta el minuto 74",
+        "expulsados": null
+      }
+    ]
+  },
+  {
+    "mundial_año": 2002,
+    "sede": "Corea/Japón",
+    "partidos": [
+      {
+        "rival": "Croacia",
+        "marcador": "1-0",
+        "anotadores_mexico": ["Cuauhtémoc Blanco"],
+        "eventos_ineditos": null,
+        "expulsados": null
+      },
+      {
+        "rival": "Ecuador",
+        "marcador": "2-1",
+        "anotadores_mexico": ["Jared Borgetti", "Gerardo Torrado"],
+        "eventos_ineditos": null,
+        "expulsados": null
+      },
+      {
+        "rival": "Italia",
+        "marcador": "1-1",
+        "anotadores_mexico": ["Jared Borgetti"],
+        "eventos_ineditos": "Cabezazo de Borgetti a pase de Blanco",
+        "expulsados": null
+      },
+      {
+        "rival": "Estados Unidos",
+        "marcador": "0-2",
+        "anotadores_mexico": [],
+        "eventos_ineditos": "Derrota en Octavos contra el rival de CONCACAF",
+        "expulsados": ["Rafael Márquez"]
+      }
+    ]
+  },
+  {
+    "mundial_año": 2006,
+    "sede": "Alemania",
+    "partidos": [
+      {
+        "rival": "Irán",
+        "marcador": "3-1",
+        "anotadores_mexico": ["Omar Bravo (2)", "Zinha"],
+        "eventos_ineditos": null,
+        "expulsados": null
+      },
+      {
+        "rival": "Angola",
+        "marcador": "0-0",
+        "anotadores_mexico": [],
+        "eventos_ineditos": null,
+        "expulsados": null
+      },
+      {
+        "rival": "Portugal",
+        "marcador": "1-2",
+        "anotadores_mexico": ["Francisco Fonseca"],
+        "eventos_ineditos": "Omar Bravo falló un penal",
+        "expulsados": ["Luis Pérez"]
+      },
+      {
+        "rival": "Argentina",
+        "marcador": "1-2",
+        "anotadores_mexico": ["Rafael Márquez"],
+        "eventos_ineditos": "Eliminados por golazo de Maxi Rodríguez en tiempo extra",
+        "expulsados": null
+      }
+    ]
+  },
+  {
+    "mundial_año": 2010,
+    "sede": "Sudáfrica",
+    "partidos": [
+      {
+        "rival": "Sudáfrica",
+        "marcador": "1-1",
+        "anotadores_mexico": ["Rafael Márquez"],
+        "eventos_ineditos": "Inauguración del torneo",
+        "expulsados": null
+      },
+      {
+        "rival": "Francia",
+        "marcador": "2-0",
+        "anotadores_mexico": ["Javier Hernández", "Cuauhtémoc Blanco"],
+        "eventos_ineditos": "Primer triunfo de México ante un campeón del mundo",
+        "expulsados": null
+      },
+      {
+        "rival": "Uruguay",
+        "marcador": "0-1",
+        "anotadores_mexico": [],
+        "eventos_ineditos": null,
+        "expulsados": null
+      },
+      {
+        "rival": "Argentina",
+        "marcador": "1-3",
+        "anotadores_mexico": ["Javier Hernández"],
+        "eventos_ineditos": "Polémico gol en fuera de lugar de Carlos Tévez",
+        "expulsados": null
+      }
+    ]
+  },
+  {
+    "mundial_año": 2014,
+    "sede": "Brasil",
+    "partidos": [
+      {
+        "rival": "Camerún",
+        "marcador": "1-0",
+        "anotadores_mexico": ["Oribe Peralta"],
+        "eventos_ineditos": "Dos goles legítimos anulados a Giovani dos Santos",
+        "expulsados": null
+      },
+      {
+        "rival": "Brasil",
+        "marcador": "0-0",
+        "anotadores_mexico": [],
+        "eventos_ineditos": "Actuación legendaria de Guillermo Ochoa",
+        "expulsados": null
+      },
+      {
+        "rival": "Croacia",
+        "marcador": "3-1",
+        "anotadores_mexico": ["Rafael Márquez", "Andrés Guardado", "Javier Hernández"],
+        "eventos_ineditos": null,
+        "expulsados": ["Ante Rebic (CRO)"]
+      },
+      {
+        "rival": "Países Bajos",
+        "marcador": "1-2",
+        "anotadores_mexico": ["Giovani dos Santos"],
+        "eventos_ineditos": "El polémico penal al minuto 94 ('No era penal')",
+        "expulsados": null
+      }
+    ]
+  },
+  {
+    "mundial_año": 2018,
+    "sede": "Rusia",
+    "partidos": [
+      {
+        "rival": "Alemania",
+        "marcador": "1-0",
+        "anotadores_mexico": ["Hirving Lozano"],
+        "eventos_ineditos": "Victoria histórica ante el campeón vigente",
+        "expulsados": null
+      },
+      {
+        "rival": "Corea del Sur",
+        "marcador": "2-1",
+        "anotadores_mexico": ["Carlos Vela", "Javier Hernández"],
+        "eventos_ineditos": null,
+        "expulsados": null
+      },
+      {
+        "rival": "Suecia",
+        "marcador": "0-3",
+        "anotadores_mexico": [],
+        "eventos_ineditos": null,
+        "expulsados": null
+      },
+      {
+        "rival": "Brasil",
+        "marcador": "0-2",
+        "anotadores_mexico": [],
+        "eventos_ineditos": null,
+        "expulsados": null
+      }
+    ]
+  },
+  {
+    "mundial_año": 2022,
+    "sede": "Catar",
+    "partidos": [
+      {
+        "rival": "Polonia",
+        "marcador": "0-0",
+        "anotadores_mexico": [],
+        "eventos_ineditos": "Ochoa le detiene un penal a Robert Lewandowski",
+        "expulsados": null
+      },
+      {
+        "rival": "Argentina",
+        "marcador": "0-2",
+        "anotadores_mexico": [],
+        "eventos_ineditos": null,
+        "expulsados": null
+      },
+      {
+        "rival": "Arabia Saudita",
+        "marcador": "2-1",
+        "anotadores_mexico": ["Henry Martín", "Luis Chávez"],
+        "eventos_ineditos": "México queda fuera en fase de grupos por primera vez desde 1978",
+        "expulsados": null
+      }
+    ]
+  }
+]

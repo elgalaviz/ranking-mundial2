@@ -1,0 +1,816 @@
+[
+  {
+    "mundial_año": 1930,
+    "partidos": [
+      {
+        "fase": "Semifinal",
+        "equipo_local": "Argentina",
+        "equipo_visitante": "Estados Unidos",
+        "goles_local": 6,
+        "goles_visitante": 1,
+        "nota": "Argentina goleó para convertirse en el primer finalista de la historia"
+      },
+      {
+        "fase": "Semifinal",
+        "equipo_local": "Uruguay",
+        "equipo_visitante": "Yugoslavia",
+        "goles_local": 6,
+        "goles_visitante": 1,
+        "nota": "Uruguay confirmó su favoritismo como local con una goleada contundente"
+      },
+      {
+        "fase": "Fase de grupos",
+        "equipo_local": "Francia",
+        "equipo_visitante": "México",
+        "goles_local": 4,
+        "goles_visitante": 1,
+        "nota": "Lucien Laurent anotó el primer gol en la historia de los mundiales"
+      },
+      {
+        "fase": "Final",
+        "equipo_local": "Uruguay",
+        "equipo_visitante": "Argentina",
+        "goles_local": 4,
+        "goles_visitante": 2,
+        "nota": "Uruguay remontó un 1-2 al descanso para ser el primer campeón mundial"
+      }
+    ]
+  },
+  {
+    "mundial_año": 1934,
+    "partidos": [
+      {
+        "fase": "Cuartos de final",
+        "equipo_local": "Italia",
+        "equipo_visitante": "España",
+        "goles_local": 1,
+        "goles_visitante": 1,
+        "nota": "Partido de extrema dureza que necesitó un desempate donde ganó Italia 1-0"
+      },
+      {
+        "fase": "Semifinal",
+        "equipo_local": "Italia",
+        "equipo_visitante": "Austria",
+        "goles_local": 1,
+        "goles_visitante": 0,
+        "nota": "Italia derrotó al 'Wunderteam' austríaco bajo una intensa lluvia"
+      },
+      {
+        "fase": "Semifinal",
+        "equipo_local": "Checoslovaquia",
+        "equipo_visitante": "Alemania",
+        "goles_local": 3,
+        "goles_visitante": 1,
+        "nota": "Oldřich Nejedlý anotó un hat-trick para llevar a los checos a la final"
+      },
+      {
+        "fase": "Final",
+        "equipo_local": "Italia",
+        "equipo_visitante": "Checoslovaquia",
+        "goles_local": 2,
+        "goles_visitante": 1,
+        "nota": "Italia ganó en la prórroga tras el gol decisivo de Angelo Schiavio"
+      }
+    ]
+  },
+  {
+    "mundial_año": 1938,
+    "partidos": [
+      {
+        "fase": "Octavos de final",
+        "equipo_local": "Brasil",
+        "equipo_visitante": "Polonia",
+        "goles_local": 6,
+        "goles_visitante": 5,
+        "nota": "Leônidas marcó tres goles y el polaco Wilimowski anotó cuatro"
+      },
+      {
+        "fase": "Semifinal",
+        "equipo_local": "Italia",
+        "equipo_visitante": "Brasil",
+        "goles_local": 2,
+        "goles_visitante": 1,
+        "nota": "Meazza anotó un penal decisivo sujetándose el pantalón roto"
+      },
+      {
+        "fase": "Semifinal",
+        "equipo_local": "Hungría",
+        "equipo_visitante": "Suecia",
+        "goles_local": 5,
+        "goles_visitante": 1,
+        "nota": "Hungría aplastó a los suecos mostrando un fútbol ofensivo de alto nivel"
+      },
+      {
+        "fase": "Final",
+        "equipo_local": "Italia",
+        "equipo_visitante": "Hungría",
+        "goles_local": 4,
+        "goles_visitante": 2,
+        "nota": "Italia defendió su corona convirtiéndose en el primer bicampeón mundial"
+      }
+    ]
+  },
+  {
+    "mundial_año": 1950,
+    "partidos": [
+      {
+        "fase": "Fase de grupos",
+        "equipo_local": "EEUU",
+        "equipo_visitante": "Inglaterra",
+        "goles_local": 1,
+        "goles_visitante": 0,
+        "nota": "Un equipo amateur venció a los inventores del fútbol en la mayor sorpresa hasta entonces"
+      },
+      {
+        "fase": "Cuadrangular Final",
+        "equipo_local": "Brasil",
+        "equipo_visitante": "Suecia",
+        "goles_local": 7,
+        "goles_visitante": 1,
+        "nota": "Brasil exhibió un poderío demoledor que ilusionó a su país"
+      },
+      {
+        "fase": "Cuadrangular Final",
+        "equipo_local": "Brasil",
+        "equipo_visitante": "España",
+        "goles_local": 6,
+        "goles_visitante": 1,
+        "nota": "La penúltima exhibición brasileña antes del colapso final"
+      },
+      {
+        "fase": "Final (Partido decisivo)",
+        "equipo_local": "Uruguay",
+        "equipo_visitante": "Brasil",
+        "goles_local": 2,
+        "goles_visitante": 1,
+        "nota": "El 'Maracanazo': Uruguay venció al favorito ante 200,000 personas para ser campeón"
+      }
+    ]
+  },
+  {
+    "mundial_año": 1954,
+    "partidos": [
+      {
+        "fase": "Cuartos de final",
+        "equipo_local": "Austria",
+        "equipo_visitante": "Suiza",
+        "goles_local": 7,
+        "goles_visitante": 5,
+        "nota": "El partido con más goles en la historia de los mundiales"
+      },
+      {
+        "fase": "Semifinal",
+        "equipo_local": "Alemania Occidental",
+        "equipo_visitante": "Austria",
+        "goles_local": 6,
+        "goles_visitante": 1,
+        "nota": "Los hermanos Walter lideraron la goleada para llegar a su primera final"
+      },
+      {
+        "fase": "Semifinal",
+        "equipo_local": "Hungría",
+        "equipo_visitante": "Uruguay",
+        "goles_local": 4,
+        "goles_visitante": 2,
+        "nota": "Hungría derrotó al campeón vigente en la prórroga en un duelo de titanes"
+      },
+      {
+        "fase": "Final",
+        "equipo_local": "Alemania Occidental",
+        "equipo_visitante": "Hungría",
+        "goles_local": 3,
+        "goles_visitante": 2,
+        "nota": "El 'Milagro de Berna': Alemania remontó un 0-2 ante la invencible Hungría"
+      }
+    ]
+  },
+  {
+    "mundial_año": 1958,
+    "partidos": [
+      {
+        "fase": "Cuartos de final",
+        "equipo_local": "Brasil",
+        "equipo_visitante": "Gales",
+        "goles_local": 1,
+        "goles_visitante": 0,
+        "nota": "Pelé anotó su primer gol mundialista siendo el goleador más joven"
+      },
+      {
+        "fase": "Semifinal",
+        "equipo_local": "Brasil",
+        "equipo_visitante": "Francia",
+        "goles_local": 5,
+        "goles_visitante": 2,
+        "nota": "Hat-trick de Pelé para superar a la Francia de Just Fontaine"
+      },
+      {
+        "fase": "Semifinal",
+        "equipo_local": "Suecia",
+        "equipo_visitante": "Alemania Occidental",
+        "goles_local": 3,
+        "goles_visitante": 1,
+        "nota": "Suecia aprovechó la localía para eliminar al campeón defensor"
+      },
+      {
+        "fase": "Final",
+        "equipo_local": "Brasil",
+        "equipo_visitante": "Suecia",
+        "goles_local": 5,
+        "goles_visitante": 2,
+        "nota": "Brasil logró su primer título con actuaciones estelares de Pelé y Garrincha"
+      }
+    ]
+  },
+  {
+    "mundial_año": 1962,
+    "partidos": [
+      {
+        "fase": "Fase de grupos",
+        "equipo_local": "Chile",
+        "equipo_visitante": "Italia",
+        "goles_local": 2,
+        "goles_visitante": 0,
+        "nota": "La 'Batalla de Santiago' por la extrema violencia y peleas en la cancha"
+      },
+      {
+        "fase": "Semifinal",
+        "equipo_local": "Brasil",
+        "equipo_visitante": "Chile",
+        "goles_local": 4,
+        "goles_visitante": 2,
+        "nota": "Garrincha anotó dos goles y fue expulsado contra el anfitrión"
+      },
+      {
+        "fase": "Semifinal",
+        "equipo_local": "Checoslovaquia",
+        "equipo_visitante": "Yugoslavia",
+        "goles_local": 3,
+        "goles_visitante": 1,
+        "nota": "Los checoslovacos regresaron a una final tras 28 años"
+      },
+      {
+        "fase": "Final",
+        "equipo_local": "Brasil",
+        "equipo_visitante": "Checoslovaquia",
+        "goles_local": 3,
+        "goles_visitante": 1,
+        "nota": "Brasil remontó el marcador para retener el título sin el lesionado Pelé"
+      }
+    ]
+  },
+  {
+    "mundial_año": 1966,
+    "partidos": [
+      {
+        "fase": "Cuartos de final",
+        "equipo_local": "Portugal",
+        "equipo_visitante": "Corea del Norte",
+        "goles_local": 5,
+        "goles_visitante": 3,
+        "nota": "Eusébio anotó cuatro goles para remontar un sorprendente 0-3 inicial"
+      },
+      {
+        "fase": "Semifinal",
+        "equipo_local": "Inglaterra",
+        "equipo_visitante": "Portugal",
+        "goles_local": 2,
+        "goles_visitante": 1,
+        "nota": "Bobby Charlton anotó un doblete para llevar a Inglaterra a su única final"
+      },
+      {
+        "fase": "Semifinal",
+        "equipo_local": "Alemania Occidental",
+        "equipo_visitante": "Unión Soviética",
+        "goles_local": 2,
+        "goles_visitante": 1,
+        "nota": "Beckenbauer anotó un golazo para asegurar el pase alemán"
+      },
+      {
+        "fase": "Final",
+        "equipo_local": "Inglaterra",
+        "equipo_visitante": "Alemania Occidental",
+        "goles_local": 4,
+        "goles_visitante": 2,
+        "nota": "Inglaterra ganó con hat-trick de Hurst y el polémico 'gol fantasma'"
+      }
+    ]
+  },
+  {
+    "mundial_año": 1970,
+    "partidos": [
+      {
+        "fase": "Cuartos de final",
+        "equipo_local": "Alemania Occidental",
+        "equipo_visitante": "Inglaterra",
+        "goles_local": 3,
+        "goles_visitante": 2,
+        "nota": "Alemania remontó dos goles cobrando revancha de la final anterior"
+      },
+      {
+        "fase": "Semifinal",
+        "equipo_local": "Brasil",
+        "equipo_visitante": "Uruguay",
+        "goles_local": 3,
+        "goles_visitante": 1,
+        "nota": "Pelé realizó el famoso 'no gol' amagando al portero sin tocar el balón"
+      },
+      {
+        "fase": "Semifinal",
+        "equipo_local": "Italia",
+        "equipo_visitante": "Alemania Occidental",
+        "goles_local": 4,
+        "goles_visitante": 3,
+        "nota": "El 'Partido del Siglo' con cinco goles anotados en la prórroga"
+      },
+      {
+        "fase": "Final",
+        "equipo_local": "Brasil",
+        "equipo_visitante": "Italia",
+        "goles_local": 4,
+        "goles_visitante": 1,
+        "nota": "Consagración de Pelé y el fútbol arte del 'Scratch' para el tricampeonato"
+      }
+    ]
+  },
+  {
+    "mundial_año": 1974,
+    "partidos": [
+      {
+        "fase": "Segunda Fase",
+        "equipo_local": "Países Bajos",
+        "equipo_visitante": "Brasil",
+        "goles_local": 2,
+        "goles_visitante": 0,
+        "nota": "La 'Naranja Mecánica' eliminó al campeón defensor con fútbol total"
+      },
+      {
+        "fase": "Semifinal (Grupo decisivo)",
+        "equipo_local": "Alemania Occidental",
+        "equipo_visitante": "Polonia",
+        "goles_local": 1,
+        "goles_visitante": 0,
+        "nota": "Partido en campo inundado donde Gerd Müller anotó el gol decisivo"
+      },
+      {
+        "fase": "Semifinal (Grupo decisivo)",
+        "equipo_local": "Países Bajos",
+        "equipo_visitante": "Argentina",
+        "goles_local": 4,
+        "goles_visitante": 0,
+        "nota": "Exhibición absoluta de Cruyff que marcó dos goles"
+      },
+      {
+        "fase": "Final",
+        "equipo_local": "Alemania Occidental",
+        "equipo_visitante": "Países Bajos",
+        "goles_local": 2,
+        "goles_visitante": 1,
+        "nota": "Alemania venció al favorito neerlandés con goles de Breitner y Müller"
+      }
+    ]
+  },
+  {
+    "mundial_año": 1978,
+    "partidos": [
+      {
+        "fase": "Segunda Fase",
+        "equipo_local": "Argentina",
+        "equipo_visitante": "Perú",
+        "goles_local": 6,
+        "goles_visitante": 0,
+        "nota": "Polémica goleada que Argentina necesitaba para llegar a la final"
+      },
+      {
+        "fase": "Semifinal (Grupo decisivo)",
+        "equipo_local": "Países Bajos",
+        "equipo_visitante": "Italia",
+        "goles_local": 2,
+        "goles_visitante": 1,
+        "nota": "Un golazo de Haan le dio el pase a la final a los neerlandeses"
+      },
+      {
+        "fase": "Semifinal (Grupo decisivo)",
+        "equipo_local": "Argentina",
+        "equipo_visitante": "Brasil",
+        "goles_local": 0,
+        "goles_visitante": 0,
+        "nota": "Duro choque sudamericano conocido como la 'Batalla de Rosario'"
+      },
+      {
+        "fase": "Final",
+        "equipo_local": "Argentina",
+        "equipo_visitante": "Países Bajos",
+        "goles_local": 3,
+        "goles_visitante": 1,
+        "nota": "Kempes lideró el primer título argentino con dos goles en la prórroga"
+      }
+    ]
+  },
+  {
+    "mundial_año": 1982,
+    "partidos": [
+      {
+        "fase": "Segunda Fase",
+        "equipo_local": "Italia",
+        "equipo_visitante": "Brasil",
+        "goles_local": 3,
+        "goles_visitante": 2,
+        "nota": "Hat-trick histórico de Rossi para eliminar al favorito Brasil de Zico"
+      },
+      {
+        "fase": "Semifinal",
+        "equipo_local": "Alemania Occidental",
+        "equipo_visitante": "Francia",
+        "goles_local": 3,
+        "goles_visitante": 3,
+        "nota": "Alemania avanzó en penales (5-4) tras una prórroga dramática"
+      },
+      {
+        "fase": "Semifinal",
+        "equipo_local": "Italia",
+        "equipo_visitante": "Polonia",
+        "goles_local": 2,
+        "goles_visitante": 0,
+        "nota": "Rossi continuó su racha para llevar a Italia a la final"
+      },
+      {
+        "fase": "Final",
+        "equipo_local": "Italia",
+        "equipo_visitante": "Alemania Occidental",
+        "goles_local": 3,
+        "goles_visitante": 1,
+        "nota": "Italia igualó a Brasil como tricampeón con el festejo mítico de Tardelli"
+      }
+    ]
+  },
+  {
+    "mundial_año": 1986,
+    "partidos": [
+      {
+        "fase": "Cuartos de final",
+        "equipo_local": "Argentina",
+        "equipo_visitante": "Inglaterra",
+        "goles_local": 2,
+        "goles_visitante": 1,
+        "nota": "Gol de la Mano de Dios y el Gol del Siglo de Maradona"
+      },
+      {
+        "fase": "Semifinal",
+        "equipo_local": "Argentina",
+        "equipo_visitante": "Bélgica",
+        "goles_local": 2,
+        "goles_visitante": 0,
+        "nota": "Actuación magistral de Maradona con un golazo esquivando cuatro defensas"
+      },
+      {
+        "fase": "Semifinal",
+        "equipo_local": "Alemania Occidental",
+        "equipo_visitante": "Francia",
+        "goles_local": 2,
+        "goles_visitante": 0,
+        "nota": "Alemania dejó fuera a la Francia de Platini por segunda vez seguida"
+      },
+      {
+        "fase": "Final",
+        "equipo_local": "Argentina",
+        "equipo_visitante": "Alemania Occidental",
+        "goles_local": 3,
+        "goles_visitante": 2,
+        "nota": "Alemania remontó de 0-2 pero Burruchaga marcó el 3-2 definitivo al 84'"
+      }
+    ]
+  },
+  {
+    "mundial_año": 1990,
+    "partidos": [
+      {
+        "fase": "Fase de grupos",
+        "equipo_local": "Argentina",
+        "equipo_visitante": "Camerún",
+        "goles_local": 0,
+        "goles_visitante": 1,
+        "nota": "Camerún sorprendió venciendo al campeón defensor en el debut"
+      },
+      {
+        "fase": "Semifinal",
+        "equipo_local": "Alemania Occidental",
+        "equipo_visitante": "Inglaterra",
+        "goles_local": 1,
+        "goles_visitante": 1,
+        "nota": "Alemania avanzó en penales (4-3) en un duelo de mucha tensión"
+      },
+      {
+        "fase": "Semifinal",
+        "equipo_local": "Argentina",
+        "equipo_visitante": "Italia",
+        "goles_local": 1,
+        "goles_visitante": 1,
+        "nota": "Goycochea fue el héroe en penales (4-3) eliminando al anfitrión"
+      },
+      {
+        "fase": "Final",
+        "equipo_local": "Alemania Occidental",
+        "equipo_visitante": "Argentina",
+        "goles_local": 1,
+        "goles_visitante": 0,
+        "nota": "Andreas Brehme anotó de penal el gol del título alemán"
+      }
+    ]
+  },
+  {
+    "mundial_año": 1994,
+    "partidos": [
+      {
+        "fase": "Fase de grupos",
+        "equipo_local": "Rusia",
+        "equipo_visitante": "Camerún",
+        "goles_local": 6,
+        "goles_visitante": 1,
+        "nota": "Salenko anotó cinco goles (récord) y Milla marcó con 42 años"
+      },
+      {
+        "fase": "Semifinal",
+        "equipo_local": "Brasil",
+        "equipo_visitante": "Suecia",
+        "goles_local": 1,
+        "goles_visitante": 0,
+        "nota": "Romário anotó de cabeza para poner a Brasil en la final tras 24 años"
+      },
+      {
+        "fase": "Semifinal",
+        "equipo_local": "Italia",
+        "equipo_visitante": "Bulgaria",
+        "goles_local": 2,
+        "goles_visitante": 1,
+        "nota": "Roberto Baggio anotó doblete para terminar el sueño búlgaro"
+      },
+      {
+        "fase": "Final",
+        "equipo_local": "Brasil",
+        "equipo_visitante": "Italia",
+        "goles_local": 0,
+        "goles_visitante": 0,
+        "nota": "Brasil tetracampeón en penales (3-2) con el fallo final de Baggio"
+      }
+    ]
+  },
+  {
+    "mundial_año": 1998,
+    "partidos": [
+      {
+        "fase": "Cuartos de final",
+        "equipo_local": "Países Bajos",
+        "equipo_visitante": "Argentina",
+        "goles_local": 2,
+        "goles_visitante": 1,
+        "nota": "Bergkamp anotó un gol antológico al último minuto para clasificar"
+      },
+      {
+        "fase": "Semifinal",
+        "equipo_local": "Brasil",
+        "equipo_visitante": "Países Bajos",
+        "goles_local": 1,
+        "goles_visitante": 1,
+        "nota": "Brasil avanzó en penales (4-2) tras un duelo de altísimo nivel"
+      },
+      {
+        "fase": "Semifinal",
+        "equipo_local": "Francia",
+        "equipo_visitante": "Croacia",
+        "goles_local": 2,
+        "goles_visitante": 1,
+        "nota": "Thuram anotó sus únicos dos goles con la selección para remontar"
+      },
+      {
+        "fase": "Final",
+        "equipo_local": "Francia",
+        "equipo_visitante": "Brasil",
+        "goles_local": 3,
+        "goles_visitante": 0,
+        "nota": "Zidane anotó dos cabezazos para el primer mundial galo en casa"
+      }
+    ]
+  },
+  {
+    "mundial_año": 2002,
+    "partidos": [
+      {
+        "fase": "Cuartos de final",
+        "equipo_local": "Corea del Sur",
+        "equipo_visitante": "España",
+        "goles_local": 0,
+        "goles_visitante": 0,
+        "nota": "Corea pasó en penales (5-3) en un partido con arbitraje muy polémico"
+      },
+      {
+        "fase": "Semifinal",
+        "equipo_local": "Alemania",
+        "equipo_visitante": "Corea del Sur",
+        "goles_local": 1,
+        "goles_visitante": 0,
+        "nota": "Michael Ballack anotó el gol pero recibió amarilla que lo sacó de la final"
+      },
+      {
+        "fase": "Semifinal",
+        "equipo_local": "Brasil",
+        "equipo_visitante": "Turquía",
+        "goles_local": 1,
+        "goles_visitante": 0,
+        "nota": "Ronaldo anotó de punta para vencer a la gran sorpresa turca"
+      },
+      {
+        "fase": "Final",
+        "equipo_local": "Brasil",
+        "equipo_visitante": "Alemania",
+        "goles_local": 2,
+        "goles_visitante": 0,
+        "nota": "Brasil logró el pentacampeonato con doblete de Ronaldo ante Kahn"
+      }
+    ]
+  },
+  {
+    "mundial_año": 2006,
+    "partidos": [
+      {
+        "fase": "Octavos de final",
+        "equipo_local": "Argentina",
+        "equipo_visitante": "México",
+        "goles_local": 2,
+        "goles_visitante": 1,
+        "nota": "Maxi Rodríguez anotó una volea inolvidable en la prórroga"
+      },
+      {
+        "fase": "Semifinal",
+        "equipo_local": "Italia",
+        "equipo_visitante": "Alemania",
+        "goles_local": 2,
+        "goles_visitante": 0,
+        "nota": "Grosso y Del Piero marcaron al final de la prórroga silenciando Dortmund"
+      },
+      {
+        "fase": "Semifinal",
+        "equipo_local": "Francia",
+        "equipo_visitante": "Portugal",
+        "goles_local": 1,
+        "goles_visitante": 0,
+        "nota": "Zidane anotó de penal para llevar a Francia a una nueva final"
+      },
+      {
+        "fase": "Final",
+        "equipo_local": "Italia",
+        "equipo_visitante": "Francia",
+        "goles_local": 1,
+        "goles_visitante": 1,
+        "nota": "Italia campeón en penales (5-3) en la noche del cabezazo de Zidane"
+      }
+    ]
+  },
+  {
+    "mundial_año": 2010,
+    "partidos": [
+      {
+        "fase": "Cuartos de final",
+        "equipo_local": "Uruguay",
+        "equipo_visitante": "Ghana",
+        "goles_local": 1,
+        "goles_visitante": 1,
+        "nota": "Uruguay pasó en penales tras la mano de Suárez y el penal errado de Gyan"
+      },
+      {
+        "fase": "Semifinal",
+        "equipo_local": "España",
+        "equipo_visitante": "Alemania",
+        "goles_local": 1,
+        "goles_visitante": 0,
+        "nota": "Puyol anotó un cabezazo imparable para meter a España en su primera final"
+      },
+      {
+        "fase": "Semifinal",
+        "equipo_local": "Países Bajos",
+        "equipo_visitante": "Uruguay",
+        "goles_local": 3,
+        "goles_visitante": 2,
+        "nota": "Van Bronckhorst anotó un golazo lejano para abrir el marcador"
+      },
+      {
+        "fase": "Final",
+        "equipo_local": "España",
+        "equipo_visitante": "Países Bajos",
+        "goles_local": 1,
+        "goles_visitante": 0,
+        "nota": "Iniesta anotó al minuto 116 el gol que dio a España su primer Mundial"
+      }
+    ]
+  },
+  {
+    "mundial_año": 2014,
+    "partidos": [
+      {
+        "fase": "Octavos de final",
+        "equipo_local": "Colombia",
+        "equipo_visitante": "Uruguay",
+        "goles_local": 2,
+        "goles_visitante": 0,
+        "nota": "James Rodríguez anotó una volea espectacular premiada con el Puskas"
+      },
+      {
+        "fase": "Semifinal",
+        "equipo_local": "Alemania",
+        "equipo_visitante": "Brasil",
+        "goles_local": 7,
+        "goles_visitante": 1,
+        "nota": "El 'Mineirazo', la mayor goleada sufrida por Brasil en su historia"
+      },
+      {
+        "fase": "Semifinal",
+        "equipo_local": "Argentina",
+        "equipo_visitante": "Países Bajos",
+        "goles_local": 0,
+        "goles_visitante": 0,
+        "nota": "Argentina pasó en penales (4-2) con Romero tapando dos disparos"
+      },
+      {
+        "fase": "Final",
+        "equipo_local": "Alemania",
+        "equipo_visitante": "Argentina",
+        "goles_local": 1,
+        "goles_visitante": 0,
+        "nota": "Götze anotó en la prórroga el gol que dio el tetracampeonato alemán"
+      }
+    ]
+  },
+  {
+    "mundial_año": 2018,
+    "partidos": [
+      {
+        "fase": "Octavos de final",
+        "equipo_local": "Francia",
+        "equipo_visitante": "Argentina",
+        "goles_local": 4,
+        "goles_visitante": 3,
+        "nota": "Duelo vibrante con la irrupción de Mbappé y el golazo de Pavard"
+      },
+      {
+        "fase": "Semifinal",
+        "equipo_local": "Francia",
+        "equipo_visitante": "Bélgica",
+        "goles_local": 1,
+        "goles_visitante": 0,
+        "nota": "Umtiti clasificó a Francia en un gran duelo de porteros"
+      },
+      {
+        "fase": "Semifinal",
+        "equipo_local": "Croacia",
+        "equipo_visitante": "Inglaterra",
+        "goles_local": 2,
+        "goles_visitante": 1,
+        "nota": "Croacia remontó en la prórroga para llegar a su primera final histórica"
+      },
+      {
+        "fase": "Final",
+        "equipo_local": "Francia",
+        "equipo_visitante": "Croacia",
+        "goles_local": 4,
+        "goles_visitante": 2,
+        "nota": "Francia ganó su segunda estrella en una final con muchos goles"
+      }
+    ]
+  },
+  {
+    "mundial_año": 2022,
+    "partidos": [
+      {
+        "fase": "Cuartos de final",
+        "equipo_local": "Argentina",
+        "equipo_visitante": "Países Bajos",
+        "goles_local": 2,
+        "goles_visitante": 2,
+        "nota": "Argentina avanzó en penales (4-3) tras una remontada agónica naranja"
+      },
+      {
+        "fase": "Semifinal",
+        "equipo_local": "Argentina",
+        "equipo_visitante": "Croacia",
+        "goles_local": 3,
+        "goles_visitante": 0,
+        "nota": "Exhibición de Messi y doblete de Julián Álvarez para golear"
+      },
+      {
+        "fase": "Semifinal",
+        "equipo_local": "Francia",
+        "equipo_visitante": "Marruecos",
+        "goles_local": 2,
+        "goles_visitante": 0,
+        "nota": "Francia detuvo la histórica andadura de la primera selección africana en semis"
+      },
+      {
+        "fase": "Final",
+        "equipo_local": "Argentina",
+        "equipo_visitante": "Francia",
+        "goles_local": 3,
+        "goles_visitante": 3,
+        "nota": "Argentina campeón en penales (4-2) tras un duelo épico entre Messi y Mbappé"
+      }
+    ]
+  }
+]

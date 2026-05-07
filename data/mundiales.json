@@ -1,0 +1,640 @@
+[
+  {
+    "año": 1930,
+    "sede": "Uruguay",
+    "campeon": "Uruguay",
+    "subcampeon": "Argentina",
+    "tercer_lugar": "Estados Unidos",
+    "cuarto_lugar": "Yugoslavia",
+    "resultado_final": "4-2",
+    "goleador": "Guillermo Stábile",
+    "goles_goleador": 8,
+    "total_goles": 70,
+    "total_equipos": 13,
+    "estadio_final": "Estadio Centenario",
+    "ciudad_final": "Montevideo",
+    "hechos_clave": [
+      "Primer Mundial de la historia",
+      "Uruguay fue elegido por ser bicampeón olímpico",
+      "No hubo partido por el tercer puesto",
+      "Argentina y Uruguay usaron balones distintos en cada tiempo de la final"
+    ],
+    "datos_mexico": {
+      "participo": true,
+      "fase": "Fase de grupos",
+      "eliminado_por": "Fase de grupos",
+      "forma_eliminacion": "Fase de grupos",
+      "goles_a_favor": 4,
+      "goles_en_contra": 13
+    }
+  },
+  {
+    "año": 1934,
+    "sede": "Italia",
+    "campeon": "Italia",
+    "subcampeon": "Checoslovaquia",
+    "tercer_lugar": "Alemania",
+    "cuarto_lugar": "Austria",
+    "resultado_final": "2-1",
+    "goleador": "Oldřich Nejedlý",
+    "goles_goleador": 5,
+    "total_goles": 70,
+    "total_equipos": 16,
+    "estadio_final": "Stadio Nazionale PNF",
+    "ciudad_final": "Roma",
+    "hechos_clave": [
+      "Primer mundial con fase de clasificación previa",
+      "Uruguay declinó participar como protesta",
+      "Italia se convirtió en el primer campeón europeo",
+      "Formato de eliminación directa desde el inicio"
+    ],
+    "datos_mexico": {
+      "participo": false,
+      "fase": null,
+      "eliminado_por": null,
+      "forma_eliminacion": null,
+      "goles_a_favor": null,
+      "goles_en_contra": null
+    }
+  },
+  {
+    "año": 1938,
+    "sede": "Francia",
+    "campeon": "Italia",
+    "subcampeon": "Hungría",
+    "tercer_lugar": "Brasil",
+    "cuarto_lugar": "Suecia",
+    "resultado_final": "4-2",
+    "goleador": "Leônidas",
+    "goles_goleador": 7,
+    "total_goles": 84,
+    "total_equipos": 15,
+    "estadio_final": "Stade Olympique de Colombes",
+    "ciudad_final": "París",
+    "hechos_clave": [
+      "Italia primer bicampeón consecutivo",
+      "Cuba e Indonesia debutaron en un mundial",
+      "Austria se retiró tras ser anexionada por Alemania",
+      "Último mundial antes de la Segunda Guerra Mundial"
+    ],
+    "datos_mexico": {
+      "participo": false,
+      "fase": null,
+      "eliminado_por": null,
+      "forma_eliminacion": null,
+      "goles_a_favor": null,
+      "goles_en_contra": null
+    }
+  },
+  {
+    "año": 1950,
+    "sede": "Brasil",
+    "campeon": "Uruguay",
+    "subcampeon": "Brasil",
+    "tercer_lugar": "Suecia",
+    "cuarto_lugar": "España",
+    "resultado_final": "2-1",
+    "goleador": "Ademir",
+    "goles_goleador": 8,
+    "total_goles": 88,
+    "total_equipos": 13,
+    "estadio_final": "Estadio Maracaná",
+    "ciudad_final": "Río de Janeiro",
+    "hechos_clave": [
+      "El 'Maracanazo': Uruguay vence al favorito Brasil",
+      "Único mundial sin una final de eliminación directa (cuadrangular final)",
+      "India se retiró por no poder jugar descalzos",
+      "Regreso tras 12 años de interrupción por la guerra"
+    ],
+    "datos_mexico": {
+      "participo": true,
+      "fase": "Fase de grupos",
+      "eliminado_por": "Fase de grupos",
+      "forma_eliminacion": "Fase de grupos",
+      "goles_a_favor": 2,
+      "goles_en_contra": 10
+    }
+  },
+  {
+    "año": 1954,
+    "sede": "Suiza",
+    "campeon": "Alemania Occidental",
+    "subcampeon": "Hungría",
+    "tercer_lugar": "Austria",
+    "cuarto_lugar": "Uruguay",
+    "resultado_final": "3-2",
+    "goleador": "Sándor Kocsis",
+    "goles_goleador": 11,
+    "total_goles": 140,
+    "total_equipos": 16,
+    "estadio_final": "Wankdorfstadion",
+    "ciudad_final": "Berna",
+    "hechos_clave": [
+      "El 'Milagro de Berna': Alemania vence a la Hungría invicta",
+      "Mundial con mayor promedio de goles por partido",
+      "Primera vez que se utilizan dorsales en las camisetas",
+      "Hungría anotó 27 goles en total"
+    ],
+    "datos_mexico": {
+      "participo": true,
+      "fase": "Fase de grupos",
+      "eliminado_por": "Fase de grupos",
+      "forma_eliminacion": "Fase de grupos",
+      "goles_a_favor": 2,
+      "goles_en_contra": 8
+    }
+  },
+  {
+    "año": 1958,
+    "sede": "Suecia",
+    "campeon": "Brasil",
+    "subcampeon": "Suecia",
+    "tercer_lugar": "Francia",
+    "cuarto_lugar": "Alemania Occidental",
+    "resultado_final": "5-2",
+    "goleador": "Just Fontaine",
+    "goles_goleador": 13,
+    "total_goles": 126,
+    "total_equipos": 16,
+    "estadio_final": "Råsunda Stadium",
+    "ciudad_final": "Solna",
+    "hechos_clave": [
+      "Debut y primer título de Pelé con 17 años",
+      "Just Fontaine estableció el récord de más goles en un solo torneo (13)",
+      "Brasil primera selección en ganar fuera de su continente",
+      "Primera transmisión televisiva internacional"
+    ],
+    "datos_mexico": {
+      "participo": true,
+      "fase": "Fase de grupos",
+      "eliminado_por": "Fase de grupos",
+      "forma_eliminacion": "Fase de grupos",
+      "goles_a_favor": 1,
+      "goles_en_contra": 8
+    }
+  },
+  {
+    "año": 1962,
+    "sede": "Chile",
+    "campeon": "Brasil",
+    "subcampeon": "Checoslovaquia",
+    "tercer_lugar": "Chile",
+    "cuarto_lugar": "Yugoslavia",
+    "resultado_final": "3-1",
+    "goleador": "Garrincha",
+    "goles_goleador": 4,
+    "total_goles": 89,
+    "total_equipos": 16,
+    "estadio_final": "Estadio Nacional",
+    "ciudad_final": "Santiago",
+    "hechos_clave": [
+      "Brasil logró su segundo título consecutivo",
+      "La 'Batalla de Santiago' entre Chile e Italia",
+      "Pelé se lesionó en el segundo partido",
+      "Garrincha fue la figura absoluta del torneo"
+    ],
+    "datos_mexico": {
+      "participo": true,
+      "fase": "Fase de grupos",
+      "eliminado_por": "Fase de grupos",
+      "forma_eliminacion": "Fase de grupos",
+      "goles_a_favor": 3,
+      "goles_en_contra": 4
+    }
+  },
+  {
+    "año": 1966,
+    "sede": "Inglaterra",
+    "campeon": "Inglaterra",
+    "subcampeon": "Alemania Occidental",
+    "tercer_lugar": "Portugal",
+    "cuarto_lugar": "Unión Soviética",
+    "resultado_final": "4-2",
+    "goleador": "Eusébio",
+    "goles_goleador": 9,
+    "total_goles": 89,
+    "total_equipos": 16,
+    "estadio_final": "Wembley Stadium",
+    "ciudad_final": "Londres",
+    "hechos_clave": [
+      "Gol fantasma de Geoff Hurst en la final",
+      "Eusébio brilló con Portugal",
+      "Corea del Norte eliminó a Italia",
+      "El trofeo Jules Rimet fue robado y encontrado por un perro llamado Pickles"
+    ],
+    "datos_mexico": {
+      "participo": true,
+      "fase": "Fase de grupos",
+      "eliminado_por": "Fase de grupos",
+      "forma_eliminacion": "Fase de grupos",
+      "goles_a_favor": 1,
+      "goles_en_contra": 3
+    }
+  },
+  {
+    "año": 1970,
+    "sede": "México",
+    "campeon": "Brasil",
+    "subcampeon": "Italia",
+    "tercer_lugar": "Alemania Occidental",
+    "cuarto_lugar": "Uruguay",
+    "resultado_final": "4-1",
+    "goleador": "Gerd Müller",
+    "goles_goleador": 10,
+    "total_goles": 95,
+    "total_equipos": 16,
+    "estadio_final": "Estadio Azteca",
+    "ciudad_final": "Ciudad de México",
+    "hechos_clave": [
+      "Considerado el mejor mundial de la historia",
+      "Uso de tarjetas amarillas y rojas por primera vez",
+      "Brasil se quedó con la Copa Jules Rimet en propiedad",
+      "El 'Partido del Siglo' entre Italia y Alemania (4-3)"
+    ],
+    "datos_mexico": {
+      "participo": true,
+      "fase": "Cuartos de final",
+      "eliminado_por": "Italia",
+      "forma_eliminacion": "Eliminación directa",
+      "goles_a_favor": 6,
+      "goles_en_contra": 4
+    }
+  },
+  {
+    "año": 1974,
+    "sede": "Alemania Occidental",
+    "campeon": "Alemania Occidental",
+    "subcampeon": "Países Bajos",
+    "tercer_lugar": "Polonia",
+    "cuarto_lugar": "Brasil",
+    "resultado_final": "2-1",
+    "goleador": "Grzegorz Lato",
+    "goles_goleador": 7,
+    "total_goles": 97,
+    "total_equipos": 16,
+    "estadio_final": "Olympiastadion",
+    "ciudad_final": "Múnich",
+    "hechos_clave": [
+      "Aparición de la 'Naranja Mecánica' de Cruyff",
+      "Presentación del actual trofeo de la Copa del Mundo",
+      "Enfrentamiento histórico entre las dos Alemanias",
+      "Primer mundial con control antidopaje"
+    ],
+    "datos_mexico": {
+      "participo": false,
+      "fase": null,
+      "eliminado_por": null,
+      "forma_eliminacion": null,
+      "goles_a_favor": null,
+      "goles_en_contra": null
+    }
+  },
+  {
+    "año": 1978,
+    "sede": "Argentina",
+    "campeon": "Argentina",
+    "subcampeon": "Países Bajos",
+    "tercer_lugar": "Brasil",
+    "cuarto_lugar": "Italia",
+    "resultado_final": "3-1",
+    "goleador": "Mario Kempes",
+    "goles_goleador": 6,
+    "total_goles": 102,
+    "total_equipos": 16,
+    "estadio_final": "Estadio Monumental",
+    "ciudad_final": "Buenos Aires",
+    "hechos_clave": [
+      "Argentina gana su primer mundial como local",
+      "Polémica victoria 6-0 de Argentina sobre Perú",
+      "Johan Cruyff no asistió al mundial",
+      "Túnez logró la primera victoria africana en mundiales"
+    ],
+    "datos_mexico": {
+      "participo": true,
+      "fase": "Fase de grupos",
+      "eliminado_por": "Fase de grupos",
+      "forma_eliminacion": "Fase de grupos",
+      "goles_a_favor": 2,
+      "goles_en_contra": 12
+    }
+  },
+  {
+    "año": 1982,
+    "sede": "España",
+    "campeon": "Italia",
+    "subcampeon": "Alemania Occidental",
+    "tercer_lugar": "Polonia",
+    "cuarto_lugar": "Francia",
+    "resultado_final": "3-1",
+    "goleador": "Paolo Rossi",
+    "goles_goleador": 6,
+    "total_goles": 146,
+    "total_equipos": 24,
+    "estadio_final": "Santiago Bernabéu",
+    "ciudad_final": "Madrid",
+    "hechos_clave": [
+      "Aumento de 16 a 24 equipos",
+      "Hattrick de Paolo Rossi contra Brasil",
+      "Goleada histórica de Hungría 10-1 a El Salvador",
+      "El Jeque de Kuwait bajó a la cancha para anular un gol"
+    ],
+    "datos_mexico": {
+      "participo": false,
+      "fase": null,
+      "eliminado_por": null,
+      "forma_eliminacion": null,
+      "goles_a_favor": null,
+      "goles_en_contra": null
+    }
+  },
+  {
+    "año": 1986,
+    "sede": "México",
+    "campeon": "Argentina",
+    "subcampeon": "Alemania Occidental",
+    "tercer_lugar": "Francia",
+    "cuarto_lugar": "Bélgica",
+    "resultado_final": "3-2",
+    "goleador": "Gary Lineker",
+    "goles_goleador": 6,
+    "total_goles": 132,
+    "total_equipos": 24,
+    "estadio_final": "Estadio Azteca",
+    "ciudad_final": "Ciudad de México",
+    "hechos_clave": [
+      "El gol de la mano de Dios de Maradona contra Inglaterra",
+      "El gol del siglo de Maradona contra Inglaterra",
+      "México fue el primer país en organizar dos mundiales",
+      "Consagración de Diego Armando Maradona"
+    ],
+    "datos_mexico": {
+      "participo": true,
+      "fase": "Cuartos de final",
+      "eliminado_por": "Alemania Occidental",
+      "forma_eliminacion": "Penales",
+      "goles_a_favor": 6,
+      "goles_en_contra": 2
+    }
+  },
+  {
+    "año": 1990,
+    "sede": "Italia",
+    "campeon": "Alemania Occidental",
+    "subcampeon": "Argentina",
+    "tercer_lugar": "Italia",
+    "cuarto_lugar": "Inglaterra",
+    "resultado_final": "1-0",
+    "goleador": "Salvatore Schillaci",
+    "goles_goleador": 6,
+    "total_goles": 115,
+    "total_equipos": 24,
+    "estadio_final": "Stadio Olimpico",
+    "ciudad_final": "Roma",
+    "hechos_clave": [
+      "Mundial con el promedio de gol más bajo",
+      "Camerún sorprendió llegando a cuartos de final",
+      "La final se decidió por un polémico penal",
+      "Despedida de la Alemania dividida"
+    ],
+    "datos_mexico": {
+      "participo": false,
+      "fase": null,
+      "eliminado_por": null,
+      "forma_eliminacion": null,
+      "goles_a_favor": null,
+      "goles_en_contra": null
+    }
+  },
+  {
+    "año": 1994,
+    "sede": "Estados Unidos",
+    "campeon": "Brasil",
+    "subcampeon": "Italia",
+    "tercer_lugar": "Suecia",
+    "cuarto_lugar": "Bulgaria",
+    "resultado_final": "0-0",
+    "goleador": "Hristo Stoichkov, Oleg Salenko",
+    "goles_goleador": 6,
+    "total_goles": 141,
+    "total_equipos": 24,
+    "estadio_final": "Rose Bowl",
+    "ciudad_final": "Pasadena",
+    "hechos_clave": [
+      "Primera final decidida en tanda de penaltis",
+      "Positivo por dopaje de Diego Maradona",
+      "Oleg Salenko anotó 5 goles en un solo partido",
+      "Muerte del colombiano Andrés Escobar tras el torneo"
+    ],
+    "datos_mexico": {
+      "participo": true,
+      "fase": "Octavos de final",
+      "eliminado_por": "Bulgaria",
+      "forma_eliminacion": "Penales",
+      "goles_a_favor": 4,
+      "goles_en_contra": 4
+    }
+  },
+  {
+    "año": 1998,
+    "sede": "Francia",
+    "campeon": "Francia",
+    "subcampeon": "Brasil",
+    "tercer_lugar": "Croacia",
+    "cuarto_lugar": "Países Bajos",
+    "resultado_final": "3-0",
+    "goleador": "Davor Šuker",
+    "goles_goleador": 6,
+    "total_goles": 171,
+    "total_equipos": 32,
+    "estadio_final": "Stade de France",
+    "ciudad_final": "Saint-Denis",
+    "hechos_clave": [
+      "Aumento de 24 a 32 equipos",
+      "Zinedine Zidane lideró a Francia a su primer título",
+      "Problemas de salud de Ronaldo antes de la final",
+      "Croacia fue la revelación obteniendo el tercer puesto"
+    ],
+    "datos_mexico": {
+      "participo": true,
+      "fase": "Octavos de final",
+      "eliminado_por": "Alemania",
+      "forma_eliminacion": "Eliminación directa",
+      "goles_a_favor": 8,
+      "goles_en_contra": 7
+    }
+  },
+  {
+    "año": 2002,
+    "sede": "Corea del Sur / Japón",
+    "campeon": "Brasil",
+    "subcampeon": "Alemania",
+    "tercer_lugar": "Turquía",
+    "cuarto_lugar": "Corea del Sur",
+    "resultado_final": "2-0",
+    "goleador": "Ronaldo",
+    "goles_goleador": 8,
+    "total_goles": 161,
+    "total_equipos": 32,
+    "estadio_final": "International Stadium Yokohama",
+    "ciudad_final": "Yokohama",
+    "hechos_clave": [
+      "Primer mundial organizado por dos países",
+      "Primer mundial celebrado en Asia",
+      "Brasil ganó todos sus partidos del torneo",
+      "Eliminaciones tempranas de Francia y Argentina"
+    ],
+    "datos_mexico": {
+      "participo": true,
+      "fase": "Octavos de final",
+      "eliminado_por": "Estados Unidos",
+      "forma_eliminacion": "Eliminación directa",
+      "goles_a_favor": 4,
+      "goles_en_contra": 4
+    }
+  },
+  {
+    "año": 2006,
+    "sede": "Alemania",
+    "campeon": "Italia",
+    "subcampeon": "Francia",
+    "tercer_lugar": "Alemania",
+    "cuarto_lugar": "Portugal",
+    "resultado_final": "1-1",
+    "goleador": "Miroslav Klose",
+    "goles_goleador": 5,
+    "total_goles": 147,
+    "total_equipos": 32,
+    "estadio_final": "Olympiastadion",
+    "ciudad_final": "Berlín",
+    "hechos_clave": [
+      "Cabezazo de Zidane a Materazzi en la final",
+      "Italia ganó su cuarto título",
+      "Despedida de Zinedine Zidane del fútbol",
+      "Máxima cantidad de tarjetas en el partido Portugal vs Holanda"
+    ],
+    "datos_mexico": {
+      "participo": true,
+      "fase": "Octavos de final",
+      "eliminado_por": "Argentina",
+      "forma_eliminacion": "Tiempo extra",
+      "goles_a_favor": 5,
+      "goles_en_contra": 5
+    }
+  },
+  {
+    "año": 2010,
+    "sede": "Sudáfrica",
+    "campeon": "España",
+    "subcampeon": "Países Bajos",
+    "tercer_lugar": "Alemania",
+    "cuarto_lugar": "Uruguay",
+    "resultado_final": "1-0",
+    "goleador": "Thomas Müller",
+    "goles_goleador": 5,
+    "total_goles": 145,
+    "total_equipos": 32,
+    "estadio_final": "Soccer City",
+    "ciudad_final": "Johannesburgo",
+    "hechos_clave": [
+      "Primer mundial organizado en África",
+      "España gana su primer título mundial",
+      "Uso de las vuvuzelas en los estadios",
+      "Francia e Italia eliminadas en primera ronda"
+    ],
+    "datos_mexico": {
+      "participo": true,
+      "fase": "Octavos de final",
+      "eliminado_por": "Argentina",
+      "forma_eliminacion": "Eliminación directa",
+      "goles_a_favor": 4,
+      "goles_en_contra": 5
+    }
+  },
+  {
+    "año": 2014,
+    "sede": "Brasil",
+    "campeon": "Alemania",
+    "subcampeon": "Argentina",
+    "tercer_lugar": "Países Bajos",
+    "cuarto_lugar": "Brasil",
+    "resultado_final": "1-0",
+    "goleador": "James Rodríguez",
+    "goles_goleador": 6,
+    "total_goles": 171,
+    "total_equipos": 32,
+    "estadio_final": "Estadio Maracaná",
+    "ciudad_final": "Río de Janeiro",
+    "hechos_clave": [
+      "El histórico 7-1 de Alemania a Brasil en semis",
+      "Miroslav Klose se convirtió en el goleador histórico de los mundiales",
+      "Primer uso de la tecnología de línea de gol",
+      "James Rodríguez fue la revelación del torneo"
+    ],
+    "datos_mexico": {
+      "participo": true,
+      "fase": "Octavos de final",
+      "eliminado_por": "Países Bajos",
+      "forma_eliminacion": "Eliminación directa",
+      "goles_a_favor": 5,
+      "goles_en_contra": 3
+    }
+  },
+  {
+    "año": 2018,
+    "sede": "Rusia",
+    "campeon": "Francia",
+    "subcampeon": "Croacia",
+    "tercer_lugar": "Bélgica",
+    "cuarto_lugar": "Inglaterra",
+    "resultado_final": "4-2",
+    "goleador": "Harry Kane",
+    "goles_goleador": 6,
+    "total_goles": 169,
+    "total_equipos": 32,
+    "estadio_final": "Estadio Luzhnikí",
+    "ciudad_final": "Moscú",
+    "hechos_clave": [
+      "Primer mundial con uso del sistema VAR",
+      "Francia obtuvo su segunda estrella",
+      "Croacia alcanzó su primera final histórica",
+      "Eliminación temprana del campeón vigente Alemania"
+    ],
+    "datos_mexico": {
+      "participo": true,
+      "fase": "Octavos de final",
+      "eliminado_por": "Brasil",
+      "forma_eliminacion": "Eliminación directa",
+      "goles_a_favor": 3,
+      "goles_en_contra": 6
+    }
+  },
+  {
+    "año": 2022,
+    "sede": "Catar",
+    "campeon": "Argentina",
+    "subcampeon": "Francia",
+    "tercer_lugar": "Croacia",
+    "cuarto_lugar": "Marruecos",
+    "resultado_final": "3-3",
+    "goleador": "Kylian Mbappé",
+    "goles_goleador": 8,
+    "total_goles": 172,
+    "total_equipos": 32,
+    "estadio_final": "Estadio de Lusail",
+    "ciudad_final": "Lusail",
+    "hechos_clave": [
+      "Primer mundial en un país árabe y en invierno boreal",
+      "Consagración de Lionel Messi con el título mundial",
+      "Marruecos fue el primer país africano en llegar a semifinales",
+      "Final considerada una de las mejores de la historia"
+    ],
+    "datos_mexico": {
+      "participo": true,
+      "fase": "Fase de grupos",
+      "eliminado_por": "Fase de grupos",
+      "forma_eliminacion": "Fase de grupos",
+      "goles_a_favor": 2,
+      "goles_en_contra": 3
+    }
+  }
+]
