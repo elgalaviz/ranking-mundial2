@@ -147,6 +147,32 @@ export function buscarHistorial(tipo: TipoHistorial, año?: number): string {
   }
 }
 
+// --- buscarWikipedia ---
+export async function buscarWikipedia(consulta: string): Promise<string> {
+  console.log(`🛠️ buscarWikipedia("${consulta}")`);
+  try {
+    // 1. Buscar el artículo más relevante
+    const searchUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(consulta)}&format=json&srlimit=1&srprop=snippet&origin=*`;
+    const searchRes = await fetch(searchUrl, { signal: AbortSignal.timeout(5000) });
+    const searchData = await searchRes.json() as { query?: { search?: Array<{ title: string; snippet: string }> } };
+    const hit = searchData?.query?.search?.[0];
+    if (!hit) return JSON.stringify({ message: "No se encontraron resultados en Wikipedia." });
+
+    // 2. Obtener el resumen completo del artículo
+    const summaryUrl = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(hit.title)}`;
+    const summaryRes = await fetch(summaryUrl, { signal: AbortSignal.timeout(5000) });
+    const summary = await summaryRes.json() as { extract?: string; title?: string };
+
+    return JSON.stringify({
+      titulo: summary.title ?? hit.title,
+      resumen: summary.extract ?? hit.snippet.replace(/<[^>]+>/g, ""),
+    });
+  } catch (e) {
+    console.error("Error en buscarWikipedia:", e);
+    return JSON.stringify({ error: "No se pudo consultar Wikipedia en este momento." });
+  }
+}
+
 // --- Definición de la herramienta para OpenAI ---
 export const tools: ChatCompletionTool[] = [
   {
@@ -202,6 +228,23 @@ export const tools: ChatCompletionTool[] = [
           },
         },
         required: [],
+      },
+    },
+  },
+  {
+    type: 'function',
+    function: {
+      name: 'buscarWikipedia',
+      description: 'Busca información en Wikipedia para verificar o ampliar datos específicos sobre fútbol: goleadores, jugadas, récords, jugadores históricos, detalles de partidos. Úsala en inglés para mejores resultados. Úsala cuando necesites confirmar un dato puntual que no tienes en el historial local.',
+      parameters: {
+        type: 'object',
+        properties: {
+          consulta: {
+            type: 'string',
+            description: 'Búsqueda en inglés (ej. "Manuel Negrete 1986 FIFA World Cup goal", "1994 FIFA World Cup Mexico goals scored").',
+          },
+        },
+        required: ['consulta'],
       },
     },
   },

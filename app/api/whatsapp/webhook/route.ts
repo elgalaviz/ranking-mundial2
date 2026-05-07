@@ -4,7 +4,7 @@ import OpenAI from "openai";
 import { sendWhatsAppText } from "@/lib/ai/sendWhatsAppText";
 import { sendWhatsAppReplyButtons } from "@/lib/ai/sendWhatsAppInteractive";
 import { getSystemPrompt } from "@/lib/ai/systemPrompt";
-import { tools, getPartidos, getMomios, buscarHistorial } from "@/lib/ai/tools";
+import { tools, getPartidos, getMomios, buscarHistorial, buscarWikipedia } from "@/lib/ai/tools";
 import { getWorldCupOdds, findEventByTeam } from "@/lib/odds/client";
 import { welcomeMessage, limitReachedMessage, pronoGuardadoMessage } from "@/lib/fanbot/messages";
 
@@ -614,6 +614,11 @@ export async function POST(req: NextRequest) {
           const args = JSON.parse(toolCall.function.arguments);
           const result = buscarHistorial(args.tipo, args.año);
           console.log(`🛠️ buscarHistorial(${args.tipo}, ${args.año ?? "todos"}) →`, result.slice(0, 120));
+          messages.push({ tool_call_id: toolCall.id, role: "tool", content: result });
+        } else if (toolCall.type === "function" && toolCall.function.name === "buscarWikipedia") {
+          const args = JSON.parse(toolCall.function.arguments);
+          const result = await buscarWikipedia(args.consulta);
+          console.log(`🛠️ buscarWikipedia("${args.consulta}") →`, result.slice(0, 120));
           messages.push({ tool_call_id: toolCall.id, role: "tool", content: result });
         }
       }
