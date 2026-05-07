@@ -1,7 +1,7 @@
 export function welcomeMessage(name: string): string {
   return `¡Hola ${name}! 👋 Soy FanBot, tu guía del Mundial 2026 🏆
 
-Ya te inscribí a las alertas — 15 min antes de cada partido te aviso con info del juego y jugadores a seguir.
+Ya te inscribí a las alertas — 15 min antes de cada partido te aviso con info del juego, estadio y en qué canales verlo 📺
 
 ¿Tienes alguna pregunta del mundial? Tienes 5 consultas gratis al día 🎯`;
 }
