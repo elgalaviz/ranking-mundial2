@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import CountdownBanner from "./components/CountdownBanner";
 
 export const dynamic = "force-dynamic";
 
@@ -140,6 +141,8 @@ export default async function LandingPage() {
         </section>
       )}
 
+      <CountdownBanner />
+
       {/* ── CÓMO FUNCIONA ─────────────────────────────── */}
       <section className="bg-black py-20">
         <div className="max-w-6xl mx-auto px-6">
@@ -228,7 +231,7 @@ export default async function LandingPage() {
               >
                 Crear mi Grupo →
               </a>
-              <p className="text-center text-xs text-gray-400 mt-3">Pago único · Válido todo el Mundial</p>
+              <p className="text-center text-xs text-gray-400 mt-3">Válido todo el Mundial</p>
             </div>
           </div>
         </div>
