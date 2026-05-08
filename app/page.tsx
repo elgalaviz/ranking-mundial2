@@ -61,7 +61,7 @@ export default async function LandingPage() {
           <img src="/mifanbot.svg" alt="MiFanBot" width={320} height={320} className="mb-5" />
 
           <h1 className="text-4xl sm:text-4xl font-black leading-tight mb-4 text-gray-900">
-            Tu guía del{" "}
+            Tus Alertas del{" "}
             <span className="text-[#006847]">Mundial 2026</span>
             <br />por WhatsApp
           </h1>
@@ -216,17 +216,10 @@ export default async function LandingPage() {
                 Compite con familia o amigos. Código exclusivo, ranking privado y resultados por WhatsApp después de cada partido.
               </p>
 
-              <div className="grid grid-cols-2 gap-3 mb-8">
-                {[
-                  { price: "Gratis", limit: "Hasta 10 personas", tag: "Grupos chicos" },
-                  { price: "$150 MXN", limit: "Hasta 50 personas", tag: "Grupos grandes" },
-                ].map(plan => (
-                  <div key={plan.price} className="border border-gray-200 rounded-xl p-4 text-center">
-                    <div className="text-xs text-gray-400 mb-1">{plan.tag}</div>
-                    <div className="text-lg font-black text-gray-900">{plan.price}</div>
-                    <div className="text-xs text-gray-500 mt-1">{plan.limit}</div>
-                  </div>
-                ))}
+              <div className="border border-gray-200 rounded-xl p-4 text-center mb-8">
+                <div className="text-xs text-gray-400 mb-1">Totalmente gratis</div>
+                <div className="text-lg font-black text-[#006847]">Gratis</div>
+                <div className="text-xs text-gray-500 mt-1">Compite con familia y amigos</div>
               </div>
 
               <a
@@ -236,56 +229,6 @@ export default async function LandingPage() {
                 Crear mi Grupo →
               </a>
               <p className="text-center text-xs text-gray-400 mt-3">Pago único · Válido todo el Mundial</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── FANBOT PREMIUM ────────────────────────────── */}
-      <section className="bg-white py-20">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 bg-amber-100 border border-amber-300 text-amber-700 text-xs px-3 py-1.5 rounded-full mb-4">
-              <span className="text-base">⭐</span>
-              FanBot Premium
-            </div>
-            <h2 className="text-3xl font-black text-gray-900">Consultas ilimitadas todo el torneo</h2>
-            <p className="text-gray-500 mt-2 text-sm">Un solo pago. Sin límites. Durante todo el Mundial 2026.</p>
-          </div>
-
-          <div className="max-w-4xl mx-auto grid lg:grid-cols-2 gap-8 items-center">
-            {/* Features */}
-            <div className="space-y-4">
-              {[
-                { icon: "💬", title: "Consultas ilimitadas", desc: "Pregunta todo lo que quieras sin restricciones durante los 104 partidos del torneo." },
-                { icon: "📊", title: "Estadísticas y alineaciones durante el Mundial", desc: "Datos actualizados de cada partido: alineaciones, resultados y más." },
-                { icon: "⚽", title: "Info de cada partido", desc: "Historial de enfrentamientos, jugadores clave y contexto antes de cada juego." },
-                { icon: "⚡", title: "Acceso prioritario", desc: "Respuestas inmediatas durante los momentos más intensos del torneo." },
-              ].map(f => (
-                <div key={f.title} className="flex gap-4">
-                  <div className="w-10 h-10 bg-amber-50 border border-amber-200 rounded-xl flex items-center justify-center text-xl shrink-0">
-                    {f.icon}
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-sm text-gray-900">{f.title}</h3>
-                    <p className="text-gray-500 text-xs leading-relaxed mt-0.5">{f.desc}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Pricing card */}
-            <div className="bg-linear-to-br from-amber-400 to-orange-500 rounded-2xl p-8 text-white text-center shadow-xl shadow-amber-200">
-              <div className="text-5xl mb-4">⭐</div>
-              <div className="text-5xl font-black mb-1">$99</div>
-              <div className="text-amber-100 text-sm mb-6">MXN · Pago único · Sin renovación</div>
-              <a
-                href="/fanbot"
-                className="block w-full py-3.5 bg-white text-amber-600 font-bold rounded-xl hover:bg-amber-50 transition-colors"
-              >
-                Proximamente Premium →
-              </a>
-              <p className="text-amber-100 text-xs mt-4">Gratis: 3 consultas al día · Premium: ilimitadas</p>
             </div>
           </div>
         </div>
