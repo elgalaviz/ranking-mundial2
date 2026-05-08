@@ -144,22 +144,21 @@ export default async function LandingPage() {
       <CountdownBanner />
 
       {/* ── CÓMO FUNCIONA ─────────────────────────────── */}
-      <section className="bg-black py-20">
-        <div className="max-w-6xl mx-auto px-6">
-          <h2 className="text-2xl font-bold text-center mb-2 text-white">Así de fácil</h2>
-          <p className="text-gray-400 text-center text-sm mb-12">Sin apps, sin registros, sin complicaciones</p>
-          <div className="grid sm:grid-cols-3 gap-8">
+      <section className="bg-black py-20 px-6">
+        <div className="max-w-6xl mx-auto">
+          <p className="text-[#006847] text-xs font-bold uppercase tracking-widest mb-2">Manual del hincha · 03 pasos</p>
+          <h2 className="text-white font-black text-3xl sm:text-4xl uppercase mb-14">
+            Se activa en<br /><span className="text-[#006847]">cuatro segundos.</span>
+          </h2>
+          <div className="grid sm:grid-cols-3 gap-0 border-t border-white/10">
             {[
-              { n: "1", icon: "💬", title: "Escríbenos", desc: "Manda un mensaje al número de FanBot. En segundos quedas registrado." },
-              { n: "2", icon: "⚽", title: "Recibe alertas", desc: "15 minutos antes de cada partido te mandamos info del juego." },
-              { n: "3", icon: "🤖", title: "Pregunta lo que quieras", desc: "Nuestro chatbot responde todo sobre el Mundial 2026 y la historia de los mudniales." },
-            ].map(s => (
-              <div key={s.n} className="text-center">
-                <div className="w-14 h-14 bg-white/10 border border-white/20 rounded-2xl flex items-center justify-center text-2xl mx-auto mb-4">
-                  {s.icon}
-                </div>
-                <div className="text-xs text-[#00e5a0] font-bold mb-2">PASO {s.n}</div>
-                <h3 className="font-bold text-lg mb-2 text-white">{s.title}</h3>
+              { n: "01", title: "ESCRÍBENOS.", desc: "Manda un mensaje al número de FanBot. No te pide mail, ni nombre, ni nada raro." },
+              { n: "02", title: "RECIBES.", desc: "15 minutos antes de cada partido te llega el aviso con info del juego y dónde verlo." },
+              { n: "03", title: "PREGUNTAS.", desc: "¿Quién va primero? ¿Quién jugó la final del 86? ¿Cuándo es la próxima de México? Pregunta lo que quieras." },
+            ].map((s, i) => (
+              <div key={s.n} className={`py-10 ${i < 2 ? "sm:border-r border-white/10" : ""} sm:px-10 first:pl-0`}>
+                <p className="text-[#006847] text-xs font-bold uppercase tracking-widest mb-4">PASO {s.n}</p>
+                <h3 className="text-white font-black text-3xl sm:text-4xl uppercase mb-4 leading-tight">{s.title}</h3>
                 <p className="text-gray-400 text-sm leading-relaxed">{s.desc}</p>
               </div>
             ))}
@@ -238,24 +237,25 @@ export default async function LandingPage() {
       </section>
 
       {/* ── CTA FINAL ─────────────────────────────────── */}
-      <section className="py-20 px-6 text-center">
-        <div className="max-w-xl mx-auto">
-          <div className="text-5xl mb-6">🏆</div>
-          <h2 className="text-3xl font-black mb-4 text-gray-900">
-            El Mundial arranca el <span className="text-[#006847]">11 de junio</span>
+      <section className="bg-black py-24 px-6 text-center">
+        <div className="max-w-4xl mx-auto">
+          <p className="text-[#006847] text-xs font-bold uppercase tracking-widest mb-4">Fin del demo · Inicio de tu temporada</p>
+          <h2 className="text-white font-black text-5xl sm:text-7xl uppercase leading-none mb-4">
+            Actívate ahora.
           </h2>
-          <p className="text-gray-600 mb-8">
-            Más de 100 partidos. 48 selecciones. Sé el primero en saberlo todo.
-          </p>
+          <h2 className="text-[#006847] font-black text-5xl sm:text-7xl uppercase leading-none mb-12">
+            Mira el Mundial<br />como nunca.
+          </h2>
           <a
             href={`https://wa.me/${WA_NUMBER}?text=Hola%20FanBot%2C%20quiero%20mis%20alertas%20del%20Mundial%202026`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-3 bg-[#25D366] hover:bg-[#20c05c] text-black font-bold text-lg px-8 py-4 rounded-2xl transition-all"
+            className="inline-flex items-center gap-3 bg-[#25D366] hover:bg-[#20c05c] text-black font-black text-lg px-10 py-5 transition-all uppercase tracking-wide"
           >
             <WhatsAppIcon />
-            Activar alertas gratis
+            Empezar gratis por WhatsApp
           </a>
+          <p className="text-white/30 text-xs mt-5 uppercase tracking-widest">Tarda 4 segundos · Cero compromiso</p>
         </div>
       </section>
 
