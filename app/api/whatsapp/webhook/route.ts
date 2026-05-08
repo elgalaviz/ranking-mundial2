@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import OpenAI from "openai";
+import crypto from "crypto";
 import { sendWhatsAppText } from "@/lib/ai/sendWhatsAppText";
 import { sendWhatsAppReplyButtons } from "@/lib/ai/sendWhatsAppInteractive";
 import { getSystemPrompt } from "@/lib/ai/systemPrompt";
@@ -16,7 +17,22 @@ const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN || "";
 const APP_URL = (process.env.NEXT_PUBLIC_APP_URL || "https://rankingmundial26.com").replace(/\/$/, "");
 const PRONO_SPONSOR = process.env.PRONO_SPONSOR || "";
 const WA_BOT_NUMBER = process.env.WA_BOT_NUMBER || "5218112993097";
+const META_APP_SECRET = process.env.META_APP_SECRET || "";
 const MAX_FREE_QUERIES = 5;
+
+function verifyMetaSignature(rawBody: string, signature: string | null): boolean {
+  if (!META_APP_SECRET) {
+    console.warn("⚠️ META_APP_SECRET no configurado — saltando validación de firma");
+    return true;
+  }
+  if (!signature) return false;
+  const expected = "sha256=" + crypto.createHmac("sha256", META_APP_SECRET).update(rawBody).digest("hex");
+  try {
+    return crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(signature));
+  } catch {
+    return false;
+  }
+}
 
 const MATCH_TRIGGERS = [
   'partido', 'juego', 'juega', 'jugará', 'jugaran', 'fecha', 'horario',
@@ -71,9 +87,17 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  const rawBody = await req.text();
+  const signature = req.headers.get("x-hub-signature-256");
+
+  if (!verifyMetaSignature(rawBody, signature)) {
+    console.warn("⚠️ Firma inválida — request rechazado", { signature });
+    return new NextResponse("Unauthorized", { status: 401 });
+  }
+
   const supabase = getSupabase();
   try {
-    const body = await req.json();
+    const body = JSON.parse(rawBody);
     const entry = body.entry?.[0];
     const change = entry?.changes?.[0];
     const value = change?.value;
