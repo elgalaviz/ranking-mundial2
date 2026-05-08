@@ -17,10 +17,10 @@ function calcTime() {
 function Digit({ value, label }: { value: number; label: string }) {
   return (
     <div className="flex flex-col items-center">
-      <div className="bg-[#006847] text-white font-black text-4xl sm:text-5xl w-20 sm:w-24 h-20 sm:h-24 rounded-2xl flex items-center justify-center tabular-nums shadow-lg shadow-[#006847]/30">
+      <span className="text-white font-black text-5xl sm:text-6xl tabular-nums leading-none">
         {String(value).padStart(2, "0")}
-      </div>
-      <span className="text-xs text-gray-400 font-semibold mt-2 uppercase tracking-widest">{label}</span>
+      </span>
+      <span className="text-white/60 text-[10px] font-bold mt-1 uppercase tracking-widest">{label}</span>
     </div>
   );
 }
@@ -36,29 +36,31 @@ export default function CountdownBanner() {
   if (!time) return null;
 
   return (
-    <section className="bg-gray-900 py-14 px-6">
-      <div className="max-w-2xl mx-auto text-center">
-        <p className="text-[#006847] text-xs font-bold uppercase tracking-widest mb-3">El silbato suena el 11 de junio · 18:00 CDMX</p>
-        <h2 className="text-white text-2xl sm:text-3xl font-black mb-10">
-          ¿Ya tienes tus alertas activadas?
-        </h2>
-        <div className="flex justify-center gap-4 sm:gap-6 mb-10">
+    <section className="bg-[#006847] px-6 py-8">
+      <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
+
+        {/* Texto izquierda */}
+        <div>
+          <p className="text-white/60 text-[10px] font-bold uppercase tracking-widest mb-1">
+            T-MINUS · INICIO DE TRANSMISIÓN
+          </p>
+          <p className="text-white font-black text-xl sm:text-2xl uppercase leading-tight">
+            El silbato suena el<br />
+            11.06.2026 · 18:00 CDMX
+          </p>
+        </div>
+
+        {/* Números derecha */}
+        <div className="flex items-center gap-3 sm:gap-5">
           <Digit value={time.days} label="días" />
+          <span className="text-white/40 font-black text-4xl leading-none mb-4">:</span>
           <Digit value={time.hours} label="horas" />
+          <span className="text-white/40 font-black text-4xl leading-none mb-4">:</span>
           <Digit value={time.mins} label="min" />
+          <span className="text-white/40 font-black text-4xl leading-none mb-4">:</span>
           <Digit value={time.secs} label="seg" />
         </div>
-        <a
-          href={`https://wa.me/5218112993097?text=Hola%20FanBot%2C%20quiero%20mis%20alertas%20del%20Mundial%202026`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-3 bg-[#25D366] hover:bg-[#20c05c] text-black font-bold text-base px-7 py-3.5 rounded-2xl transition-all shadow-lg shadow-[#25D366]/20"
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-          </svg>
-          Activar mis alertas gratis
-        </a>
+
       </div>
     </section>
   );
