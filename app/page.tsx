@@ -62,7 +62,7 @@ export default async function LandingPage() {
 
           <h1 className="text-4xl sm:text-4xl font-black leading-tight mb-4 text-gray-900">
             Tus Alertas del{" "}
-            <span className="text-[#006847]">Mundial 2026</span>
+            <span className="text-[#006847]">Mundial</span>
             <br />por WhatsApp
           </h1>
 
