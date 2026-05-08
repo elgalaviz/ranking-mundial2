@@ -141,8 +141,6 @@ export default async function LandingPage() {
         </section>
       )}
 
-      <CountdownBanner />
-
       {/* ── CÓMO FUNCIONA ─────────────────────────────── */}
       <section className="bg-black py-20 px-6">
         <div className="max-w-6xl mx-auto">
@@ -165,6 +163,8 @@ export default async function LandingPage() {
           </div>
         </div>
       </section>
+
+      <CountdownBanner />
 
       {/* ── PRONÓSTICOS ───────────────────────────────── */}
       <section className="bg-black py-20 px-6">
