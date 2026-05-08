@@ -54,16 +54,16 @@ export default async function LandingPage() {
       {/* ── HERO ──────────────────────────────────────── */}
       <section className="max-w-6xl mx-auto px-6 pt-10 pb-20 grid lg:grid-cols-2 gap-12 items-center">
         <div>
-          <div className="inline-flex items-center gap-2 bg-[#006847]/10 border border-[#006847]/50 text-[#006847] text-xs px-3 py-1.5 rounded-full mb-6">
-            <span className="w-2 h-2 bg-[#006847] rounded-full animate-pulse" />
+          <div className="inline-flex items-center gap-2 bg-[#00A550]/10 border border-[#00A550]/50 text-[#00A550] text-xs px-3 py-1.5 rounded-full mb-6">
+            <span className="w-2 h-2 bg-[#00A550] rounded-full animate-pulse" />
             Mundial 2026 · 11 Jun – 19 Jul · USA · CAN · MEX
           </div>
 
           <img src="/mifanbot.svg" alt="MiFanBot" width={320} height={320} className="mb-5" />
 
-          <h1 className="text-4xl sm:text-4xl font-black leading-tight mb-4 text-gray-900">
-            Tus Alertas del{" "}
-            <span className="text-[#006847]">Mundial</span>
+          <h1 className="text-5xl sm:text-6xl font-black leading-none uppercase mb-4 text-gray-900">
+            Tus Alertas<br />del{" "}
+            <span className="text-[#00A550]">Mundial</span>
             <br />por WhatsApp
           </h1>
 
@@ -93,7 +93,7 @@ export default async function LandingPage() {
               { n: "16", label: "Ciudades sede" },
             ].map(s => (
               <div key={s.label}>
-                <div className="text-2xl font-black text-[#006847]">{s.n}</div>
+                <div className="text-2xl font-black text-[#00A550]">{s.n}</div>
                 <div className="text-xs text-gray-500">{s.label}</div>
               </div>
             ))}
@@ -123,8 +123,8 @@ export default async function LandingPage() {
             <p className="text-gray-500 text-sm mb-8">Horarios en tiempo de Ciudad de México</p>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {partidos.map((p: Record<string, string>) => (
-                <div key={p.id} className="bg-white border border-gray-200 rounded-xl p-4 hover:border-[#006847]/40 hover:shadow-md transition-all">
-                  <div className="text-xs text-[#006847] mb-2 font-semibold">
+                <div key={p.id} className="bg-white border border-gray-200 rounded-xl p-4 hover:border-[#00A550]/40 hover:shadow-md transition-all">
+                  <div className="text-xs text-[#00A550] mb-2 font-semibold">
                     {p.fase}{p.grupo ? ` · Grupo ${p.grupo}` : ""}
                   </div>
                   <div className="flex items-center justify-between mb-3">
@@ -146,9 +146,9 @@ export default async function LandingPage() {
       {/* ── CÓMO FUNCIONA ─────────────────────────────── */}
       <section className="bg-black py-20 px-6">
         <div className="max-w-6xl mx-auto">
-          <p className="text-[#006847] text-xs font-bold uppercase tracking-widest mb-2">Manual del hincha · 03 pasos</p>
+          <p className="text-[#00A550] text-xs font-bold uppercase tracking-widest mb-2">Manual del hincha · 03 pasos</p>
           <h2 className="text-white font-black text-3xl sm:text-4xl uppercase mb-14">
-            Se activa en<br /><span className="text-[#006847]">cuatro segundos.</span>
+            Se activa en<br /><span className="text-[#00A550]">cuatro segundos.</span>
           </h2>
           <div className="grid sm:grid-cols-3 gap-0 border-t border-white/10">
             {[
@@ -157,7 +157,7 @@ export default async function LandingPage() {
               { n: "03", title: "PREGUNTAS.", desc: "¿Quién va primero? ¿Quién jugó la final del 86? ¿Cuándo es la próxima de México? Pregunta lo que quieras." },
             ].map((s, i) => (
               <div key={s.n} className={`py-10 ${i < 2 ? "sm:border-r border-white/10" : ""} sm:px-10 first:pl-0`}>
-                <p className="text-[#006847] text-xs font-bold uppercase tracking-widest mb-4">PASO {s.n}</p>
+                <p className="text-[#00A550] text-xs font-bold uppercase tracking-widest mb-4">PASO {s.n}</p>
                 <h3 className="text-white font-black text-3xl sm:text-4xl uppercase mb-4 leading-tight">{s.title}</h3>
                 <p className="text-gray-400 text-sm leading-relaxed">{s.desc}</p>
               </div>
@@ -167,70 +167,62 @@ export default async function LandingPage() {
       </section>
 
       {/* ── PRONÓSTICOS ───────────────────────────────── */}
-      <section className="bg-gray-50 py-20 border-y border-gray-100">
-        <div className="max-w-6xl mx-auto px-6">
+      <section className="bg-black py-20 px-6">
+        <div className="max-w-6xl mx-auto">
+          <p className="text-[#00A550] text-xs font-bold uppercase tracking-widest mb-2">Funcionalidad destacada</p>
+          <h2 className="text-white font-black text-3xl sm:text-5xl uppercase mb-14">
+            Pronósticos<br /><span className="text-[#00A550]">del Mundial.</span>
+          </h2>
 
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 bg-[#006847]/10 border border-[#006847]/30 text-[#006847] text-xs px-3 py-1.5 rounded-full mb-4">
-              <span className="w-2 h-2 bg-[#006847] rounded-full animate-pulse" />
-              Ya disponible
-            </div>
-            <h2 className="text-3xl font-black text-gray-900">Pronósticos Mundial 2026</h2>
-            <p className="text-gray-500 mt-2 text-sm">Pronostica cada partido por WhatsApp y ve tu historial en la web</p>
-          </div>
-
-          <div className="grid lg:grid-cols-2 gap-8 items-start">
-
-            {/* Pronósticos */}
-            <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm">
-              <div className="text-4xl mb-4">🎯</div>
-              <div className="inline-block bg-[#006847]/10 text-[#006847] text-xs font-bold px-2 py-1 rounded-full mb-3">GRATIS</div>
-              <h3 className="text-xl font-black text-gray-900 mb-2">Pronostica por WhatsApp</h3>
-              <p className="text-gray-500 text-sm mb-6 leading-relaxed">
-                Antes de cada partido  con un toque das tu pronóstico. Al terminar te avisamos si acertaste y ves todo tu historial en la web.
+          <div className="grid sm:grid-cols-2 gap-0 border-t border-white/10">
+            {/* Pronostica */}
+            <div className="py-10 sm:border-r border-white/10 sm:pr-10">
+              <p className="text-[#00A550] text-xs font-bold uppercase tracking-widest mb-4">/ Jugar</p>
+              <h3 className="text-white font-black text-2xl sm:text-3xl uppercase mb-4 leading-tight">
+                Pronostica<br />por WhatsApp.
+              </h3>
+              <p className="text-gray-400 text-sm leading-relaxed mb-6">
+                Antes de cada partido das tu pick con un toque: Local, Empate o Visita. Al terminar te avisamos el resultado y acumulas puntos.
               </p>
               <ul className="space-y-2 mb-8">
                 {[
-                  
-                  "Pronóstico con un toque: Local, Empate o Visita",
+                  "Pick con un toque desde WhatsApp",
                   "Notificación al terminar el partido",
                   "Historial completo en mifanbot.com",
                 ].map(item => (
-                  <li key={item} className="flex items-center gap-2 text-sm text-gray-700">
-                    <span className="text-[#006847] font-bold">✓</span> {item}
+                  <li key={item} className="flex items-center gap-2 text-sm text-gray-300">
+                    <span className="text-[#00A550] font-black">✓</span> {item}
                   </li>
                 ))}
               </ul>
               <a
                 href="/pronosticos/jornada/1"
-                className="block w-full py-3 bg-[#006847] hover:bg-green-800 text-white font-bold text-center rounded-xl transition-colors"
+                className="inline-block bg-[#00A550] hover:bg-green-600 text-white font-black text-sm px-6 py-3 uppercase tracking-wide transition-colors"
               >
-                Pronosticar 1er Jornada →
+                Pronosticar 1ra Jornada →
               </a>
             </div>
 
-            {/* Grupos privados */}
-            <div className="bg-white border-2 border-[#006847] rounded-2xl p-8 shadow-md relative overflow-hidden">
-              <div className="absolute top-4 right-4 bg-[#006847] text-white text-xs font-bold px-3 py-1 rounded-full">NUEVO</div>
-              <div className="text-4xl mb-4">👥</div>
-              <h3 className="text-xl font-black text-gray-900 mb-2">Grupos Privados</h3>
-              <p className="text-gray-500 text-sm mb-6 leading-relaxed">
-                Compite con familia o amigos. Código exclusivo, ranking privado y resultados por WhatsApp después de cada partido.
+            {/* Grupos */}
+            <div className="py-10 sm:pl-10">
+              <p className="text-[#00A550] text-xs font-bold uppercase tracking-widest mb-4">/ Grupos</p>
+              <h3 className="text-white font-black text-2xl sm:text-3xl uppercase mb-4 leading-tight">
+                Grupos<br />Privados.
+              </h3>
+              <p className="text-gray-400 text-sm leading-relaxed mb-6">
+                Familia, oficina, banda del barrio. Código exclusivo, ranking privado y resultados en vivo por WhatsApp.
               </p>
-
-              <div className="border border-gray-200 rounded-xl p-4 text-center mb-8">
-                <div className="text-xs text-gray-400 mb-1">Totalmente gratis</div>
-                <div className="text-lg font-black text-[#006847]">Gratis</div>
-                <div className="text-xs text-gray-500 mt-1">Compite con familia y amigos</div>
+              <div className="border border-white/10 p-4 mb-8">
+                <p className="text-[#00A550] text-xs font-bold uppercase tracking-widest mb-1">Código de grupo</p>
+                <p className="text-white font-black text-2xl tracking-widest">FAN-2026</p>
+                <p className="text-gray-500 text-xs mt-2 uppercase tracking-wide">Precio · <span className="text-[#00A550] font-bold">Gratis</span></p>
               </div>
-
               <a
                 href="/quiniela/ligas/nueva"
-                className="block w-full py-3 bg-[#006847] hover:bg-green-800 text-white font-bold text-center rounded-xl transition-colors"
+                className="inline-block bg-white hover:bg-gray-100 text-black font-black text-sm px-6 py-3 uppercase tracking-wide transition-colors"
               >
                 Crear mi Grupo →
               </a>
-              <p className="text-center text-xs text-gray-400 mt-3">Válido todo el Mundial</p>
             </div>
           </div>
         </div>
@@ -239,11 +231,11 @@ export default async function LandingPage() {
       {/* ── CTA FINAL ─────────────────────────────────── */}
       <section className="bg-black py-24 px-6 text-center">
         <div className="max-w-4xl mx-auto">
-          <p className="text-[#006847] text-xs font-bold uppercase tracking-widest mb-4">Fin del demo · Inicio de tu temporada</p>
+          <p className="text-[#00A550] text-xs font-bold uppercase tracking-widest mb-4">Fin del demo · Inicio de tu temporada</p>
           <h2 className="text-white font-black text-5xl sm:text-7xl uppercase leading-none mb-4">
             Actívate ahora.
           </h2>
-          <h2 className="text-[#006847] font-black text-5xl sm:text-7xl uppercase leading-none mb-12">
+          <h2 className="text-[#00A550] font-black text-5xl sm:text-7xl uppercase leading-none mb-12">
             Mira el Mundial<br />como nunca.
           </h2>
           <a
@@ -368,7 +360,7 @@ function PhoneMockup() {
       <div className="absolute -right-4 top-16 bg-[#CE1126] text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg rotate-3">
         48 selecciones
       </div>
-      <div className="absolute -left-6 bottom-24 bg-[#006847] text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg -rotate-2">
+      <div className="absolute -left-6 bottom-24 bg-[#00A550] text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg -rotate-2">
         104 partidos
       </div>
     </div>

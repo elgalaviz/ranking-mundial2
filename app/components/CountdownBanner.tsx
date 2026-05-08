@@ -36,7 +36,7 @@ export default function CountdownBanner() {
   if (!time) return null;
 
   return (
-    <section className="bg-[#006847] px-6 py-8">
+    <section className="bg-[#00A550] px-6 py-8">
       <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
 
         {/* Texto izquierda */}
