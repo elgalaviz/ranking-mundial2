@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createClient as createAdmin } from "@supabase/supabase-js";
-import { Users, Globe, Hash, Calendar, MessageCircle } from "lucide-react";
+import { Users, Globe, Hash, Calendar, MessageCircle, Bell } from "lucide-react";
 import { Suspense } from "react";
 import UsersFilters from "./UsersFilters";
 
@@ -22,6 +22,7 @@ type FanBotUser = {
   country_code: string | null;
   consultas_hoy: number;
   plan: string | null;
+  alertas_activas: boolean | null;
 };
 
 function formatDate(d: string | null) {
@@ -51,7 +52,7 @@ export default async function GodUsersPage({
 
   let query = db
     .from("users")
-    .select("id, created_at, name, phone, country_code, consultas_hoy, plan")
+    .select("id, created_at, name, phone, country_code, consultas_hoy, plan, alertas_activas")
     .order("created_at", { ascending: false });
 
   if (plan) query = query.eq("plan", plan);
@@ -103,6 +104,7 @@ export default async function GodUsersPage({
               <th className="px-6 py-3 font-medium"><Hash className="w-4 h-4 inline -mt-0.5 mr-1" />Número</th>
               <th className="px-6 py-3 font-medium"><Calendar className="w-4 h-4 inline -mt-0.5 mr-1" />Fecha Registro</th>
               <th className="px-6 py-3 font-medium"><MessageCircle className="w-4 h-4 inline -mt-0.5 mr-1" />Consultas Hoy</th>
+              <th className="px-6 py-3 font-medium"><Bell className="w-4 h-4 inline -mt-0.5 mr-1" />Alertas</th>
             </tr>
           </thead>
           <tbody>
@@ -124,6 +126,13 @@ export default async function GodUsersPage({
                 <td className="px-6 py-4 font-mono">{u.phone ? `+${u.phone.slice(0, 2)} ****${u.phone.slice(-4)}` : "—"}</td>
                 <td className="px-6 py-4">{formatDate(u.created_at)}</td>
                 <td className="px-6 py-4 text-center">{u.consultas_hoy}</td>
+                <td className="px-6 py-4 text-center">
+                  {u.alertas_activas === true
+                    ? <span title="Alertas activas" className="inline-flex items-center gap-1 text-green-600 font-semibold text-xs"><Bell className="w-3.5 h-3.5" />Sí</span>
+                    : u.alertas_activas === false
+                    ? <span className="text-gray-300 text-xs">No</span>
+                    : <span className="text-gray-200 text-xs">—</span>}
+                </td>
               </tr>
             ))}
           </tbody>
