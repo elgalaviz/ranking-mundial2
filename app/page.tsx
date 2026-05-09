@@ -52,66 +52,71 @@ export default async function LandingPage() {
       </nav>
 
       {/* ── HERO ──────────────────────────────────────── */}
-      <section className="max-w-6xl mx-auto px-6 pt-10 pb-20 grid lg:grid-cols-2 gap-12 items-center">
-        <div>
-          <div className="inline-flex items-center gap-2 bg-[#00A550]/10 border border-[#00A550]/50 text-[#00A550] text-xs px-3 py-1.5 rounded-full mb-6">
-            <span className="w-2 h-2 bg-[#00A550] rounded-full animate-pulse" />
-            Mundial 2026 · 11 Jun – 19 Jul · USA · CAN · MEX
-          </div>
+      <section className="bg-white px-6 pt-10 pb-0 overflow-hidden">
+        <div className="max-w-6xl mx-auto">
 
-          <img src="/mifanbot.svg" alt="MiFanBot" width={320} height={320} className="mb-5" />
-
-          <h1 className="text-5xl sm:text-6xl font-black leading-none uppercase mb-4 text-gray-900">
-            Tus Alertas<br />del{" "}
-            <span className="text-[#00A550]">Mundial</span>
-            <br />por WhatsApp
-          </h1>
-
-          <p className="text-gray-700 text-lg mb-8 leading-relaxed">
-            Mi FanBot te responde todo sobre los mundiales, activa y recibe alertas <strong className="text-gray-900">15 minutos antes</strong> de cada partido,
-            y te avisa en <strong className="text-gray-900">qué canal ver cada juego</strong> y mucho más.
-            Gratis. Sin app. Solo WhatsApp.
-          </p>
-
-          <a
-            href={`https://wa.me/${WA_NUMBER}?text=Hola%20FanBot%2C%20quiero%20mis%20alertas%20del%20Mundial%202026`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-3 bg-[#25D366] hover:bg-[#20c05c] text-black font-bold text-lg px-8 py-4 rounded-2xl transition-all shadow-lg shadow-[#25D366]/20 mb-4"
-          >
-            <WhatsAppIcon />
-            Activar mis alertas gratis
-          </a>
-
-          <p className="text-gray-500 text-sm">Sin registros. Sin contraseña. Solo escríbenos.</p>
-
-          {/* Stats */}
-          <div className="flex gap-8 mt-10">
-            {[
-              { n: "104", label: "Partidos" },
-              { n: "48", label: "Selecciones" },
-              { n: "16", label: "Ciudades sede" },
-            ].map(s => (
-              <div key={s.label}>
-                <div className="text-2xl font-black text-[#00A550]">{s.n}</div>
-                <div className="text-xs text-gray-500">{s.label}</div>
+          {/* Logo + badge */}
+          <div className="flex items-center gap-4 mb-8">
+            <img src="/mifanbot.svg" alt="MiFanBot" width={64} height={64} />
+            <div>
+              <p className="text-[#00A550] text-[10px] font-bold uppercase tracking-widest">Transmisión en vivo · Canal FanBot</p>
+              <div className="flex items-center gap-2 mt-1">
+                <span className="bg-[#00A550] text-white text-[10px] font-black px-2 py-0.5 uppercase tracking-wide">En pantalla</span>
+                <span className="bg-black text-[#00A550] text-[10px] font-black px-2 py-0.5 uppercase tracking-wide animate-pulse">Chat · Alerta en vivo</span>
               </div>
-            ))}
+            </div>
           </div>
-        </div>
 
-        {/* Phone mockup */}
-        <div className="flex flex-col items-center lg:items-end gap-5">
-          <PhoneMockup />
-          <a
-            href={`https://wa.me/${WA_NUMBER}?text=Hola%20FanBot%2C%20quiero%20mi%20calendario%20del%20Mundial%202026`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-3 bg-black text-white font-semibold text-sm px-5 py-3 rounded-2xl hover:bg-gray-900 transition-all shadow-md"
-          >
-            <span className="text-lg">📅</span>
-             Calendario para Iphone y Android del Mundial
-          </a>
+          {/* Headline + mockup */}
+          <div className="grid lg:grid-cols-2 gap-8 items-end">
+            <div>
+              <h1 className="font-black uppercase leading-none text-gray-900 mb-6"
+                style={{ fontSize: "clamp(3rem, 10vw, 7rem)", lineHeight: 0.95 }}>
+                Tus<br />
+                Alertas<br />
+                del<br />
+                <span className="text-[#00A550]">Mundial,</span><br />
+                <span className="text-4xl sm:text-5xl">a tu celular.</span>
+              </h1>
+
+              <p className="text-gray-600 text-base mb-8 max-w-md leading-relaxed">
+                Mi FanBot es tu narrador personal. Te avisa <strong className="text-gray-900">15 min antes</strong>, te manda goles, rojas y resultado en vivo, y responde lo que le preguntes. Todo por WhatsApp.
+              </p>
+
+              <div className="flex flex-wrap items-center gap-4 mb-10">
+                <a
+                  href={`https://wa.me/${WA_NUMBER}?text=Hola%20FanBot%2C%20quiero%20mis%20alertas%20del%20Mundial%202026`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-3 bg-[#25D366] hover:bg-[#20c05c] text-black font-black text-base px-7 py-4 uppercase tracking-wide transition-all"
+                >
+                  <WhatsAppIcon />
+                  Activar mis alertas
+                </a>
+                <p className="text-gray-400 text-xs uppercase tracking-widest">Sin app · Sin login · Solo WhatsApp</p>
+              </div>
+
+              {/* Stats */}
+              <div className="flex gap-8 border-t border-gray-100 pt-6">
+                {[
+                  { n: "48", label: "Equipos" },
+                  { n: "104", label: "Partidos" },
+                  { n: "16", label: "Sedes" },
+                  { n: `15"`, label: "Tiempo real" },
+                ].map(s => (
+                  <div key={s.label}>
+                    <div className="text-xl font-black text-gray-900">{s.n}</div>
+                    <div className="text-[10px] text-gray-400 uppercase tracking-wide">{s.label}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Phone mockup */}
+            <div className="flex justify-center lg:justify-end">
+              <PhoneMockup />
+            </div>
+          </div>
         </div>
       </section>
 
