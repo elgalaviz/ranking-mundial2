@@ -52,7 +52,7 @@ export default async function LandingPage() {
       </nav>
 
       {/* ── HERO ──────────────────────────────────────── */}
-      <section className="bg-white px-6 pt-10 pb-0 overflow-hidden">
+      <section className="bg-white px-6 pt-10 pb-16 overflow-hidden">
         <div className="max-w-6xl mx-auto">
 
           {/* Logo + badge */}
@@ -68,7 +68,7 @@ export default async function LandingPage() {
           </div>
 
           {/* Headline + mockup */}
-          <div className="grid lg:grid-cols-2 gap-8 items-end">
+          <div className="grid lg:grid-cols-2 gap-8 items-center">
             <div>
               <h1 className="font-black uppercase leading-none text-gray-900 mb-6"
                 style={{ fontSize: "clamp(3rem, 10vw, 7rem)", lineHeight: 0.95 }}>
