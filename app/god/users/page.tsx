@@ -21,6 +21,7 @@ type FanBotUser = {
   phone: string | null;
   country_code: string | null;
   consultas_hoy: number;
+  consultas_reset: string | null;
   plan: string | null;
   alertas_activas: boolean | null;
 };
@@ -52,7 +53,7 @@ export default async function GodUsersPage({
 
   let query = db
     .from("users")
-    .select("id, created_at, name, phone, country_code, consultas_hoy, plan, alertas_activas")
+    .select("id, created_at, name, phone, country_code, consultas_hoy, consultas_reset, plan, alertas_activas")
     .order("created_at", { ascending: false });
 
   if (plan) query = query.eq("plan", plan);
@@ -125,7 +126,14 @@ export default async function GodUsersPage({
                 </td>
                 <td className="px-6 py-4 font-mono">{u.phone ? `+${u.phone.slice(0, 3)} ****${u.phone.slice(-4)}` : "—"}</td>
                 <td className="px-6 py-4">{formatDate(u.created_at)}</td>
-                <td className="px-6 py-4 text-center">{u.consultas_hoy}</td>
+                <td className="px-6 py-4 text-center">
+                  <div className="font-semibold text-gray-800">{u.consultas_hoy}</div>
+                  {u.consultas_reset && (
+                    <div className={`text-xs mt-0.5 ${u.consultas_reset === new Date().toISOString().split("T")[0] ? "text-green-600 font-medium" : "text-gray-400"}`}>
+                      {u.consultas_reset === new Date().toISOString().split("T")[0] ? "hoy" : u.consultas_reset}
+                    </div>
+                  )}
+                </td>
                 <td className="px-6 py-4 text-center">
                   {u.alertas_activas === true
                     ? <span title="Alertas activas" className="inline-flex items-center gap-1 text-green-600 font-semibold text-xs"><Bell className="w-3.5 h-3.5" />Sí</span>
