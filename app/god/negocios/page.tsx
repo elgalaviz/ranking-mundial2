@@ -4,7 +4,7 @@ import { createClient as createAdminClient } from "@supabase/supabase-js";
 import Link from "next/link";
 import { Plus, Building2, Users, MessageCircle, ArrowUpRight, CheckCircle, XCircle } from "lucide-react";
 
-const GOD_EMAIL = "rene.galaviz@gmail.com";
+const GOD_EMAIL = process.env.ADMIN_EMAIL!;
 
 type Business = {
   id: string;

@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import Link from "next/link";
 import { ArrowLeft, Building2, Users, Plus, Trash2, CheckCircle, XCircle } from "lucide-react";
 
-const GOD_EMAIL = "rene.galaviz@gmail.com";
+const GOD_EMAIL = process.env.ADMIN_EMAIL!;
 
 async function toggleActive(formData: FormData) {
   "use server";

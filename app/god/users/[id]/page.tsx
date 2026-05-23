@@ -11,7 +11,7 @@ function getSupabaseAdmin() {
   );
 }
 
-const GOD_EMAIL = process.env.ADMIN_EMAIL || "rene.galaviz@gmail.com";
+const GOD_EMAIL = process.env.ADMIN_EMAIL!;
 
 function formatDate(d: string | null) {
   if (!d) return "—";

@@ -4,7 +4,7 @@ import { createClient as createServerClient } from "@/lib/supabase/server";
 import { sendWhatsAppText } from "@/lib/ai/sendWhatsAppText";
 import { sendWhatsAppTemplate } from "@/lib/ai/sendWhatsAppInteractive";
 
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "rene.galaviz@gmail.com";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL!;
 const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN || "";
 const PHONE_NUMBER_ID = process.env.WHATSAPP_PHONE_NUMBER_ID || "";
 const ADMIN_PHONE = process.env.ADMIN_PHONE || "";

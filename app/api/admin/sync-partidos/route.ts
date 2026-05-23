@@ -9,7 +9,7 @@ import { createClient as createServerClient } from "@/lib/supabase/server";
 import { getFixtures } from "@/lib/api-football/client";
 import { fixtureToPartido } from "@/lib/api-football/mappers";
 
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "rene.galaviz@gmail.com";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL!;
 
 function getSupabase() {
   return createClient(

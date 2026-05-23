@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import Sidebar from "@/components/god/Sidebar";
 
-const GOD_EMAIL = process.env.ADMIN_EMAIL || "rene.galaviz@gmail.com";
+const GOD_EMAIL = process.env.ADMIN_EMAIL!;
 
 export default async function GodLayout({
   children,

@@ -13,7 +13,7 @@ function getSupabaseAdmin() {
   );
 }
 
-const GOD_EMAIL = process.env.ADMIN_EMAIL || "rene.galaviz@gmail.com";
+const GOD_EMAIL = process.env.ADMIN_EMAIL!;
 
 type FanBotUser = {
   id: string;

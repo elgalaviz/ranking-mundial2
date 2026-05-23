@@ -6,7 +6,7 @@ import { sendWhatsAppText } from "@/lib/ai/sendWhatsAppText";
 const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN || "";
 const PHONE_NUMBER_ID = process.env.WHATSAPP_PHONE_NUMBER_ID || "";
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://rankingmundial26.com";
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "rene.galaviz@gmail.com";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL!;
 
 async function requireAdmin(): Promise<boolean> {
   const supabase = await createServerClient();
@@ -22,6 +22,7 @@ function getSupabase() {
 }
 
 export async function GET() {
+  if (!await requireAdmin()) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const supabase = getSupabase();
   const { data, error } = await supabase
     .from("ligas")

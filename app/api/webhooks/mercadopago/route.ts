@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createHmac } from "crypto";
+import { createHmac, timingSafeEqual } from "crypto";
 import { createClient } from "@supabase/supabase-js";
 import { MercadoPagoConfig, Payment } from "mercadopago";
 import { sendWhatsAppText } from "@/lib/ai/sendWhatsAppText";
@@ -35,7 +35,11 @@ function validateSignature(req: NextRequest, rawBody: string, dataId: string): b
 
   const manifest = `id:${dataId};request-id:${xRequestId};ts:${ts};`;
   const expected = createHmac("sha256", secret).update(manifest).digest("hex");
-  return expected === v1;
+  try {
+    return timingSafeEqual(Buffer.from(expected), Buffer.from(v1));
+  } catch {
+    return false;
+  }
 }
 
 async function handleLigaPago(ligaId: string) {

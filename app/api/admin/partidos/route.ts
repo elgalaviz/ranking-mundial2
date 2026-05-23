@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { createClient as createServerClient } from "@/lib/supabase/server";
 
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "rene.galaviz@gmail.com";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL!;
 
 async function requireAdmin(): Promise<boolean> {
   const supabase = await createServerClient();
@@ -18,6 +18,7 @@ function getSupabase() {
 }
 
 export async function GET() {
+  if (!await requireAdmin()) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const supabase = getSupabase();
   const { data, error } = await supabase
     .from("partidos")

@@ -19,7 +19,7 @@ function getSupabase() {
 
 export async function POST(req: NextRequest) {
   const secret = req.headers.get("x-cron-secret");
-  if (!CRON_SECRET || secret !== CRON_SECRET) {
+  if (!CRON_SECRET || !secret || secret !== CRON_SECRET) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

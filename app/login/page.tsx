@@ -31,8 +31,7 @@ export default function LoginPage() {
         return;
       }
 
-      const dest = data.user?.email === "rene.galaviz@gmail.com" ? "/god/users" : "/dashboard";
-      router.push(dest);
+      router.push("/dashboard");
       router.refresh();
     } catch {
       setErrorMessage("Ocurrió un error inesperado al iniciar sesión.");

@@ -5,7 +5,7 @@ import { createClient as createAdmin } from "@supabase/supabase-js";
 import { DEFAULT_SYSTEM_PROMPT } from "@/lib/ai/systemPrompt";
 import { Bot, Save } from "lucide-react";
 
-const GOD_EMAIL = process.env.ADMIN_EMAIL || "rene.galaviz@gmail.com";
+const GOD_EMAIL = process.env.ADMIN_EMAIL!;
 
 function getSupabaseAdmin() {
   return createAdmin(

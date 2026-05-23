@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createClient as createAdmin } from "@supabase/supabase-js";
 import { DollarSign, Star, Trophy, TrendingUp } from "lucide-react";
 
-const GOD_EMAIL = process.env.ADMIN_EMAIL || "rene.galaviz@gmail.com";
+const GOD_EMAIL = process.env.ADMIN_EMAIL!;
 const PREMIUM_PRICE = 99;
 const LIGA_TIERS = [149, 299, 499];
 
