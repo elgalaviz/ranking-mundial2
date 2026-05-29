@@ -2,6 +2,9 @@ import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
+import { Barlow_Condensed } from "next/font/google";
+
+const barlow = Barlow_Condensed({ subsets: ["latin"], weight: ["400", "500"] });
 
 export const dynamic = "force-dynamic";
 
@@ -176,7 +179,7 @@ function PaniniCard({ jugador, seleccion }: { jugador: Jugador; seleccion: Selec
         {seleccion.logo_url && (
           <img src={seleccion.logo_url} alt="" width={16} height={16} className="object-contain mx-auto mb-1 opacity-80" />
         )}
-        <p className="text-white text-[10px] font-black uppercase leading-tight truncate">
+        <p className={`${barlow.className} text-white text-[13px] font-medium uppercase leading-tight truncate`}>
           {jugador.nombre.split(" ").pop()}
         </p>
         <p className="text-white/80 text-[8px] uppercase tracking-wide">{posLabel}</p>
