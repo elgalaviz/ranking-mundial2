@@ -156,7 +156,8 @@ function PaniniCard({ jugador, seleccion }: { jugador: Jugador; seleccion: Selec
       )}
 
       {/* Foto */}
-      <div className="flex-1 relative bg-gradient-to-b from-gray-100 to-gray-200 flex items-end justify-center overflow-hidden">
+      <div className="flex-1 relative flex items-end justify-center overflow-hidden"
+        style={{ backgroundImage: "url('/grey.png')", backgroundSize: "cover", backgroundPosition: "center" }}>
         {foto ? (
           <img
             src={foto}
