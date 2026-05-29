@@ -73,6 +73,52 @@ export async function getPartidos(equipo?: string) {
   }
 }
 
+// --- getJugadores ---
+export async function getJugadores(equipo?: string, posicion?: string, nombre?: string): Promise<string> {
+  console.log(`🛠️ getJugadores(equipo=${equipo}, posicion=${posicion}, nombre=${nombre})`);
+  const supabase = getSupabase();
+  try {
+    let query = supabase
+      .from("jugadores")
+      .select("nombre, posicion, numero, edad, selecciones(nombre)")
+      .limit(30);
+
+    if (equipo) {
+      const { data: sel } = await supabase
+        .from("selecciones")
+        .select("id")
+        .ilike("nombre", `%${equipo}%`)
+        .limit(1)
+        .single();
+      if (sel) query = query.eq("team_id", sel.id);
+      else return JSON.stringify({ message: `No encontré la selección '${equipo}' en la base de datos.` });
+    }
+    if (posicion) query = query.ilike("posicion", `%${posicion}%`);
+    if (nombre) query = query.ilike("nombre", `%${nombre}%`);
+
+    query = query.order("posicion").order("numero");
+
+    const { data, error } = await query;
+    if (error) return JSON.stringify({ error: "Error al consultar jugadores." });
+    if (!data || data.length === 0) return JSON.stringify({ message: "No encontré jugadores con esos criterios." });
+
+    const POSICION_ES: Record<string, string> = {
+      Goalkeeper: "Portero", Defender: "Defensa",
+      Midfielder: "Medio",  Attacker: "Delantero",
+    };
+
+    return JSON.stringify(data.map(j => ({
+      nombre: j.nombre,
+      posicion: POSICION_ES[j.posicion ?? ""] ?? j.posicion,
+      numero: j.numero,
+      edad: j.edad,
+      seleccion: (j.selecciones as any)?.nombre,
+    })));
+  } catch (e) {
+    return JSON.stringify({ error: "No se pudo consultar la lista de jugadores." });
+  }
+}
+
 // --- buscarHistorial ---
 type TipoHistorial = "mundial" | "mexico" | "memorable";
 
@@ -140,6 +186,32 @@ export const tools: ChatCompletionTool[] = [
           equipo: {
             type: 'string',
             description: 'El nombre del equipo a buscar (ej. "México", "Argentina"). Si se omite, devuelve los próximos partidos generales.',
+          },
+        },
+        required: [],
+      },
+    },
+  },
+  {
+    type: 'function',
+    function: {
+      name: 'getJugadores',
+      description: 'Obtiene la lista de jugadores de una selección del Mundial 2026. Úsala cuando el usuario pregunte por el squad, plantilla, jugadores o convocados de un equipo, o busque a un jugador específico por nombre.',
+      parameters: {
+        type: 'object',
+        properties: {
+          equipo: {
+            type: 'string',
+            description: 'Nombre del equipo (ej. "Mexico", "Argentina", "Francia"). Omitir si se busca por nombre de jugador.',
+          },
+          posicion: {
+            type: 'string',
+            enum: ['Goalkeeper', 'Defender', 'Midfielder', 'Attacker'],
+            description: 'Filtrar por posición. Opcional.',
+          },
+          nombre: {
+            type: 'string',
+            description: 'Nombre o apellido del jugador a buscar (ej. "Messi", "Ochoa"). Omitir si se busca por equipo.',
           },
         },
         required: [],

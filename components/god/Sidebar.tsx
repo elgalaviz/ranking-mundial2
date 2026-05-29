@@ -14,12 +14,14 @@ import {
   Megaphone,
   LogOut,
   User,
+  Shirt,
 } from "lucide-react";
 
 const navigation = [
   { name: "Dashboard", href: "/god/dashboard", icon: LayoutDashboard },
   { name: "Usuarios", href: "/god/users", icon: Users },
   { name: "Partidos", href: "/god/partidos", icon: Calendar },
+  { name: "Jugadores", href: "/god/jugadores", icon: Shirt },
   { name: "Pronósticos", href: "/god/pronosticos", icon: Target },
   { name: "Pagos", href: "/god/pagos", icon: DollarSign },
   { name: "Patrocinios", href: "/god/patrocinadores", icon: Megaphone },

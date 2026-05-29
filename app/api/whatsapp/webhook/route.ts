@@ -5,7 +5,7 @@ import crypto from "crypto";
 import { sendWhatsAppText } from "@/lib/ai/sendWhatsAppText";
 import { sendWhatsAppReplyButtons } from "@/lib/ai/sendWhatsAppInteractive";
 import { getSystemPrompt } from "@/lib/ai/systemPrompt";
-import { tools, getPartidos, buscarHistorial, buscarWikipedia } from "@/lib/ai/tools";
+import { tools, getPartidos, getJugadores, buscarHistorial, buscarWikipedia } from "@/lib/ai/tools";
 import { welcomeMessage, limitReachedMessage, pronoGuardadoMessage } from "@/lib/fanbot/messages";
 
 export const runtime = "nodejs";
@@ -628,6 +628,11 @@ export async function POST(req: NextRequest) {
               .maybeSingle();
             if (next) pronoMatch = { id: next.id, equipo_local: next.equipo_local, equipo_visitante: next.equipo_visitante };
           }
+        } else if (toolCall.type === "function" && toolCall.function.name === "getJugadores") {
+          const args = JSON.parse(toolCall.function.arguments);
+          const result = await getJugadores(args.equipo, args.posicion, args.nombre);
+          console.log(`🛠️ getJugadores(${args.equipo || ""}) →`, result.slice(0, 120));
+          messages.push({ tool_call_id: toolCall.id, role: "tool", content: result });
         } else if (toolCall.type === "function" && toolCall.function.name === "buscarHistorial") {
           const args = JSON.parse(toolCall.function.arguments);
           const result = buscarHistorial(args.tipo, args.año);
