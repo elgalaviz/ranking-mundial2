@@ -185,38 +185,11 @@ export async function POST(req: NextRequest) {
       const short = (name: string) => name.split(" ")[0].slice(0, 9);
       let buttons: { id: string; title: string }[] = [];
 
-      try {
-        const { getWorldCupOdds, findEventByTeam } = await import("@/lib/odds/client");
-        const normTeam = (s: string) => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").split(" ")[0];
-        const events = await getWorldCupOdds();
-        const event = findEventByTeam(events, partido.equipo_local) ?? findEventByTeam(events, partido.equipo_visitante);
-        if (event) {
-          const h2h = event.bookmakers[0]?.markets.find((m: { key: string }) => m.key === "h2h");
-          const outcomes = h2h?.outcomes ?? [];
-          const drawOdds = outcomes.find((o: { name: string }) => o.name === "Draw");
-          const localNorm = normTeam(partido.equipo_local);
-          const visitanteNorm = normTeam(partido.equipo_visitante);
-          const localOdds = outcomes.find((o: { name: string }) => normTeam(o.name).startsWith(localNorm) || localNorm.startsWith(normTeam(o.name)));
-          const visitanteOdds = outcomes.find((o: { name: string }) => normTeam(o.name).startsWith(visitanteNorm) || visitanteNorm.startsWith(normTeam(o.name)));
-          if (localOdds && visitanteOdds && drawOdds) {
-            buttons = [
-              { id: `prono_L_${Math.round(localOdds.price * 100)}_${idShortClean}`, title: `${short(partido.equipo_local)} ${localOdds.price.toFixed(2)}x`.slice(0, 20) },
-              { id: `prono_E_${Math.round(drawOdds.price * 100)}_${idShortClean}`, title: `Empate ${drawOdds.price.toFixed(2)}x`.slice(0, 20) },
-              { id: `prono_V_${Math.round(visitanteOdds.price * 100)}_${idShortClean}`, title: `${short(partido.equipo_visitante)} ${visitanteOdds.price.toFixed(2)}x`.slice(0, 20) },
-            ];
-          }
-        }
-      } catch (e) {
-        console.error("Error obteniendo momios para reto:", e);
-      }
-
-      if (buttons.length === 0) {
-        buttons = [
-          { id: `prono_L_100_${idShortClean}`, title: short(partido.equipo_local).slice(0, 20) },
-          { id: `prono_E_100_${idShortClean}`, title: "Empate" },
-          { id: `prono_V_100_${idShortClean}`, title: short(partido.equipo_visitante).slice(0, 20) },
-        ];
-      }
+      buttons = [
+        { id: `prono_L_100_${idShortClean}`, title: short(partido.equipo_local).slice(0, 20) },
+        { id: `prono_E_100_${idShortClean}`, title: "Empate" },
+        { id: `prono_V_100_${idShortClean}`, title: short(partido.equipo_visitante).slice(0, 20) },
+      ];
 
       await sendWhatsAppReplyButtons({
         accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from,
@@ -381,39 +354,11 @@ export async function POST(req: NextRequest) {
       const short = (name: string) => name.split(" ")[0].slice(0, 9);
       let buttons: { id: string; title: string }[] = [];
 
-      try {
-        const { getWorldCupOdds, findEventByTeam } = await import("@/lib/odds/client");
-        const normTeam = (s: string) =>
-          s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").split(" ")[0];
-        const events = await getWorldCupOdds();
-        const event = findEventByTeam(events, partido.equipo_local) ?? findEventByTeam(events, partido.equipo_visitante);
-        if (event) {
-          const h2h = event.bookmakers[0]?.markets.find((m: { key: string }) => m.key === "h2h");
-          const outcomes = h2h?.outcomes ?? [];
-          const drawOdds = outcomes.find((o: { name: string }) => o.name === "Draw");
-          const localNorm = normTeam(partido.equipo_local);
-          const visitanteNorm = normTeam(partido.equipo_visitante);
-          const localOdds = outcomes.find((o: { name: string }) => normTeam(o.name).startsWith(localNorm) || localNorm.startsWith(normTeam(o.name)));
-          const visitanteOdds = outcomes.find((o: { name: string }) => normTeam(o.name).startsWith(visitanteNorm) || visitanteNorm.startsWith(normTeam(o.name)));
-          if (localOdds && visitanteOdds && drawOdds) {
-            buttons = [
-              { id: `prono_L_${Math.round(localOdds.price * 100)}_${idShortClean}`, title: `${short(partido.equipo_local)} ${localOdds.price.toFixed(2)}x`.slice(0, 20) },
-              { id: `prono_E_${Math.round(drawOdds.price * 100)}_${idShortClean}`, title: `Empate ${drawOdds.price.toFixed(2)}x`.slice(0, 20) },
-              { id: `prono_V_${Math.round(visitanteOdds.price * 100)}_${idShortClean}`, title: `${short(partido.equipo_visitante)} ${visitanteOdds.price.toFixed(2)}x`.slice(0, 20) },
-            ];
-          }
-        }
-      } catch (e) {
-        console.error("Error obteniendo momios para pronóstico desde alerta:", e);
-      }
-
-      if (buttons.length === 0) {
-        buttons = [
-          { id: `prono_L_100_${idShortClean}`, title: short(partido.equipo_local).slice(0, 20) },
-          { id: `prono_E_100_${idShortClean}`, title: "Empate" },
-          { id: `prono_V_100_${idShortClean}`, title: short(partido.equipo_visitante).slice(0, 20) },
-        ];
-      }
+      buttons = [
+        { id: `prono_L_100_${idShortClean}`, title: short(partido.equipo_local).slice(0, 20) },
+        { id: `prono_E_100_${idShortClean}`, title: "Empate" },
+        { id: `prono_V_100_${idShortClean}`, title: short(partido.equipo_visitante).slice(0, 20) },
+      ];
 
       await sendWhatsAppReplyButtons({
         accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from,
@@ -672,43 +617,11 @@ export async function POST(req: NextRequest) {
       const short = (name: string) => name.split(" ")[0].slice(0, 9);
       let buttons: { id: string; title: string }[] = [];
 
-      try {
-        const normTeam = (s: string) =>
-          s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").split(" ")[0];
-
-        const events = await getWorldCupOdds();
-        const event = findEventByTeam(events, pronoMatch.equipo_local) ?? findEventByTeam(events, pronoMatch.equipo_visitante);
-        if (event) {
-          const h2h = event.bookmakers[0]?.markets.find((m) => m.key === "h2h");
-          const outcomes = h2h?.outcomes ?? [];
-          const drawOdds = outcomes.find((o) => o.name === "Draw");
-
-          // Buscar por nombre, no por posición home/away de la API
-          const localNorm = normTeam(pronoMatch.equipo_local);
-          const visitanteNorm = normTeam(pronoMatch.equipo_visitante);
-          const localOdds = outcomes.find((o) => normTeam(o.name).startsWith(localNorm) || localNorm.startsWith(normTeam(o.name)));
-          const visitanteOdds = outcomes.find((o) => normTeam(o.name).startsWith(visitanteNorm) || visitanteNorm.startsWith(normTeam(o.name)));
-
-          if (localOdds && visitanteOdds && drawOdds) {
-            buttons = [
-              { id: `prono_L_${Math.round(localOdds.price * 100)}_${idShort}`, title: `${short(pronoMatch.equipo_local)} ${localOdds.price.toFixed(2)}x`.slice(0, 20) },
-              { id: `prono_E_${Math.round(drawOdds.price * 100)}_${idShort}`, title: `Empate ${drawOdds.price.toFixed(2)}x`.slice(0, 20) },
-              { id: `prono_V_${Math.round(visitanteOdds.price * 100)}_${idShort}`, title: `${short(pronoMatch.equipo_visitante)} ${visitanteOdds.price.toFixed(2)}x`.slice(0, 20) },
-            ];
-          }
-        }
-      } catch (e) {
-        console.error("Error obteniendo momios:", e);
-      }
-
-      // Fallback sin momios
-      if (buttons.length === 0) {
-        buttons = [
-          { id: `prono_L_100_${idShort}`, title: short(pronoMatch.equipo_local).slice(0, 20) },
-          { id: `prono_E_100_${idShort}`, title: "Empate" },
-          { id: `prono_V_100_${idShort}`, title: short(pronoMatch.equipo_visitante).slice(0, 20) },
-        ];
-      }
+      buttons = [
+        { id: `prono_L_100_${idShort}`, title: short(pronoMatch.equipo_local).slice(0, 20) },
+        { id: `prono_E_100_${idShort}`, title: "Empate" },
+        { id: `prono_V_100_${idShort}`, title: short(pronoMatch.equipo_visitante).slice(0, 20) },
+      ];
 
       await sendWhatsAppReplyButtons({
         accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from,
