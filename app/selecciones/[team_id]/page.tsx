@@ -34,6 +34,7 @@ type Jugador = {
   edad: number | null;
   foto_url: string | null;
   foto_custom_url: string | null;
+  destacado: boolean | null;
 };
 
 type Seleccion = {
@@ -148,8 +149,13 @@ function PaniniCard({ jugador, seleccion }: { jugador: Jugador; seleccion: Selec
   const posLabel = POSICION_ES[jugador.posicion || ""] || jugador.posicion || "";
 
   return (
-    <div className="relative w-full rounded-2xl overflow-hidden shadow-md border border-gray-200 bg-white flex flex-col"
+    <div className={`relative w-full rounded-2xl overflow-hidden shadow-md flex flex-col ${jugador.destacado ? "border-2 border-yellow-400" : "border border-gray-200"} bg-white`}
       style={{ aspectRatio: "2/3" }}>
+
+      {/* Estrella destacado */}
+      {jugador.destacado && (
+        <div className="absolute top-2 right-2 z-10 text-yellow-400 text-sm drop-shadow">★</div>
+      )}
 
       {/* Número */}
       {jugador.numero && (
@@ -179,7 +185,7 @@ function PaniniCard({ jugador, seleccion }: { jugador: Jugador; seleccion: Selec
         {seleccion.logo_url && (
           <img src={seleccion.logo_url} alt="" width={16} height={16} className="object-contain mx-auto mb-1 opacity-80" />
         )}
-        <p className={`${barlow.className} text-white text-[13px] font-medium uppercase leading-tight truncate`}>
+        <p className={`${barlow.className} text-white text-[20px] font-medium uppercase leading-tight truncate`}>
           {jugador.nombre.split(" ").pop()}
         </p>
         <p className="text-white/80 text-[8px] uppercase tracking-wide">{posLabel}</p>
