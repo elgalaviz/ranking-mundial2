@@ -256,6 +256,27 @@ export default async function LandingPage() {
         </div>
       </section>
 
+      {/* ── B2B CTA ───────────────────────────────────── */}
+      <section className="bg-black text-white py-16 px-6">
+        <div className="max-w-3xl mx-auto text-center">
+          <p className="text-[#00A550] text-xs font-bold uppercase tracking-widest mb-3">Para negocios</p>
+          <h2 className="text-3xl sm:text-4xl font-black uppercase leading-tight mb-4">
+            ¿Quieres un bot así<br />para tu marca?
+          </h2>
+          <p className="text-gray-400 text-base mb-8 max-w-xl mx-auto">
+            Desarrollamos chatbots de WhatsApp con IA para eventos, marcas y negocios. Agenda una llamada con el equipo de Ranking Agencia.
+          </p>
+          <a
+            href="https://www.rankingagencia.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 bg-[#00A550] hover:bg-green-600 text-white font-black text-sm px-8 py-4 uppercase tracking-wide transition-all"
+          >
+            Contactar a Ranking Agencia →
+          </a>
+        </div>
+      </section>
+
       {/* ── FOOTER ────────────────────────────────────── */}
       <footer className="border-t border-gray-200 bg-gray-50 py-8 px-6">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
