@@ -257,23 +257,26 @@ export default async function LandingPage() {
       </section>
 
       {/* ── B2B CTA ───────────────────────────────────── */}
-      <section className="bg-black text-white py-16 px-6">
-        <div className="max-w-3xl mx-auto text-center">
-          <p className="text-[#00A550] text-xs font-bold uppercase tracking-widest mb-3">Para negocios</p>
-          <h2 className="text-3xl sm:text-4xl font-black uppercase leading-tight mb-4">
-            ¿Tu empresa necesita<br />un bot con IA?
-          </h2>
-          <p className="text-gray-400 text-base mb-8 max-w-xl mx-auto">
-            Crea tu propio chatbot de WhatsApp con inteligencia artificial. Sin código, sin complicaciones.
-          </p>
-          <a
-            href="https://www.prospekto.com.mx"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 bg-[#00A550] hover:bg-green-600 text-white font-black text-sm px-8 py-4 uppercase tracking-wide transition-all"
-          >
-            Prueba Prospekto →
-          </a>
+      <section className="bg-white border-t border-gray-100 py-16 px-6">
+        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-10">
+          <img src="/prospekto.png" alt="Prospekto" className="w-48 md:w-64 object-contain shrink-0" />
+          <div>
+            <p className="text-[#00A550] text-xs font-bold uppercase tracking-widest mb-3">Para negocios</p>
+            <h2 className="text-3xl sm:text-4xl font-black uppercase leading-tight mb-4 text-gray-900">
+              ¿Tu empresa necesita<br />un bot con IA?
+            </h2>
+            <p className="text-gray-500 text-base mb-8 max-w-xl">
+              Crea tu propio chatbot de WhatsApp con inteligencia artificial. Sin código, sin complicaciones.
+            </p>
+            <a
+              href="https://www.prospekto.com.mx"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 bg-[#00A550] hover:bg-green-600 text-white font-black text-sm px-8 py-4 uppercase tracking-wide transition-all"
+            >
+              Prueba Prospekto →
+            </a>
+          </div>
         </div>
       </section>
 
@@ -298,19 +301,13 @@ export default async function LandingPage() {
 
 function Logo({ small }: { small?: boolean }) {
   return (
-    <div className={`flex items-center gap-1 ${small ? "scale-75 origin-left" : ""}`}>
-      <div className="flex flex-col gap-0.5 mr-1">
-        {[12, 10, 8, 6, 4].map((w, i) => (
-          <div key={i} style={{ width: w }} className="h-0.5 bg-[#00e5a0] rounded-full" />
-        ))}
-      </div>
-      <div>
-        <div className="text-[10px] font-black text-white tracking-[0.3em] leading-none">RANKING</div>
-        <div className="text-xl font-black text-[#00e5a0] tracking-wider leading-none" style={{ fontFamily: "monospace" }}>
-          MUNDIAL26
-        </div>
-      </div>
-    </div>
+    <img
+      src="/mifanbot-h.svg"
+      alt="MiFanBot"
+      width={small ? 100 : 140}
+      height={small ? 26 : 36}
+      className="opacity-60"
+    />
   );
 }
 
