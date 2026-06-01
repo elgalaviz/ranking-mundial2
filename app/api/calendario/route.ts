@@ -70,7 +70,7 @@ export async function GET() {
   const ics = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    "PRODID:-//Ranking Mundial 26//FanBot//ES",
+    "PRODID:-//MiFanBot//FanBot//ES",
     "CALSCALE:GREGORIAN",
     "METHOD:PUBLISH",
     "X-WR-CALNAME:Mundial 2026 ⚽",

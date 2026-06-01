@@ -265,8 +265,11 @@ export default async function LandingPage() {
             <a href="/condiciones" className="hover:text-gray-900">Condiciones</a>
             <a href="/eliminacion-datos" className="hover:text-gray-900">Eliminar datos</a>
           </div>
-          <p className="text-xs text-gray-400">© 2026 <a href="https://www.rankingagencia.com" target="_blank" rel="noopener noreferrer" className="hover:text-gray-600 transition-colors">Ranking Mundial 26</a></p>
+          <p className="text-xs text-gray-400">© 2026 MiFanBot</p>
         </div>
+        <p className="text-center text-[10px] text-gray-300 mt-4 max-w-xl mx-auto">
+          MiFanBot es un servicio independiente de información y entretenimiento para aficionados al fútbol. No está afiliado, patrocinado ni respaldado por FIFA ni por ninguna entidad organizadora del torneo.
+        </p>
       </footer>
     </main>
   );
@@ -325,7 +328,7 @@ function PhoneMockup() {
           style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c8b8a2' fill-opacity='0.3'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")" }}
         >
           <ChatBubble from="bot">
-            ¡Hola Carlos! 👋 Soy <strong>FanBot</strong>, tu guía del Mundial 2026 🏆<br />
+            ¡Hola Carlos! 👋 Soy <strong>FanBot</strong>, tu asistente de fútbol ⚽<br />
             Ya quedaste inscrito. Te aviso 15 min antes de cada partido.
           </ChatBubble>
 

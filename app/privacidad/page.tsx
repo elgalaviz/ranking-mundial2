@@ -76,7 +76,7 @@ export default function PrivacidadPage() {
 
           <h2>3. Consentimiento para mensajes de WhatsApp</h2>
           <p>
-            Al interactuar con Ranking Mundial 26 vía WhatsApp, aceptas expresamente recibir:
+            Al interactuar con MiFanBot vía WhatsApp, aceptas expresamente recibir:
           </p>
           <ul>
             <li>Alertas automáticas 15 minutos antes de cada partido del Mundial 2026.</li>

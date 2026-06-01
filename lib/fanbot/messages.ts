@@ -1,5 +1,5 @@
 export function welcomeMessage(name: string): string {
-  return `¡Hola ${name}! 👋 Soy FanBot, tu guía del Mundial 2026 🏆
+  return `¡Hola ${name}! 👋 Soy FanBot, tu asistente de fútbol ⚽
 
 Ya te inscribí a las alertas — 15 min antes de cada partido te aviso con info del juego, estadio y en qué canales verlo 📺
 

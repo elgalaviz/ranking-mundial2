@@ -154,7 +154,7 @@ export default function FanbotLandingPage() {
             <Link href="/privacidad" className="hover:text-gray-900">Privacidad</Link>
             <Link href="/condiciones" className="hover:text-gray-900">Condiciones</Link>
           </div>
-          <p className="text-xs text-gray-400">© 2026 <Link href="https://www.rankingagencia.com" target="_blank" rel="noopener noreferrer" className="hover:text-gray-600 transition-colors">Ranking Mundial 26</Link></p>
+          <p className="text-xs text-gray-400">© 2026 MiFanBot</p>
         </div>
       </footer>
     </main>
