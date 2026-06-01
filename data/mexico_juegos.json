@@ -2,6 +2,17 @@
   {
     "mundial_año": 1930,
     "sede": "Uruguay",
+    "mejor_resultado": "Fase de grupos",
+    "estadisticas": {
+      "partidos_jugados": 3,
+      "ganados": 0,
+      "empatados": 0,
+      "perdidos": 3,
+      "goles_favor": 4,
+      "goles_contra": 13,
+      "goleador_del_torneo": "Manuel Rosas (2)"
+    },
+    "once_historico": ["Felipe Rosas (capitán)", "Manuel Rosas", "Roberto Gayón", "Juan Carreño", "Rafael Garza Gutiérrez"],
     "partidos": [
       {
         "rival": "Francia",
@@ -29,6 +40,17 @@
   {
     "mundial_año": 1950,
     "sede": "Brasil",
+    "mejor_resultado": "Fase de grupos",
+    "estadisticas": {
+      "partidos_jugados": 3,
+      "ganados": 0,
+      "empatados": 0,
+      "perdidos": 3,
+      "goles_favor": 2,
+      "goles_contra": 10,
+      "goleador_del_torneo": "Héctor Ortiz (1), Horacio Casarín (1)"
+    },
+    "once_historico": ["Antonio Carbajal (GK - debut mundial)", "Horacio Casarín", "Héctor Ortiz", "José Naranjo", "Héctor Gómez"],
     "partidos": [
       {
         "rival": "Brasil",
@@ -56,6 +78,17 @@
   {
     "mundial_año": 1954,
     "sede": "Suiza",
+    "mejor_resultado": "Fase de grupos",
+    "estadisticas": {
+      "partidos_jugados": 2,
+      "ganados": 0,
+      "empatados": 0,
+      "perdidos": 2,
+      "goles_favor": 2,
+      "goles_contra": 8,
+      "goleador_del_torneo": "José Luis Lamadrid (1), Tomás Balcázar (1)"
+    },
+    "once_historico": ["Antonio Carbajal (GK)", "Tomás Balcázar", "José Luis Lamadrid", "Raúl Cárdenas", "Héctor Hernández"],
     "partidos": [
       {
         "rival": "Brasil",
@@ -76,6 +109,17 @@
   {
     "mundial_año": 1958,
     "sede": "Suecia",
+    "mejor_resultado": "Fase de grupos",
+    "estadisticas": {
+      "partidos_jugados": 3,
+      "ganados": 0,
+      "empatados": 1,
+      "perdidos": 2,
+      "goles_favor": 1,
+      "goles_contra": 8,
+      "goleador_del_torneo": "Jaime Belmonte (1)"
+    },
+    "once_historico": ["Antonio Carbajal (GK)", "Jaime Belmonte", "Salvador Reyes", "Raúl Cárdenas", "Héctor Hernández"],
     "partidos": [
       {
         "rival": "Suecia",
@@ -103,6 +147,17 @@
   {
     "mundial_año": 1962,
     "sede": "Chile",
+    "mejor_resultado": "Fase de grupos",
+    "estadisticas": {
+      "partidos_jugados": 3,
+      "ganados": 1,
+      "empatados": 0,
+      "perdidos": 2,
+      "goles_favor": 3,
+      "goles_contra": 4,
+      "goleador_del_torneo": "Isidoro Díaz (1), Alfredo del Águila (1), Héctor Hernández (1)"
+    },
+    "once_historico": ["Antonio Carbajal (GK)", "Isidoro Díaz", "Alfredo del Águila", "Héctor Hernández", "Guillermo Hernández"],
     "partidos": [
       {
         "rival": "Brasil",
@@ -130,6 +185,17 @@
   {
     "mundial_año": 1966,
     "sede": "Inglaterra",
+    "mejor_resultado": "Fase de grupos",
+    "estadisticas": {
+      "partidos_jugados": 3,
+      "ganados": 0,
+      "empatados": 2,
+      "perdidos": 1,
+      "goles_favor": 1,
+      "goles_contra": 3,
+      "goleador_del_torneo": "Enrique Borja (1)"
+    },
+    "once_historico": ["Antonio Carbajal (GK - 5 mundiales)", "Enrique Borja", "Gustavo Peña", "Isidoro Díaz", "Ignacio Jáuregui"],
     "partidos": [
       {
         "rival": "Francia",
@@ -157,6 +223,17 @@
   {
     "mundial_año": 1970,
     "sede": "México",
+    "mejor_resultado": "Cuartos de final",
+    "estadisticas": {
+      "partidos_jugados": 4,
+      "ganados": 2,
+      "empatados": 1,
+      "perdidos": 1,
+      "goles_favor": 6,
+      "goles_contra": 4,
+      "goleador_del_torneo": "Javier Valdivia (2)"
+    },
+    "once_historico": ["Ignacio Calderón (GK)", "Gustavo Peña (capitán)", "Javier Valdivia", "Javier Fragoso", "Ignacio Basaguren", "José Luis González", "Aaron Padilla", "Mario Peláez"],
     "partidos": [
       {
         "rival": "Unión Soviética",
@@ -183,7 +260,7 @@
         "rival": "Italia",
         "marcador": "1-4",
         "anotadores_mexico": ["José Luis González"],
-        "eventos_ineditos": "Cuartos de final",
+        "eventos_ineditos": "Cuartos de final — mejor resultado histórico hasta entonces",
         "expulsados": null
       }
     ]
@@ -191,6 +268,17 @@
   {
     "mundial_año": 1978,
     "sede": "Argentina",
+    "mejor_resultado": "Fase de grupos",
+    "estadisticas": {
+      "partidos_jugados": 3,
+      "ganados": 0,
+      "empatados": 0,
+      "perdidos": 3,
+      "goles_favor": 2,
+      "goles_contra": 12,
+      "goleador_del_torneo": "Arturo Vázquez Ayala (1), Víctor Rangel (1)"
+    },
+    "once_historico": ["José Pilar Reyes (GK)", "Arturo Vázquez Ayala", "Víctor Rangel", "Leonardo Cuéllar", "Alfredo Tena"],
     "partidos": [
       {
         "rival": "Túnez",
@@ -218,6 +306,18 @@
   {
     "mundial_año": 1986,
     "sede": "México",
+    "mejor_resultado": "Cuartos de final",
+    "estadisticas": {
+      "partidos_jugados": 5,
+      "ganados": 3,
+      "empatados": 1,
+      "perdidos": 0,
+      "goles_favor": 6,
+      "goles_contra": 2,
+      "nota": "Eliminados en penales 1-4 en Cuartos de Final",
+      "goleador_del_torneo": "Fernando Quirarte (2), Manuel Negrete (1), Hugo Sánchez (1), Luis Flores (1), Raúl Servín (1)"
+    },
+    "once_historico": ["Pablo Larios (GK)", "Fernando Quirarte", "Hugo Sánchez", "Manuel Negrete", "Raúl Servín", "Luis Flores", "Javier Aguirre", "Tomás Boy", "Alfredo del Mazo", "Carlos de los Cobos"],
     "partidos": [
       {
         "rival": "Bélgica",
@@ -259,6 +359,18 @@
   {
     "mundial_año": 1994,
     "sede": "Estados Unidos",
+    "mejor_resultado": "Octavos de final",
+    "estadisticas": {
+      "partidos_jugados": 4,
+      "ganados": 1,
+      "empatados": 2,
+      "perdidos": 1,
+      "goles_favor": 4,
+      "goles_contra": 4,
+      "nota": "Eliminados en penales 1-3 en Octavos",
+      "goleador_del_torneo": "Luis García (2)"
+    },
+    "once_historico": ["Jorge Campos (GK)", "Claudio Suárez", "Luis García", "Alberto García Aspe", "Ramón Ramírez", "Benjamín Galindo", "Marcelino Bernal", "Joaquín del Olmo"],
     "partidos": [
       {
         "rival": "Noruega",
@@ -293,6 +405,17 @@
   {
     "mundial_año": 1998,
     "sede": "Francia",
+    "mejor_resultado": "Octavos de final",
+    "estadisticas": {
+      "partidos_jugados": 4,
+      "ganados": 1,
+      "empatados": 2,
+      "perdidos": 1,
+      "goles_favor": 8,
+      "goles_contra": 7,
+      "goleador_del_torneo": "Luis Hernández (4)"
+    },
+    "once_historico": ["Jorge Campos (GK)", "Luis Hernández", "Cuauhtémoc Blanco", "Alberto García Aspe", "Ricardo Peláez", "Pavel Pardo", "Ramón Ramírez", "Claudio Suárez", "Ramón Morales"],
     "partidos": [
       {
         "rival": "Corea del Sur",
@@ -327,6 +450,17 @@
   {
     "mundial_año": 2002,
     "sede": "Corea/Japón",
+    "mejor_resultado": "Octavos de final",
+    "estadisticas": {
+      "partidos_jugados": 4,
+      "ganados": 2,
+      "empatados": 1,
+      "perdidos": 1,
+      "goles_favor": 4,
+      "goles_contra": 4,
+      "goleador_del_torneo": "Jared Borgetti (2)"
+    },
+    "once_historico": ["Oswaldo Sánchez (GK)", "Rafael Márquez", "Jared Borgetti", "Cuauhtémoc Blanco", "Gerardo Torrado", "Pavel Pardo", "Claudio Suárez", "Braulio Luna"],
     "partidos": [
       {
         "rival": "Croacia",
@@ -361,6 +495,18 @@
   {
     "mundial_año": 2006,
     "sede": "Alemania",
+    "mejor_resultado": "Octavos de final",
+    "estadisticas": {
+      "partidos_jugados": 4,
+      "ganados": 1,
+      "empatados": 1,
+      "perdidos": 2,
+      "goles_favor": 5,
+      "goles_contra": 5,
+      "nota": "Eliminados en tiempo extra en Octavos",
+      "goleador_del_torneo": "Omar Bravo (2)"
+    },
+    "once_historico": ["Oswaldo Sánchez (GK)", "Rafael Márquez", "Cuauhtémoc Blanco (capitán)", "Omar Bravo", "Pavel Pardo", "Andrés Guardado", "Gerardo Torrado", "Francisco Fonseca", "Zinha"],
     "partidos": [
       {
         "rival": "Irán",
@@ -395,6 +541,17 @@
   {
     "mundial_año": 2010,
     "sede": "Sudáfrica",
+    "mejor_resultado": "Octavos de final",
+    "estadisticas": {
+      "partidos_jugados": 4,
+      "ganados": 2,
+      "empatados": 1,
+      "perdidos": 1,
+      "goles_favor": 4,
+      "goles_contra": 5,
+      "goleador_del_torneo": "Javier Hernández (2)"
+    },
+    "once_historico": ["Guillermo Ochoa (GK)", "Rafael Márquez", "Javier Hernández", "Andrés Guardado", "Cuauhtémoc Blanco", "Carlos Vela", "Giovani dos Santos", "Gerardo Torrado", "Héctor Moreno"],
     "partidos": [
       {
         "rival": "Sudáfrica",
@@ -429,6 +586,17 @@
   {
     "mundial_año": 2014,
     "sede": "Brasil",
+    "mejor_resultado": "Octavos de final",
+    "estadisticas": {
+      "partidos_jugados": 4,
+      "ganados": 2,
+      "empatados": 1,
+      "perdidos": 1,
+      "goles_favor": 5,
+      "goles_contra": 3,
+      "goleador_del_torneo": "Javier Hernández (1), Rafael Márquez (1), Andrés Guardado (1), Oribe Peralta (1), Giovani dos Santos (1)"
+    },
+    "once_historico": ["Guillermo Ochoa (GK - legendario vs Brasil)", "Rafael Márquez", "Javier Hernández", "Andrés Guardado", "Oribe Peralta", "Giovani dos Santos", "Héctor Moreno", "Miguel Layún", "Paul Aguilar"],
     "partidos": [
       {
         "rival": "Camerún",
@@ -463,6 +631,17 @@
   {
     "mundial_año": 2018,
     "sede": "Rusia",
+    "mejor_resultado": "Octavos de final",
+    "estadisticas": {
+      "partidos_jugados": 4,
+      "ganados": 2,
+      "empatados": 0,
+      "perdidos": 2,
+      "goles_favor": 3,
+      "goles_contra": 6,
+      "goleador_del_torneo": "Hirving Lozano (1), Carlos Vela (1), Javier Hernández (1)"
+    },
+    "once_historico": ["Guillermo Ochoa (GK)", "Rafael Márquez (capitán - último mundial)", "Hirving Lozano", "Carlos Vela", "Javier Hernández", "Andrés Guardado", "Héctor Herrera", "Miguel Layún", "Héctor Moreno", "Edson Álvarez"],
     "partidos": [
       {
         "rival": "Alemania",
@@ -497,6 +676,17 @@
   {
     "mundial_año": 2022,
     "sede": "Catar",
+    "mejor_resultado": "Fase de grupos",
+    "estadisticas": {
+      "partidos_jugados": 3,
+      "ganados": 1,
+      "empatados": 1,
+      "perdidos": 1,
+      "goles_favor": 2,
+      "goles_contra": 3,
+      "goleador_del_torneo": "Henry Martín (1), Luis Chávez (1)"
+    },
+    "once_historico": ["Guillermo Ochoa (GK)", "Hirving Lozano", "Henry Martín", "Luis Chávez", "Héctor Moreno", "Andrés Guardado (capitán - último mundial)", "Edson Álvarez", "Alexis Vega", "Orbelín Pineda", "Roberto Alvarado"],
     "partidos": [
       {
         "rival": "Polonia",
