@@ -261,18 +261,18 @@ export default async function LandingPage() {
         <div className="max-w-3xl mx-auto text-center">
           <p className="text-[#00A550] text-xs font-bold uppercase tracking-widest mb-3">Para negocios</p>
           <h2 className="text-3xl sm:text-4xl font-black uppercase leading-tight mb-4">
-            ¿Quieres un bot así<br />para tu marca?
+            ¿Tu empresa necesita<br />un bot con IA?
           </h2>
           <p className="text-gray-400 text-base mb-8 max-w-xl mx-auto">
-            Desarrollamos chatbots de WhatsApp con IA para eventos, marcas y negocios. Agenda una llamada con el equipo de Ranking Agencia.
+            Crea tu propio chatbot de WhatsApp con inteligencia artificial. Sin código, sin complicaciones.
           </p>
           <a
-            href="https://www.rankingagencia.com"
+            href="https://www.prospekto.com.mx"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 bg-[#00A550] hover:bg-green-600 text-white font-black text-sm px-8 py-4 uppercase tracking-wide transition-all"
           >
-            Contactar a Ranking Agencia →
+            Prueba Prospekto →
           </a>
         </div>
       </section>
