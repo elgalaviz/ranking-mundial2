@@ -75,12 +75,12 @@ export default async function LandingPage() {
                 Tus<br />
                 Alertas<br />
                 del<br />
-                <span className="text-[#00A550]">Mundial,</span><br />
+                <span className="text-[#00A550]">Torneo,</span><br />
                 <span className="text-4xl sm:text-5xl">a tu celular.</span>
               </h1>
 
               <p className="text-gray-600 text-base mb-8 max-w-md leading-relaxed">
-                Mi FanBot es tu narrador personal. Te avisa <strong className="text-gray-900">15 min antes</strong>, te manda goles, rojas y resultado en vivo, y responde lo que le preguntes. Todo por WhatsApp.
+                Mi FanBot es tu asistente personal. Te avisa <strong className="text-gray-900">15 min antes</strong>, puedes consultar los goles, resultados, y responde lo que le preguntes. Todo por WhatsApp.
               </p>
 
               <div className="flex flex-wrap items-center gap-4 mb-10">
