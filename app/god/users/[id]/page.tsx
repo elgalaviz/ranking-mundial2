@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createClient as createAdmin } from "@supabase/supabase-js";
 import { ArrowLeft, Bell, MessageCircle, Target, CheckCircle, XCircle, Clock } from "lucide-react";
 import Link from "next/link";
+import PlanToggle from "./PlanToggle";
 
 function getSupabaseAdmin() {
   return createAdmin(
@@ -78,9 +79,7 @@ export default async function UserDetailPage({ params }: { params: Promise<{ id:
             </p>
             <p className="text-gray-400 text-xs mt-2">Registrado: {formatDate(u.created_at)}</p>
           </div>
-          {u.plan === "premium" && (
-            <span className="bg-amber-200 text-amber-800 font-bold text-xs px-2 py-1 rounded">PRO</span>
-          )}
+          <PlanToggle userId={u.id} currentPlan={u.plan} />
         </div>
       </div>
 
