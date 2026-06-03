@@ -17,7 +17,7 @@ export default async function GodJugadoresPage() {
 
   const [{ data: selecciones }, { data: jugadores }] = await Promise.all([
     supabase.from("selecciones").select("id, nombre, logo_url").order("nombre"),
-    supabase.from("jugadores").select("id, team_id, nombre, posicion, numero, edad, foto_url, foto_custom_url").order("nombre"),
+    supabase.from("jugadores").select("id, team_id, nombre, posicion, numero, edad, foto_url, foto_custom_url").order("nombre").limit(2000),
   ]);
 
   const total = jugadores?.length || 0;
