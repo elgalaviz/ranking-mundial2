@@ -29,11 +29,13 @@ async function getStandings(): Promise<Record<string, Standing[]>> {
     });
     const json = await res.json();
     const groups: Standing[][] = json.response?.[0]?.league?.standings || [];
-    return groups.reduce((acc, group) => {
-      const name = group[0]?.group || "Grupo";
-      acc[name] = group;
-      return acc;
-    }, {} as Record<string, Standing[]>);
+    return groups
+      .filter(g => g[0]?.group?.startsWith("Group"))
+      .reduce((acc, group) => {
+        const name = group[0]?.group || "Grupo";
+        acc[name] = group;
+        return acc;
+      }, {} as Record<string, Standing[]>);
   } catch {
     return {};
   }
