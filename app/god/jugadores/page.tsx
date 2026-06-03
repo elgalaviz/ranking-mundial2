@@ -1,7 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { Shirt } from "lucide-react";
-import Link from "next/link";
 import JugadoresEditor from "./JugadoresEditor";
+import SyncButtons from "./SyncButtons";
 
 export const dynamic = "force-dynamic";
 
@@ -32,19 +32,9 @@ export default async function GodJugadoresPage() {
           </h1>
           <p className="text-sm text-gray-500 mt-1">
             {total} jugadores · {conCustom} con foto custom
-            {total === 0 && (
-              <span className="ml-2 text-amber-600 font-medium">
-                — <Link href="/api/admin/sync-jugadores" className="underline hover:text-amber-700">Ejecutar sync</Link>
-              </span>
-            )}
-          </p>
+            </p>
         </div>
-        <a
-          href="/api/admin/sync-jugadores"
-          className="text-xs bg-gray-900 text-white px-3 py-2 rounded-lg hover:bg-gray-700 transition-colors"
-        >
-          Re-sync jugadores
-        </a>
+        <SyncButtons />
       </div>
 
       <JugadoresEditor
