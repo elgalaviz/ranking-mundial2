@@ -10,6 +10,47 @@ function getSupabase() {
   );
 }
 
+// --- getGrupos ---
+export async function getGrupos(grupo?: string): Promise<string> {
+  console.log(`🛠️ getGrupos(grupo=${grupo || "todos"})`);
+  try {
+    const res = await fetch("https://v3.football.api-sports.io/standings?league=1&season=2026", {
+      headers: { "x-apisports-key": process.env.API_FOOTBALL_KEY! },
+      cache: "no-store",
+    });
+    const json = await res.json();
+    const groups: any[][] = json.response?.[0]?.league?.standings || [];
+
+    if (groups.length === 0) return JSON.stringify({ message: "Aún no hay posiciones disponibles. El torneo empieza el 11 de junio." });
+
+    const filtered = grupo
+      ? groups.filter(g => g[0]?.group?.toLowerCase().includes(grupo.toLowerCase()))
+      : groups;
+
+    if (filtered.length === 0) return JSON.stringify({ message: `No encontré el grupo '${grupo}'.` });
+
+    const result = filtered.map(g => ({
+      grupo: g[0]?.group,
+      equipos: g.map((s: any) => ({
+        pos: s.rank,
+        equipo: s.team.name,
+        pj: s.all.played,
+        g: s.all.win,
+        e: s.all.draw,
+        p: s.all.lose,
+        gf: s.all.goals.for,
+        gc: s.all.goals.against,
+        dg: s.goalsDiff,
+        pts: s.points,
+      })),
+    }));
+
+    return JSON.stringify(result);
+  } catch (e) {
+    return JSON.stringify({ error: "No se pudieron obtener las posiciones en este momento." });
+  }
+}
+
 // --- Función que ejecuta la herramienta ---
 export async function getPartidos(equipo?: string) {
   console.log(`🛠️ Ejecutando herramienta 'getPartidos' para el equipo: ${equipo || "todos"}`);
@@ -175,6 +216,23 @@ export async function buscarWikipedia(consulta: string): Promise<string> {
 
 // --- Definición de la herramienta para OpenAI ---
 export const tools: ChatCompletionTool[] = [
+  {
+    type: 'function',
+    function: {
+      name: 'getGrupos',
+      description: 'Obtiene la tabla de posiciones de los grupos del Mundial 2026 en tiempo real. Úsala cuando el usuario pregunte por posiciones, tabla, cómo va un grupo, cuántos puntos tiene un equipo, quién va primero, o si un equipo clasifica.',
+      parameters: {
+        type: 'object',
+        properties: {
+          grupo: {
+            type: 'string',
+            description: 'Nombre del grupo a consultar, ej. "Group A", "A", "Grupo B". Si se omite, devuelve todos los grupos.',
+          },
+        },
+        required: [],
+      },
+    },
+  },
   {
     type: 'function',
     function: {
