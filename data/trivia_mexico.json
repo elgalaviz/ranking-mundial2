@@ -880,13 +880,223 @@
     "dato": "Elegía una caja con comida decorada con la bandera del país ganador. Predijo con éxito el campeonato de España y todas las llaves de Alemania."
   },
   {
-    "id": 999,
+    "id": 81,
+    "pregunta": "Cuantas Copas de Oro ha ganado Mexico (record del torneo)?",
     "opciones": [
-      "Simularon mecer a un bebé",
-      "Bailaron samba junto al banderín",
-      "Se taparon los ojos frente a las cámaras"
+      "8",
+      "6",
+      "10"
     ],
-    "respuesta": "Simularon mecer a un bebé",
-    "dato": "Fue un homenaje improvisado en la cancha para el hijo recién nacido de Bebeto, Mattheus Oliveira, quien años más tarde también fue futbolista profesional."
+    "respuesta": "8",
+    "dato": "Mexico es el rey de la Copa de Oro con 8 titulos. Ningun pais se le acerca. El dominio de CONCACAF hecho trofeos."
+  },
+  {
+    "id": 82,
+    "pregunta": "Que seleccion elimino a Mexico en octavos del Mundial de Alemania 2006?",
+    "opciones": [
+      "Argentina",
+      "Brasil",
+      "Portugal"
+    ],
+    "respuesta": "Argentina",
+    "dato": "Maxi Rodriguez anoto uno de los goles mas bellos de la historia en la prorroga. Argentina gano 2-1. El quinto partido seguia. 💔"
+  },
+  {
+    "id": 83,
+    "pregunta": "En que Mundial debuto Cuauhtemoc Blanco con El Tri?",
+    "opciones": [
+      "Francia 1998",
+      "USA 1994",
+      "Corea-Japon 2002"
+    ],
+    "respuesta": "Francia 1998",
+    "dato": "Blanco brillo en Francia 98 con su Cuauhtemina y sus tiros libres. Fue el Mundial que lo catapulto al estrellato mundial."
+  },
+  {
+    "id": 84,
+    "pregunta": "En que liga europea jugo Jared Borgetti tras su gran Mundial 2002?",
+    "opciones": [
+      "Premier League",
+      "Bundesliga",
+      "Serie A"
+    ],
+    "respuesta": "Premier League",
+    "dato": "Borgetti ficho por el Bolton Wanderers en 2005. Fue el primer mexicano en anotar en la Premier League. Un pionero. ⚽"
+  },
+  {
+    "id": 85,
+    "pregunta": "Quien fue el tecnico de Mexico en el Mundial de Brasil 2014?",
+    "opciones": [
+      "Miguel Herrera",
+      "Tata Martino",
+      "Juan Carlos Osorio"
+    ],
+    "respuesta": "Miguel Herrera",
+    "dato": "El Piojo Herrera llevo a Mexico con pasion desbordante. Sus celebraciones en el area tecnica se volvieron virales. 🔥"
+  },
+  {
+    "id": 86,
+    "pregunta": "Cuantos goles anoto Luis El Matador Hernandez en el Mundial de Francia 1998?",
+    "opciones": [
+      "4",
+      "2",
+      "6"
+    ],
+    "respuesta": "4",
+    "dato": "Luis Hernandez fue la figura de Mexico en Francia 98 con 4 goles. El Matador en estado puro. Quedo entre los mejores goleadores del torneo."
+  },
+  {
+    "id": 87,
+    "pregunta": "Quien anoto el golazo de Mexico ante Holanda en el Mundial de Brasil 2014?",
+    "opciones": [
+      "Giovani dos Santos",
+      "Chicharito",
+      "Oribe Peralta"
+    ],
+    "respuesta": "Giovani dos Santos",
+    "dato": "Giovani remato de volea desde fuera del area al minuto 48. El gol mas bonito de Mexico en anos. El partido termino 2-1 para Holanda con polemica. 😤"
+  },
+  {
+    "id": 88,
+    "pregunta": "Quien anoto el polémico penal que elimino a Mexico ante Holanda al minuto 94 en Brasil 2014?",
+    "opciones": [
+      "Klaas Jan Huntelaar",
+      "Arjen Robben",
+      "Robin van Persie"
+    ],
+    "respuesta": "Klaas Jan Huntelaar",
+    "dato": "Robben se tiro al suelo y el arbitro pito penal. Huntelaar lo convirtio al 94. Una de las eliminaciones mas dolorosas de la historia reciente de El Tri."
+  },
+  {
+    "id": 89,
+    "pregunta": "Que seleccion elimino a Mexico en los octavos del Mundial de Corea-Japon 2002?",
+    "opciones": [
+      "Estados Unidos",
+      "Espana",
+      "Senegal"
+    ],
+    "respuesta": "Estados Unidos",
+    "dato": "USA gano 2-0 en un resultado historico. El famoso Dos a Cero que sigue siendo el recuerdo mas amargo del Clasico de CONCACAF."
+  },
+  {
+    "id": 90,
+    "pregunta": "Cual fue el resultado del Partido del Siglo jugado en el Azteca en Mexico 1970?",
+    "opciones": [
+      "Italia 4-3 Alemania",
+      "Brasil 4-1 Mexico",
+      "Argentina 3-2 Brasil"
+    ],
+    "respuesta": "Italia 4-3 Alemania",
+    "dato": "La semifinal entre Italia y Alemania es la mas emocionante de la historia: 5 goles en la prorroga. Se jugo en nuestro Azteca. 🔥"
+  },
+  {
+    "id": 91,
+    "pregunta": "Quien elimino a Mexico en penales en los octavos de USA 1994?",
+    "opciones": [
+      "Bulgaria",
+      "Romania",
+      "Suecia"
+    ],
+    "respuesta": "Bulgaria",
+    "dato": "Mexico domino el partido pero perdio la tanda de penales. Bulgaria llegaria hasta la semifinal. El quinto partido nacia ese dia."
+  },
+  {
+    "id": 92,
+    "pregunta": "Como se llama el estadio de Monterrey que sera sede del Mundial 2026?",
+    "opciones": [
+      "Estadio BBVA",
+      "Estadio Bancomer",
+      "Estadio Gigante"
+    ],
+    "respuesta": "Estadio BBVA",
+    "dato": "El Estadio BBVA en San Nicolas de los Garza tiene capacidad para mas de 51,000 personas. La Sultana del Norte tambien vivira el Mundial. 🏟️"
+  },
+  {
+    "id": 93,
+    "pregunta": "Cual es la firma de Hugo Sanchez al celebrar sus goles en el Real Madrid?",
+    "opciones": [
+      "Una mortal",
+      "Correr con brazos abiertos",
+      "Senalar al cielo"
+    ],
+    "respuesta": "Una mortal",
+    "dato": "Hugo Sanchez hacia una mortal perfecta cada vez que anotaba. Decia que se la dedicaba a su hermana gimnasta. 🤸"
+  },
+  {
+    "id": 94,
+    "pregunta": "Cuantos partidos gano Mexico en el Mundial de Qatar 2022?",
+    "opciones": [
+      "1",
+      "0",
+      "2"
+    ],
+    "respuesta": "1",
+    "dato": "Mexico solo gano 1 partido (2-1 vs Arabia Saudita) y quedo eliminado. Fue la peor participacion desde Argentina 1978. 😔"
+  },
+  {
+    "id": 95,
+    "pregunta": "Quien fue el capitan de Mexico en su ultimo Mundial, Qatar 2022?",
+    "opciones": [
+      "Andres Guardado",
+      "Hector Moreno",
+      "Guillermo Ochoa"
+    ],
+    "respuesta": "Andres Guardado",
+    "dato": "Guardado disputó su 5to Mundial y fue capitan en Qatar. Se retiro de la Seleccion tras el torneo. Un legado enorme para El Tri. 🫡"
+  },
+  {
+    "id": 96,
+    "pregunta": "Cuantas veces ha perdido Mexico una eliminatoria en el Estadio Azteca?",
+    "opciones": [
+      "Ninguna",
+      "1 vez",
+      "3 veces"
+    ],
+    "respuesta": "Ninguna",
+    "dato": "El Azteca es una fortaleza en eliminatorias: Mexico jamas ha perdido en casa. La altitud y la aficion son la 12va jugadora. 🏰"
+  },
+  {
+    "id": 97,
+    "pregunta": "Cual es el nombre completo de Chicharito?",
+    "opciones": [
+      "Javier Hernandez Balcazar",
+      "Javier Hernandez Lopez",
+      "Javier Hernandez Ruiz"
+    ],
+    "respuesta": "Javier Hernandez Balcazar",
+    "dato": "Javier Hernandez Balcazar. Su padre Javier Hernandez Gutierrez tambien jugo con El Tri. El gol lleva el apellido Hernandez en la sangre. ⚽"
+  },
+  {
+    "id": 98,
+    "pregunta": "Que equipo mexicano tiene mas titulos de la Liga MX en la historia?",
+    "opciones": [
+      "America",
+      "Chivas",
+      "Cruz Azul"
+    ],
+    "respuesta": "America",
+    "dato": "El America es el club mas ganador de la Liga MX con 14 titulos. El Aguilas dominan el futbol mexicano. Los clasicos con Chivas son los mas apasionados."
+  },
+  {
+    "id": 99,
+    "pregunta": "En que Mundial marco Mexico sus primeros dos goles en un mismo partido?",
+    "opciones": [
+      "Mexico 1970",
+      "Uruguay 1930",
+      "Francia 1998"
+    ],
+    "respuesta": "Mexico 1970",
+    "dato": "En Mexico 70, El Tri goleo 4-0 a El Salvador. Fue la primera vez que Mexico marcaba 4 goles en un partido mundialista. El anfitrion en su mejor version."
+  },
+  {
+    "id": 100,
+    "pregunta": "Cuantos mundiales ha jugado Mexico de forma consecutiva desde 1994?",
+    "opciones": [
+      "9",
+      "8",
+      "7"
+    ],
+    "respuesta": "9",
+    "dato": "Mexico ha clasificado a 9 Mundiales consecutivos (1994-2026). Una racha de consistencia que pocos paises de CONCACAF pueden igualar. 🇲🇽"
   }
 ]
