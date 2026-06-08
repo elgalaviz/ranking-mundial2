@@ -40,12 +40,12 @@
     "mundial_año": 1934,
     "partidos": [
       {
-        "fase": "Cuartos de final",
+        "fase": "Cuartos de final (desempate)",
         "equipo_local": "Italia",
         "equipo_visitante": "España",
         "goles_local": 1,
-        "goles_visitante": 1,
-        "nota": "Partido de extrema dureza que necesitó un desempate donde ganó Italia 1-0"
+        "goles_visitante": 0,
+        "nota": "El primer partido terminó 1-1 tras extrema dureza. En el desempate Italia ganó 1-0 y avanzó a semis"
       },
       {
         "fase": "Semifinal",
@@ -344,12 +344,12 @@
         "nota": "La 'Naranja Mecánica' eliminó al campeón defensor con fútbol total"
       },
       {
-        "fase": "Semifinal (Grupo decisivo)",
+        "fase": "Segunda Fase",
         "equipo_local": "Alemania Occidental",
         "equipo_visitante": "Polonia",
         "goles_local": 1,
         "goles_visitante": 0,
-        "nota": "Partido en campo inundado donde Gerd Müller anotó el gol decisivo"
+        "nota": "Partido en campo inundado donde Gerd Müller anotó el gol decisivo para avanzar a la final"
       },
       {
         "fase": "Semifinal (Grupo decisivo)",
@@ -381,7 +381,7 @@
         "nota": "Polémica goleada que Argentina necesitaba para llegar a la final"
       },
       {
-        "fase": "Semifinal (Grupo decisivo)",
+        "fase": "Segunda Fase",
         "equipo_local": "Países Bajos",
         "equipo_visitante": "Italia",
         "goles_local": 2,
@@ -389,7 +389,7 @@
         "nota": "Un golazo de Haan le dio el pase a la final a los neerlandeses"
       },
       {
-        "fase": "Semifinal (Grupo decisivo)",
+        "fase": "Segunda Fase",
         "equipo_local": "Argentina",
         "equipo_visitante": "Brasil",
         "goles_local": 0,
@@ -715,11 +715,11 @@
       },
       {
         "fase": "Semifinal",
-        "equipo_local": "Alemania",
-        "equipo_visitante": "Brasil",
-        "goles_local": 7,
-        "goles_visitante": 1,
-        "nota": "El 'Mineirazo', la mayor goleada sufrida por Brasil en su historia"
+        "equipo_local": "Brasil",
+        "equipo_visitante": "Alemania",
+        "goles_local": 1,
+        "goles_visitante": 7,
+        "nota": "El 'Mineirazo': Brasil recibió 7 goles en casa ante Alemania. La mayor humillación en la historia del fútbol brasileño"
       },
       {
         "fase": "Semifinal",
