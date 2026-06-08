@@ -395,7 +395,33 @@ export async function POST(req: NextRequest) {
       return new NextResponse("ok", { status: 200 });
     }
 
-    // --- Respuesta de trivia pre-partido (trivia_mx_{id}_{optIndex}) ---
+    // --- Respuesta de trivia desde plantilla (trivia_tpl_A / B / C) ---
+    if (text === "trivia_tpl_A" || text === "trivia_tpl_B" || text === "trivia_tpl_C") {
+      const { data: u } = await supabase
+        .from("users")
+        .select("id, trivia_activa_id")
+        .eq("whatsapp_id", waId)
+        .single();
+
+      if (u?.trivia_activa_id) {
+        const trivia = getTriviaById(u.trivia_activa_id);
+        if (trivia) {
+          const optIndex = text === "trivia_tpl_A" ? 0 : text === "trivia_tpl_B" ? 1 : 2;
+          const elegida = trivia.opciones[optIndex];
+          const acerto = elegida === trivia.respuesta;
+          const intro = acerto ? "¡Correcto! 🎉" : `No era esa. La respuesta correcta es *${trivia.respuesta}*.`;
+          const msg = `${acerto ? "✅" : "❌"} ${intro}\n\n💡 ${trivia.dato}`;
+          await sendWhatsAppText({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from, body: msg });
+          // Limpiar la trivia activa
+          await supabase.from("users").update({ trivia_activa_id: null }).eq("id", u.id);
+        }
+      } else {
+        await sendWhatsAppText({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from, body: "Ups, no encontré la pregunta de trivia. 😕 Escríbeme \"trivia\" para jugar una nueva." });
+      }
+      return new NextResponse("ok", { status: 200 });
+    }
+
+    // --- Respuesta de trivia interactiva (trivia_mx_{id}_{optIndex}) ---
     if (text.startsWith("trivia_mx_")) {
       const parts = text.split("_"); // ["trivia", "mx", id, optIndex]
       const qId = parseInt(parts[2]);

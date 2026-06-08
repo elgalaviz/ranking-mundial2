@@ -59,7 +59,7 @@ export async function sendWhatsAppReplyButtons({ accessToken, phoneNumberId, to,
   return sendWhatsAppMessage({ accessToken, phoneNumberId, to, message });
 }
 
-// --- Función para enviar plantilla con botón de respuesta rápida ---
+// --- Función para enviar plantilla con botones de respuesta rápida ---
 export async function sendWhatsAppTemplate({
   accessToken,
   phoneNumberId,
@@ -68,6 +68,7 @@ export async function sendWhatsAppTemplate({
   languageCode = "es_MX",
   bodyParams = [],
   buttonPayload,
+  buttonPayloads,
 }: {
   accessToken: string;
   phoneNumberId: string;
@@ -76,6 +77,7 @@ export async function sendWhatsAppTemplate({
   languageCode?: string;
   bodyParams?: string[];
   buttonPayload?: string;
+  buttonPayloads?: string[];
 }) {
   const components: object[] = [];
 
@@ -86,14 +88,16 @@ export async function sendWhatsAppTemplate({
     });
   }
 
-  if (buttonPayload) {
+  // Soporte para múltiples botones
+  const payloads = buttonPayloads ?? (buttonPayload ? [buttonPayload] : []);
+  payloads.forEach((payload, index) => {
     components.push({
       type: "button",
       sub_type: "quick_reply",
-      index: "0",
-      parameters: [{ type: "payload", payload: buttonPayload }],
+      index: String(index),
+      parameters: [{ type: "payload", payload }],
     });
-  }
+  });
 
   const message = {
     type: "template",

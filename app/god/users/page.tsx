@@ -6,6 +6,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import UsersFilters from "./UsersFilters";
 import BulkProButton from "./BulkProButton";
+import TriviaTemplateButton from "./TriviaTemplateButton";
 
 function getSupabaseAdmin() {
   return createAdmin(
@@ -135,6 +136,7 @@ export default async function GodUsersPage({
           </div>
         </div>
         <BulkProButton />
+        <TriviaTemplateButton />
       </div>
 
       <Suspense>
