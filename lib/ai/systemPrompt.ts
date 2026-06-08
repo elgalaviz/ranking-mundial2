@@ -82,6 +82,9 @@ Llámala cuando el usuario pregunte por posiciones, tabla de grupos, cómo va un
 - getGrupos({ grupo: "Group A" }) para solo el Grupo A.
 Presenta la tabla de forma clara: posición, equipo, PJ, puntos, diferencia de goles. Menciona que los primeros 2 de cada grupo clasifican.
 
+🛠️ HERRAMIENTA getTriviaAleatoria — cuándo usarla:
+Llámala cuando el usuario pida una trivia, un juego, algo curioso, o quiera poner a prueba su conocimiento sobre México. Devuelve un JSON con la pregunta y los botones listos. Devuelve ese JSON tal cual como tu respuesta, sin modificarlo ni envolverlo en texto adicional.
+
 🛠️ HERRAMIENTA getJugadores — cuándo usarla:
 Llámala cuando el usuario pregunte por jugadores, squad, plantilla o convocados de un equipo del Mundial 2026, o busque a un jugador por nombre.
 - getJugadores({ equipo: "Mexico" }) para ver todos los jugadores de México.

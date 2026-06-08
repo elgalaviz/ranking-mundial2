@@ -5,10 +5,36 @@ import crypto from "crypto";
 import { sendWhatsAppText } from "@/lib/ai/sendWhatsAppText";
 import { sendWhatsAppReplyButtons } from "@/lib/ai/sendWhatsAppInteractive";
 import { getSystemPrompt } from "@/lib/ai/systemPrompt";
-import { tools, getPartidos, getJugadores, getGrupos, buscarHistorial, buscarWikipedia } from "@/lib/ai/tools";
+import { tools, getPartidos, getJugadores, getGrupos, buscarHistorial, buscarWikipedia, getTriviaAleatoria } from "@/lib/ai/tools";
 import { welcomeMessage, limitReachedMessage, pronoGuardadoMessage } from "@/lib/fanbot/messages";
 
 export const runtime = "nodejs";
+
+// --- Trivia helpers ---
+type TriviaItem = { id: number; pregunta: string; opciones: string[]; respuesta: string; dato: string };
+
+function loadTrivia(): TriviaItem[] {
+  try {
+    const raw = require("fs").readFileSync(require("path").join(process.cwd(), "data", "trivia_mexico.json"), "utf-8");
+    return JSON.parse(raw) as TriviaItem[];
+  } catch { return []; }
+}
+
+function getRandomTrivia(): TriviaItem {
+  const list = loadTrivia();
+  return list.length > 0 ? list[Math.floor(Math.random() * list.length)] : {
+    id: 0,
+    pregunta: "¿Quién es el máximo goleador histórico de la Selección Mexicana?",
+    opciones: ["Chicharito", "Hugo Sánchez", "C. Blanco"],
+    respuesta: "Chicharito",
+    dato: "Javier Hernández tiene 52 goles con El Tri. El mejor de todos.",
+  };
+}
+
+function getTriviaById(id: number): TriviaItem | null {
+  const list = loadTrivia();
+  return list.find(t => t.id === id) ?? null;
+}
 
 const VERIFY_TOKEN = process.env.META_VERIFY_TOKEN || "";
 const PHONE_NUMBER_ID = process.env.WHATSAPP_PHONE_NUMBER_ID || "";
@@ -369,7 +395,26 @@ export async function POST(req: NextRequest) {
       return new NextResponse("ok", { status: 200 });
     }
 
-    // --- Respuesta de trivia ---
+    // --- Respuesta de trivia pre-partido (trivia_mx_{id}_{optIndex}) ---
+    if (text.startsWith("trivia_mx_")) {
+      const parts = text.split("_"); // ["trivia", "mx", id, optIndex]
+      const qId = parseInt(parts[2]);
+      const optIndex = parseInt(parts[3]);
+      if (!isNaN(qId) && !isNaN(optIndex)) {
+        const trivia = getTriviaById(qId);
+        if (trivia) {
+          const elegida = trivia.opciones[optIndex];
+          const acerto = elegida === trivia.respuesta;
+          const emoji = acerto ? "✅" : "❌";
+          const intro = acerto ? "¡Correcto! 🎉" : `No era esa. La respuesta correcta es *${trivia.respuesta}*.`;
+          const msg = `${emoji} ${intro}\n\n💡 ${trivia.dato}`;
+          await sendWhatsAppText({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from, body: msg });
+        }
+      }
+      return new NextResponse("ok", { status: 200 });
+    }
+
+    // --- Respuesta de trivia (limit-hit) ---
     if (text === "trivia_correcta" || text.startsWith("trivia_incorrecta")) {
       const { data: u } = await supabase
         .from("users")
@@ -474,48 +519,16 @@ export async function POST(req: NextRequest) {
         // Ofrecer trivia
         const { data: pat } = await supabase.from("patrocinadores").select("nombre").eq("activo", true).limit(1).maybeSingle();
         const sponsor = pat?.nombre || "nuestros amigos";
-        // El modelo solo genera la pregunta y respuestas — nosotros asignamos los IDs
-        // para evitar que el modelo mezcle cuál es correcta e incorrecta.
-        const triviaPrompt = `Genera una trivia de fútbol sobre la Selección Mexicana. Dificultad media. Devuelve SOLO este JSON (sin texto extra):
-{
-  "pregunta": "¿La pregunta aquí? (máx 120 caracteres)",
-  "correcta": "Respuesta correcta (máx 18 caracteres)",
-  "incorrecta_1": "Opción falsa 1 (máx 18 caracteres)",
-  "incorrecta_2": "Opción falsa 2 (máx 18 caracteres)"
-}`;
         const footer = `Trivia patrocinada por: ${sponsor}`;
-        try {
-          const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
-          const triviaResp = await openai.chat.completions.create({
-            model: process.env.OPENAI_MODEL || "gpt-4o-mini",
-            messages: [
-              { role: "system", content: "Eres un generador de trivias de fútbol. Responde solo con el JSON solicitado." },
-              { role: "user", content: triviaPrompt },
-            ],
-            response_format: { type: "json_object" },
-          });
-          const t = JSON.parse(triviaResp.choices[0].message.content || "{}");
-          if (!t.pregunta || !t.correcta || !t.incorrecta_1 || !t.incorrecta_2) throw new Error("JSON incompleto");
-
-          // Asignamos IDs nosotros y mezclamos el orden aleatoriamente
-          const opciones = [
-            { id: "trivia_correcta",    title: String(t.correcta).slice(0, 18) },
-            { id: "trivia_incorrecta_a", title: String(t.incorrecta_1).slice(0, 18) },
-            { id: "trivia_incorrecta_b", title: String(t.incorrecta_2).slice(0, 18) },
-          ].sort(() => Math.random() - 0.5);
-
-          const body = `Has alcanzado tu límite de mensajes gratuitos. ¡Si aciertas la trivia, ganas 3 mensajes más!\n\n*${t.pregunta}*`;
-          await sendWhatsAppReplyButtons({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from, body, buttons: opciones, footer });
-        } catch (e) {
-          console.error("❌ Error en trivia IA, usando fallback:", e);
-          const opciones = [
-            { id: "trivia_correcta",    title: "Javier Hernández" },
-            { id: "trivia_incorrecta_a", title: "Hugo Sánchez" },
-            { id: "trivia_incorrecta_b", title: "Cuauhtémoc Blanco" },
-          ].sort(() => Math.random() - 0.5);
-          const body = `Has alcanzado tu límite de mensajes gratuitos. ¡Si aciertas la trivia, ganas 3 mensajes más!\n\n*¿Quién es el máximo goleador histórico de la Selección Mexicana?* ⚽`;
-          await sendWhatsAppReplyButtons({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from, body, buttons: opciones, footer });
-        }
+        const trivia = getRandomTrivia();
+        const opciones = trivia.opciones
+          .map((op, i) => ({
+            id: op === trivia.respuesta ? "trivia_correcta" : `trivia_incorrecta_${i}`,
+            title: op.slice(0, 20),
+          }))
+          .sort(() => Math.random() - 0.5);
+        const body = `Has alcanzado tu límite de mensajes gratuitos. ¡Si aciertas la trivia, ganas 3 mensajes más!\n\n*${trivia.pregunta}*`;
+        await sendWhatsAppReplyButtons({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from, body, buttons: opciones, footer });
       } else {
         // Ya jugó trivia — ofrecer premium
         await sendWhatsAppText({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from, body: limitReachedMessage(APP_URL) });
@@ -593,6 +606,10 @@ export async function POST(req: NextRequest) {
           const result = await buscarWikipedia(args.consulta);
           console.log(`🛠️ buscarWikipedia("${args.consulta}") →`, result.slice(0, 120));
           messages.push({ tool_call_id: toolCall.id, role: "tool", content: result });
+        } else if (toolCall.type === "function" && toolCall.function.name === "getTriviaAleatoria") {
+          const result = getTriviaAleatoria();
+          console.log("🛠️ getTriviaAleatoria →", result.slice(0, 120));
+          messages.push({ tool_call_id: toolCall.id, role: "tool", content: result });
         }
       }
       const secondResponse = await openai.chat.completions.create({
@@ -610,7 +627,15 @@ export async function POST(req: NextRequest) {
 
     const sinDatos = parsed.no_data === true;
 
-    if (parsed.type === "buttons" && parsed.buttons) {
+    if (parsed.tipo === "trivia_interactiva" && parsed.buttons) {
+      // Trivia desde getTriviaAleatoria — el bot ya tiene la pregunta en el reply
+      await sendWhatsAppReplyButtons({
+        accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from,
+        body: parsed.pregunta || reply,
+        buttons: parsed.buttons,
+        footer: "⚽ Trivia México",
+      });
+    } else if (parsed.type === "buttons" && parsed.buttons) {
       await sendWhatsAppReplyButtons({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from, body: parsed.body, buttons: parsed.buttons });
     } else {
       await sendWhatsAppText({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from, body: parsed.body || reply });

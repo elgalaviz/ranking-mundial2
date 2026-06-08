@@ -160,6 +160,26 @@ export async function getJugadores(equipo?: string, posicion?: string, nombre?: 
   }
 }
 
+// --- getTriviaAleatoria ---
+export function getTriviaAleatoria(): string {
+  console.log("🛠️ getTriviaAleatoria()");
+  try {
+    const filePath = path.join(process.cwd(), "data", "trivia_mexico.json");
+    const raw = fs.readFileSync(filePath, "utf-8");
+    const list = JSON.parse(raw) as Array<{ id: number; pregunta: string; opciones: string[]; respuesta: string; dato: string }>;
+    if (list.length === 0) return JSON.stringify({ error: "No hay trivias disponibles." });
+    const q = list[Math.floor(Math.random() * list.length)];
+    // Devuelve la pregunta con los botones listos para enviar
+    const buttons = q.opciones.map((op, i) => ({
+      id: `trivia_mx_${q.id}_${i}`,
+      title: op.slice(0, 20),
+    }));
+    return JSON.stringify({ pregunta: q.pregunta, buttons, tipo: "trivia_interactiva" });
+  } catch (e) {
+    return JSON.stringify({ error: "No se pudo cargar la trivia." });
+  }
+}
+
 // --- buscarHistorial ---
 type TipoHistorial = "mundial" | "mexico" | "memorable";
 
@@ -274,6 +294,14 @@ export const tools: ChatCompletionTool[] = [
         },
         required: [],
       },
+    },
+  },
+  {
+    type: 'function',
+    function: {
+      name: 'getTriviaAleatoria',
+      description: 'Obtiene una pregunta de trivia aleatoria sobre la Selección Mexicana con sus opciones de respuesta. Úsala cuando el usuario pida una trivia, un juego, o quiera saber algo curioso sobre México.',
+      parameters: { type: 'object', properties: {}, required: [] },
     },
   },
   {
