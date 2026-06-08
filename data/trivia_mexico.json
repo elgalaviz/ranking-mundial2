@@ -72,9 +72,9 @@
   {
     "id": 11,
     "pregunta": "¿Cómo se llama el 'malabar' más famoso de Cuauhtémoc Blanco?",
-    "opciones": ["La perrona", "La chilena", "El sombrero"],
-    "respuesta": "La perrona",
-    "dato": "Blanco sujetaba el balón entre sus pies y saltaba entre dos rivales. La inventó él y el mundo la recuerda."
+    "opciones": ["La Cuauhtemiña", "La de gajo", "El látigo"],
+    "respuesta": "La Cuauhtemiña",
+    "dato": "Blanco sujetaba el balón entre sus pies y saltaba entre dos rivales. La inventó él y lleva su nombre: la Cuauhtemiña."
   },
   {
     "id": 12,
@@ -106,10 +106,10 @@
   },
   {
     "id": 16,
-    "pregunta": "¿Qué selección le metió 8 goles a México en Chile 1962?",
-    "opciones": ["Yugoslavia", "Brasil", "España"],
-    "respuesta": "Yugoslavia",
-    "dato": "Yugoslavia aplastó a México 8-0. Es la mayor goleada sufrida por El Tri en una Copa del Mundo."
+    "pregunta": "¿Cuál es la peor goleada sufrida por México en un Mundial?",
+    "opciones": ["6-0 vs Alemania (1978)", "5-0 vs Chile (1962)", "4-0 vs Suecia (1958)"],
+    "respuesta": "6-0 vs Alemania (1978)",
+    "dato": "Alemania Federal aplastó 6-0 a México en Argentina 1978. La goleada más dolorosa en la historia de El Tri."
   },
   {
     "id": 17,
@@ -156,9 +156,9 @@
   {
     "id": 23,
     "pregunta": "¿Contra quién perdió México en cuartos en México 86?",
-    "opciones": ["Alemania Occ.", "Bélgica", "Argentina"],
-    "respuesta": "Alemania Occ.",
-    "dato": "México cayó en penaltis ante Alemania Occidental. Quedó a un paso de la semifinal como anfitrión. 😔"
+    "opciones": ["Alemania Federal", "Bélgica", "Argentina"],
+    "respuesta": "Alemania Federal",
+    "dato": "México cayó en penaltis ante Alemania Federal. Quedó a un paso de la semifinal como anfitrión. 😔"
   },
   {
     "id": 24,
@@ -183,17 +183,17 @@
   },
   {
     "id": 27,
-    "pregunta": "¿Cuál fue la goleada más grande de México en un Mundial?",
-    "opciones": ["4-0 vs Cuba", "3-0 vs E. Salvador", "5-0 vs Haití"],
-    "respuesta": "4-0 vs Cuba",
-    "dato": "México goleó 4-0 a Cuba en el Mundial de Francia 1938. Uno de los mejores resultados de El Tri."
+    "pregunta": "¿Cuál fue la mayor goleada de México a favor en un Mundial?",
+    "opciones": ["4-0 vs El Salvador", "3-0 vs Cuba", "5-0 vs Haití"],
+    "respuesta": "4-0 vs El Salvador",
+    "dato": "México goleó 4-0 a El Salvador en el Mundial de México 1970. El mejor resultado ofensivo de El Tri en Copas del Mundo."
   },
   {
     "id": 28,
-    "pregunta": "¿En qué Mundial México no participó por sanción FIFA?",
-    "opciones": ["1974", "1962", "1982"],
-    "respuesta": "1974",
-    "dato": "México fue sancionado por presentar jugadores mayores de edad en un torneo juvenil. Una de las páginas oscuras del fútbol mexicano."
+    "pregunta": "¿De qué Mundial fue expulsado México por el escándalo de los 'cachirules'?",
+    "opciones": ["Italia 1990", "Francia 1998", "USA 1994"],
+    "respuesta": "Italia 1990",
+    "dato": "México fue expulsado de Italia 1990 por presentar jugadores mayores de edad en el Mundial Sub-20. El escándalo de 'los cachirules' sigue siendo una herida en el orgullo nacional."
   },
   {
     "id": 29,
@@ -267,17 +267,17 @@
   },
   {
     "id": 39,
-    "pregunta": "¿Qué selección le ganó a México en el famoso 'partido del siglo' de 1970?",
-    "opciones": ["Italia", "Brasil", "Uruguay"],
-    "respuesta": "Italia",
-    "dato": "Italia venció 4-1 a México en cuartos de final del Mundial 1970. Ese duelo es recordado como uno de los mejores de la historia."
+    "pregunta": "¿Qué selecciones jugaron el 'Partido del Siglo' en el Azteca en 1970?",
+    "opciones": ["Italia vs Alemania", "Brasil vs Argentina", "México vs Italia"],
+    "respuesta": "Italia vs Alemania",
+    "dato": "Italia y Alemania Federal disputaron una semifinal épica que terminó 4-3. Se le llama el 'Partido del Siglo'. ¡Y fue en nuestro Azteca!"
   },
   {
     "id": 40,
     "pregunta": "¿Cuántos goles tiene Hugo Sánchez en su carrera profesional?",
-    "opciones": ["+350", "+250", "+450"],
-    "respuesta": "+350",
-    "dato": "Hugo Sánchez anotó más de 350 goles en su carrera. Es considerado el mejor jugador mexicano de todos los tiempos."
+    "opciones": ["+500", "+400", "+300"],
+    "respuesta": "+500",
+    "dato": "Hugo Sánchez anotó más de 500 goles en su carrera profesional. El goleador mexicano más prolífico de todos los tiempos."
   },
   {
     "id": 41,
@@ -324,9 +324,9 @@
   {
     "id": 47,
     "pregunta": "¿Cuál es el apodo de Carlos Vela?",
-    "opciones": ["Bomboro", "El Venado", "La Cobra"],
-    "respuesta": "Bomboro",
-    "dato": "Carlos Vela, 'Bomboro', fue un referente del fútbol mexicano y brilló en la MLS con LAFC."
+    "opciones": ["El Bombardero", "El Venado", "La Cobra"],
+    "respuesta": "El Bombardero",
+    "dato": "Carlos Vela es conocido como 'El Bombardero'. Brilló en la Real Sociedad y se convirtió en leyenda de LAFC en la MLS."
   },
   {
     "id": 48,
