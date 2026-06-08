@@ -609,6 +609,18 @@ export async function POST(req: NextRequest) {
         } else if (toolCall.type === "function" && toolCall.function.name === "getTriviaAleatoria") {
           const result = getTriviaAleatoria();
           console.log("🛠️ getTriviaAleatoria →", result.slice(0, 120));
+          const trivia = JSON.parse(result);
+          if (trivia.buttons) {
+            await sendWhatsAppReplyButtons({
+              accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from,
+              body: `¡Aquí va una trivia! ⚽\n\n*${trivia.pregunta}*`,
+              buttons: trivia.buttons,
+              footer: "Toca una opción para responder",
+            });
+            await supabase.from("users").update({ consultas_hoy: consultasHoy + 1 }).eq("id", user.id);
+            await supabase.from("registros_whatsapp").insert({ user_id: user.id, tipo_mensaje: "chatbot" });
+            return new NextResponse("ok", { status: 200 });
+          }
           messages.push({ tool_call_id: toolCall.id, role: "tool", content: result });
         }
       }
