@@ -308,7 +308,7 @@ export const tools: ChatCompletionTool[] = [
     type: 'function',
     function: {
       name: 'buscarHistorial',
-      description: 'Busca datos históricos de los Mundiales FIFA. Úsala cuando el usuario pregunte sobre mundiales pasados, historial de México en mundiales, partidos memorables, goleadores históricos, campeones, resultados de años anteriores o cualquier dato de mundiales previos al 2026.',
+      description: 'PRIMERA OPCIÓN para cualquier dato histórico de Mundiales FIFA: campeones, goleadores, resultados, estadísticas, historial de México, partidos memorables. Úsala SIEMPRE antes de buscarWikipedia. Es instantánea y cubre todos los mundiales hasta Qatar 2022.',
       parameters: {
         type: 'object',
         properties: {
