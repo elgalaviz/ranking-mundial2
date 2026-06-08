@@ -2,351 +2,891 @@
   {
     "id": 1,
     "pregunta": "¿En qué año jugó México su primer Mundial?",
-    "opciones": ["1930", "1934", "1938"],
+    "opciones": [
+      "1930",
+      "1934",
+      "1938"
+    ],
     "respuesta": "1930",
     "dato": "Fue en Uruguay 1930. México perdió sus 3 partidos y quedó último del grupo. ¡Largo camino recorrido!"
   },
   {
     "id": 2,
     "pregunta": "¿Quién anotó la chilena más famosa de México en mundiales?",
-    "opciones": ["Manuel Negrete", "Hugo Sánchez", "C. Blanco"],
+    "opciones": [
+      "Manuel Negrete",
+      "Hugo Sánchez",
+      "C. Blanco"
+    ],
     "respuesta": "Manuel Negrete",
     "dato": "Manuel Negrete anotó esa joya vs Bulgaria en México 86. Fue elegida el mejor gol del torneo. 🔥"
   },
   {
     "id": 3,
     "pregunta": "¿Contra qué selección fue la chilena de Negrete?",
-    "opciones": ["Bulgaria", "Bélgica", "Uruguay"],
+    "opciones": [
+      "Bulgaria",
+      "Bélgica",
+      "Uruguay"
+    ],
     "respuesta": "Bulgaria",
     "dato": "Fue en la fase de grupos del Mundial México 1986. México ganó 2-0 y Negrete quedó en la historia."
   },
   {
     "id": 4,
     "pregunta": "¿Cuántos Mundiales ha organizado México? (antes del 2026)",
-    "opciones": ["2", "1", "3"],
+    "opciones": [
+      "2",
+      "1",
+      "3"
+    ],
     "respuesta": "2",
     "dato": "México fue sede en 1970 y 1986. En 2026 será el tercero, compartido con USA y Canadá. 🏆"
   },
   {
     "id": 5,
     "pregunta": "¿En qué año México llegó por primera vez a cuartos de final?",
-    "opciones": ["1970", "1966", "1986"],
+    "opciones": [
+      "1970",
+      "1966",
+      "1986"
+    ],
     "respuesta": "1970",
     "dato": "En México 70, El Tri cayó ante Italia 4-1 en cuartos. Fue un partido épico en el Azteca."
   },
   {
     "id": 6,
     "pregunta": "¿Quién fue el primer jugador en disputar 5 Mundiales?",
-    "opciones": ["A. Carbajal", "R. Márquez", "H. Sánchez"],
+    "opciones": [
+      "A. Carbajal",
+      "R. Márquez",
+      "H. Sánchez"
+    ],
     "respuesta": "A. Carbajal",
     "dato": "Antonio Carbajal, portero mexicano, jugó de 1950 a 1966. Fue el primero en la historia del mundo en lograrlo."
   },
   {
     "id": 7,
     "pregunta": "¿Cuántos Pichichi ganó Hugo Sánchez en España?",
-    "opciones": ["5", "4", "6"],
+    "opciones": [
+      "5",
+      "4",
+      "6"
+    ],
     "respuesta": "5",
     "dato": "Hugo Sánchez fue el máximo goleador de La Liga española 5 veces. El mejor mexicano en Europa de todos los tiempos."
   },
   {
     "id": 8,
     "pregunta": "¿Cuál es el apodo de Hirving Lozano?",
-    "opciones": ["Chucky", "Chapito", "El Toro"],
+    "opciones": [
+      "Chucky",
+      "Chapito",
+      "El Toro"
+    ],
     "respuesta": "Chucky",
     "dato": "Le dicen Chucky por su parecido con el muñeco de la película de terror. ¡Los rivales también le tienen miedo!"
   },
   {
     "id": 9,
     "pregunta": "¿A quién le atajó Ochoa ese cabezazo histórico en Brasil 2014?",
-    "opciones": ["Neymar", "Hulk", "Oscar"],
+    "opciones": [
+      "Neymar",
+      "Hulk",
+      "Oscar"
+    ],
     "respuesta": "Neymar",
     "dato": "Ochoa atajó un cabezazo de Neymar que parecía gol seguro. México y Brasil empataron 0-0. 🧤"
   },
   {
     "id": 10,
     "pregunta": "¿Quién anotó el gol de México vs Alemania en Rusia 2018?",
-    "opciones": ["H. Lozano", "Chicharito", "C. Vela"],
+    "opciones": [
+      "H. Lozano",
+      "Chicharito",
+      "C. Vela"
+    ],
     "respuesta": "H. Lozano",
     "dato": "Hirving Lozano anotó al minuto 35. México venció 1-0 al campeón del mundo. Ciudad de México tembló de la euforia. 🇲🇽"
   },
   {
     "id": 11,
     "pregunta": "¿Cómo se llama el 'malabar' más famoso de Cuauhtémoc Blanco?",
-    "opciones": ["La Cuauhtemiña", "La de gajo", "El látigo"],
+    "opciones": [
+      "La Cuauhtemiña",
+      "La de gajo",
+      "El látigo"
+    ],
     "respuesta": "La Cuauhtemiña",
     "dato": "Blanco sujetaba el balón entre sus pies y saltaba entre dos rivales. La inventó él y lleva su nombre: la Cuauhtemiña."
   },
   {
     "id": 12,
     "pregunta": "¿En qué años el Azteca fue sede de una final mundialista?",
-    "opciones": ["1970 y 1986", "1966 y 1970", "1970 y 1978"],
+    "opciones": [
+      "1970 y 1986",
+      "1966 y 1970",
+      "1970 y 1978"
+    ],
     "respuesta": "1970 y 1986",
     "dato": "El Azteca es el único estadio en albergar 2 finales de Copa del Mundo. En 2026 volverá a brillar. 🏟️"
   },
   {
     "id": 13,
     "pregunta": "¿Quién anotó el 'Gol del Siglo' en el Azteca en 1986?",
-    "opciones": ["Maradona", "Platini", "Lineker"],
+    "opciones": [
+      "Maradona",
+      "Platini",
+      "Lineker"
+    ],
     "respuesta": "Maradona",
     "dato": "Diego Maradona recorrió 60 metros, burló a 5 ingleses y anotó el mejor gol de la historia. En nuestro Azteca. 🐐"
   },
   {
     "id": 14,
     "pregunta": "¿Contra quién perdió México en octavos en Rusia 2018?",
-    "opciones": ["Brasil", "Argentina", "Francia"],
+    "opciones": [
+      "Brasil",
+      "Argentina",
+      "Francia"
+    ],
     "respuesta": "Brasil",
     "dato": "Neymar y Firmino marcaron para Brasil. México cayó 2-0 y se despidió en octavos... otra vez."
   },
   {
     "id": 15,
     "pregunta": "¿Cuántas veces seguidas cayó México en octavos? (1994-2018)",
-    "opciones": ["7", "6", "5"],
+    "opciones": [
+      "7",
+      "6",
+      "5"
+    ],
     "respuesta": "7",
     "dato": "El maldito 'quinto partido': 7 eliminaciones seguidas en Round of 16. Una agonía de 24 años. 😩"
   },
   {
     "id": 16,
     "pregunta": "¿Cuál es la peor goleada sufrida por México en un Mundial?",
-    "opciones": ["6-0 vs Alemania (1978)", "5-0 vs Chile (1962)", "4-0 vs Suecia (1958)"],
+    "opciones": [
+      "6-0 vs Alemania (1978)",
+      "5-0 vs Chile (1962)",
+      "4-0 vs Suecia (1958)"
+    ],
     "respuesta": "6-0 vs Alemania (1978)",
     "dato": "Alemania Federal aplastó 6-0 a México en Argentina 1978. La goleada más dolorosa en la historia de El Tri."
   },
   {
     "id": 17,
     "pregunta": "¿Cuántos goles marcó Chicharito con la Selección Mexicana?",
-    "opciones": ["52", "48", "38"],
+    "opciones": [
+      "52",
+      "48",
+      "38"
+    ],
     "respuesta": "52",
     "dato": "Javier Hernández es el máximo goleador histórico de la Selección Mexicana con 52 goles. El mejor romperredes del Tri."
   },
   {
     "id": 18,
     "pregunta": "¿En qué club inglés brilló Chicharito y se hizo famoso?",
-    "opciones": ["Manchester Utd", "Arsenal", "Chelsea"],
+    "opciones": [
+      "Manchester Utd",
+      "Arsenal",
+      "Chelsea"
+    ],
     "respuesta": "Manchester Utd",
     "dato": "Chicharito llegó al Manchester United en 2010 y se ganó el corazón de Sir Alex Ferguson. ¡Orgullo mexicano!"
   },
   {
     "id": 19,
     "pregunta": "¿Cuántos Mundiales jugó Rafa Márquez con México?",
-    "opciones": ["5", "4", "3"],
+    "opciones": [
+      "5",
+      "4",
+      "3"
+    ],
     "respuesta": "5",
     "dato": "Rafa Márquez jugó de 2002 a 2018. Es el único mexicano en disputar 5 Copas del Mundo. El Kaiser de Michoacán. 👑"
   },
   {
     "id": 20,
     "pregunta": "¿En qué club europeo brilló Rafa Márquez?",
-    "opciones": ["FC Barcelona", "Real Madrid", "Juventus"],
+    "opciones": [
+      "FC Barcelona",
+      "Real Madrid",
+      "Juventus"
+    ],
     "respuesta": "FC Barcelona",
     "dato": "Márquez ganó 2 Champions League con el Barça. Considerado el mejor defensa mexicano de la historia."
   },
   {
     "id": 21,
     "pregunta": "¿En qué Mundial México no pudo salir de la fase de grupos?",
-    "opciones": ["Qatar 2022", "Rusia 2018", "Brasil 2014"],
+    "opciones": [
+      "Qatar 2022",
+      "Rusia 2018",
+      "Brasil 2014"
+    ],
     "respuesta": "Qatar 2022",
     "dato": "Por primera vez desde 1978, México quedó eliminado en la fase de grupos. Quedó fuera por diferencia de goles ante Polonia."
   },
   {
     "id": 22,
     "pregunta": "¿Qué selección aplastó a Polonia para dejar fuera a México en Qatar?",
-    "opciones": ["Argentina", "Francia", "Brasil"],
+    "opciones": [
+      "Argentina",
+      "Francia",
+      "Brasil"
+    ],
     "respuesta": "Argentina",
     "dato": "Argentina le ganó 2-0 a Polonia mientras México ganaba 2-1 a Arabia. No fue suficiente. 💔"
   },
   {
     "id": 23,
     "pregunta": "¿Contra quién perdió México en cuartos en México 86?",
-    "opciones": ["Alemania Federal", "Bélgica", "Argentina"],
+    "opciones": [
+      "Alemania Federal",
+      "Bélgica",
+      "Argentina"
+    ],
     "respuesta": "Alemania Federal",
     "dato": "México cayó en penaltis ante Alemania Federal. Quedó a un paso de la semifinal como anfitrión. 😔"
   },
   {
     "id": 24,
     "pregunta": "¿En qué posición también jugó Jorge Campos en su carrera?",
-    "opciones": ["Delantero", "Defensa", "Mediocampista"],
+    "opciones": [
+      "Delantero",
+      "Defensa",
+      "Mediocampista"
+    ],
     "respuesta": "Delantero",
     "dato": "Campos era portero pero también jugaba de delantero y anotó varios goles. Un fenómeno total."
   },
   {
     "id": 25,
     "pregunta": "¿Cuál es la capacidad aproximada del Estadio Azteca?",
-    "opciones": ["+87,000", "+70,000", "+100,000"],
+    "opciones": [
+      "+87,000",
+      "+70,000",
+      "+100,000"
+    ],
     "respuesta": "+87,000",
     "dato": "El Azteca es el estadio más grande de Latinoamérica. Un coloso que retumba con los gritos de la afición. 🏟️"
   },
   {
     "id": 26,
     "pregunta": "¿En qué año fue inaugurado el Estadio Azteca?",
-    "opciones": ["1966", "1970", "1960"],
+    "opciones": [
+      "1966",
+      "1970",
+      "1960"
+    ],
     "respuesta": "1966",
     "dato": "El Azteca abrió sus puertas el 29 de mayo de 1966 con un partido entre México y el Club América."
   },
   {
     "id": 27,
     "pregunta": "¿Cuál fue la mayor goleada de México a favor en un Mundial?",
-    "opciones": ["4-0 vs El Salvador", "3-0 vs Cuba", "5-0 vs Haití"],
+    "opciones": [
+      "4-0 vs El Salvador",
+      "3-0 vs Cuba",
+      "5-0 vs Haití"
+    ],
     "respuesta": "4-0 vs El Salvador",
     "dato": "México goleó 4-0 a El Salvador en el Mundial de México 1970. El mejor resultado ofensivo de El Tri en Copas del Mundo."
   },
   {
     "id": 28,
     "pregunta": "¿De qué Mundial fue expulsado México por el escándalo de los 'cachirules'?",
-    "opciones": ["Italia 1990", "Francia 1998", "USA 1994"],
+    "opciones": [
+      "Italia 1990",
+      "Francia 1998",
+      "USA 1994"
+    ],
     "respuesta": "Italia 1990",
     "dato": "México fue expulsado de Italia 1990 por presentar jugadores mayores de edad en el Mundial Sub-20. El escándalo de 'los cachirules' sigue siendo una herida en el orgullo nacional."
   },
   {
     "id": 29,
     "pregunta": "¿Qué apodo tiene la Selección Mexicana?",
-    "opciones": ["El Tri", "El Verde", "La Azteca"],
+    "opciones": [
+      "El Tri",
+      "El Verde",
+      "La Azteca"
+    ],
     "respuesta": "El Tri",
     "dato": "El Tri viene de tricolor, por los colores verde, blanco y rojo de la bandera mexicana. ¡El orgullo de una nación!"
   },
   {
     "id": 30,
     "pregunta": "¿Cuál es el himno no oficial más famoso de la afición mexicana?",
-    "opciones": ["Cielito Lindo", "La Bamba", "México Lindo"],
+    "opciones": [
+      "Cielito Lindo",
+      "La Bamba",
+      "México Lindo"
+    ],
     "respuesta": "Cielito Lindo",
     "dato": "'Ay, ay, ay, ay... canta y no llores' suena en cada estadio donde juega México. ¡Se escucha hasta en Europa!"
   },
   {
     "id": 31,
     "pregunta": "¿Contra quién marcó México su primer gol en un Mundial?",
-    "opciones": ["Francia", "Chile", "Argentina"],
+    "opciones": [
+      "Francia",
+      "Chile",
+      "Argentina"
+    ],
     "respuesta": "Francia",
     "dato": "México perdió 4-1 ante Francia en 1930, pero anotó. Manuel Rosas marcó el primer gol de El Tri en mundiales."
   },
   {
     "id": 32,
     "pregunta": "¿Cuántos goles recibió México en su primer Mundial (1930)?",
-    "opciones": ["13", "10", "8"],
+    "opciones": [
+      "13",
+      "10",
+      "8"
+    ],
     "respuesta": "13",
     "dato": "México recibió 13 goles y anotó 4 en Uruguay 1930. ¡De ahí venimos y mira hasta dónde hemos llegado!"
   },
   {
     "id": 33,
     "pregunta": "¿Con cuántos mundiales seguidos contará México al jugar el 2026?",
-    "opciones": ["9", "8", "7"],
+    "opciones": [
+      "9",
+      "8",
+      "7"
+    ],
     "respuesta": "9",
     "dato": "México lleva una racha de clasificaciones mundialistas consecutivas desde 1994. Una constancia envidiable."
   },
   {
     "id": 34,
     "pregunta": "¿Cuál es el apodo de Guillermo Ochoa?",
-    "opciones": ["Memo", "Güero", "Willy"],
+    "opciones": [
+      "Memo",
+      "Güero",
+      "Willy"
+    ],
     "respuesta": "Memo",
     "dato": "Memo Ochoa es el portero más internacional de México y uno de los más queridos en la historia de El Tri."
   },
   {
     "id": 35,
     "pregunta": "¿Cuántos años tenía Lozano cuando anotó vs Alemania en 2018?",
-    "opciones": ["22", "20", "24"],
+    "opciones": [
+      "22",
+      "20",
+      "24"
+    ],
     "respuesta": "22",
     "dato": "Hirving Lozano tenía apenas 22 años cuando se convirtió en héroe nacional. Su vida cambió para siempre ese día."
   },
   {
     "id": 36,
     "pregunta": "¿Quién es el jugador con más partidos en la historia de la Selección Mexicana?",
-    "opciones": ["A. Guardado", "R. Márquez", "G. Ochoa"],
+    "opciones": [
+      "A. Guardado",
+      "R. Márquez",
+      "G. Ochoa"
+    ],
     "respuesta": "A. Guardado",
     "dato": "Andrés Guardado acumuló más de 180 partidos con El Tri. El capitán más querido de su generación. 🫡"
   },
   {
     "id": 37,
     "pregunta": "¿Quién anotó el gol de México contra Francia en Sudáfrica 2010?",
-    "opciones": ["Chicharito", "Guardado", "C. Vela"],
+    "opciones": [
+      "Chicharito",
+      "Guardado",
+      "C. Vela"
+    ],
     "respuesta": "Chicharito",
     "dato": "Javier Hernández entró de cambio y anotó de cabeza para el 2-0. Era su primer Mundial y ya era héroe. 🙌"
   },
   {
     "id": 38,
     "pregunta": "¿Qué significa el grito '¡Eh, puto!' que la FIFA sanciona a México?",
-    "opciones": ["Es una grosería", "Es un aliento", "Nadie sabe"],
+    "opciones": [
+      "Es una grosería",
+      "Es un aliento",
+      "Nadie sabe"
+    ],
     "respuesta": "Es una grosería",
     "dato": "La FIFA ha sancionado repetidamente a México por ese grito en los saques de meta. La FMF ha trabajado para erradicarlo."
   },
   {
     "id": 39,
     "pregunta": "¿Qué selección derrotó a México en la final de la Copa Confederaciones 1999?",
-    "opciones": ["Brasil", "Argentina", "Alemania"],
+    "opciones": [
+      "Brasil",
+      "Argentina",
+      "Alemania"
+    ],
     "respuesta": "Brasil",
     "dato": "México llegó a la final de la Copa Confederaciones 1999 como anfitrión, pero Brasil fue superior. Aun así, fue un logro histórico para El Tri. 🥈"
   },
   {
     "id": 40,
     "pregunta": "¿Cuántos goles tiene Hugo Sánchez en su carrera profesional?",
-    "opciones": ["+500", "+400", "+300"],
+    "opciones": [
+      "+500",
+      "+400",
+      "+300"
+    ],
     "respuesta": "+500",
     "dato": "Hugo Sánchez anotó más de 500 goles en su carrera profesional. El goleador mexicano más prolífico de todos los tiempos."
   },
   {
     "id": 41,
     "pregunta": "¿En qué club jugó Hugo Sánchez la mayor parte de su carrera?",
-    "opciones": ["Real Madrid", "Atlético Madrid", "América"],
+    "opciones": [
+      "Real Madrid",
+      "Atlético Madrid",
+      "América"
+    ],
     "respuesta": "Real Madrid",
     "dato": "Hugo Sánchez brilló con el Real Madrid en los años 80 y ganó 5 Ligas españolas con el club merengue."
   },
   {
     "id": 42,
     "pregunta": "¿Qué ciudad mexicana albergará partidos del Mundial 2026?",
-    "opciones": ["Las tres opciones", "Solo CDMX", "CDMX y GDL"],
+    "opciones": [
+      "Las tres opciones",
+      "Solo CDMX",
+      "CDMX y GDL"
+    ],
     "respuesta": "Las tres opciones",
     "dato": "Ciudad de México (Azteca), Guadalajara (Akron) y Monterrey (BBVA) serán sedes. ¡México entero vivirá el Mundial!"
   },
   {
     "id": 43,
     "pregunta": "¿Quién anotó el famoso gol de cabeza ante Italia en el Mundial 2002?",
-    "opciones": ["J. Borgetti", "C. Blanco", "Palencia"],
+    "opciones": [
+      "J. Borgetti",
+      "C. Blanco",
+      "Palencia"
+    ],
     "respuesta": "J. Borgetti",
     "dato": "Jared Borgetti cabeceó de forma magistral ante Italia en Corea-Japón 2002. Uno de los goles más importantes de la historia del Tri. ⚽"
   },
   {
     "id": 44,
     "pregunta": "¿Qué jugador mexicano disputó seis Copas del Mundo?",
-    "opciones": ["G. Ochoa", "R. Márquez", "A. Carbajal"],
+    "opciones": [
+      "G. Ochoa",
+      "R. Márquez",
+      "A. Carbajal"
+    ],
     "respuesta": "G. Ochoa",
     "dato": "Guillermo Ochoa disputó los Mundiales de 2006, 2010, 2014, 2018, 2022 y 2026. Un récord histórico para un portero mexicano. 🧤"
   },
   {
     "id": 45,
     "pregunta": "¿En qué Juegos Olímpicos ganó México la medalla de oro en fútbol?",
-    "opciones": ["Londres 2012", "Atenas 2004", "Tokio 2020"],
+    "opciones": [
+      "Londres 2012",
+      "Atenas 2004",
+      "Tokio 2020"
+    ],
     "respuesta": "Londres 2012",
     "dato": "México venció 2-1 a Brasil en la final olímpica de Londres 2012. Chicharito y Peralta anotaron. El día más grande del fútbol mexicano. 🥇"
   },
   {
     "id": 46,
     "pregunta": "¿A quién venció México en la semifinal olímpica de Londres 2012?",
-    "opciones": ["Japón", "Corea del Sur", "Uruguay"],
+    "opciones": [
+      "Japón",
+      "Corea del Sur",
+      "Uruguay"
+    ],
     "respuesta": "Japón",
     "dato": "México venció a Japón en las semis y luego derrotó a Brasil en la final. Una generación de oro: Chicharito, Peralta, Guardado, Layún."
   },
   {
     "id": 47,
     "pregunta": "¿Cuál es el apodo de Carlos Vela?",
-    "opciones": ["El Bombardero", "El Venado", "La Cobra"],
+    "opciones": [
+      "El Bombardero",
+      "El Venado",
+      "La Cobra"
+    ],
     "respuesta": "El Bombardero",
     "dato": "Carlos Vela es conocido como 'El Bombardero'. Brilló en la Real Sociedad y se convirtió en leyenda de LAFC en la MLS."
   },
   {
     "id": 48,
     "pregunta": "¿Cuántos jugadores puede llevar cada selección al Mundial 2026?",
-    "opciones": ["26", "23", "25"],
+    "opciones": [
+      "26",
+      "23",
+      "25"
+    ],
     "respuesta": "26",
     "dato": "Desde Qatar 2022, FIFA permite 26 jugadores por selección. Más opciones para los técnicos."
   },
   {
     "id": 49,
     "pregunta": "¿Quién fue el DT de México en Qatar 2022?",
-    "opciones": ["Tata Martino", "Osorio", "Lavolpe"],
+    "opciones": [
+      "Tata Martino",
+      "Osorio",
+      "Lavolpe"
+    ],
     "respuesta": "Tata Martino",
     "dato": "Gerardo 'Tata' Martino dirigió a México en Qatar 2022. La eliminación en fase de grupos fue su adiós."
   },
   {
     "id": 50,
     "pregunta": "¿Qué selección de CONCACAF más veces ha ido a un Mundial?",
-    "opciones": ["México", "Estados Unidos", "Costa Rica"],
+    "opciones": [
+      "México",
+      "Estados Unidos",
+      "Costa Rica"
+    ],
     "respuesta": "México",
     "dato": "México es la selección de CONCACAF con más participaciones mundialistas de la historia. ¡El grande de la región!"
+  },
+  {
+    "id": 51,
+    "pregunta": "¿Qué gesto hicieron Bebeto, Romário y Mazinho tras anotarle a Países Bajos en 1994 que se volvió una celebración icónica mundial?",
+    "opciones": [
+      "Simularon mecer a un bebé",
+      "Bailaron samba junto al banderín",
+      "Se taparon los ojos frente a las cámaras"
+    ],
+    "respuesta": "Simularon mecer a un bebé",
+    "dato": "Fue un homenaje improvisado en la cancha para el hijo recién nacido de Bebeto, Mattheus Oliveira, quien años más tarde también fue futbolista profesional."
+  },
+  {
+    "id": 52,
+    "pregunta": "En Sudáfrica 2010, ¿quién fue el jugador de Países Bajos que le acomodó una patada estilo karateca en el pecho a Xabi Alonso?",
+    "opciones": [
+      "Nigel de Jong",
+      "Mark van Bommel",
+      "Giovanni van Bronckhorst"
+    ],
+    "respuesta": "Nigel de Jong",
+    "dato": "A pesar de la brutalidad de la falta que dio la vuelta al mundo en la final, el árbitro inglés Howard Webb increíblemente solo le mostró tarjeta amarilla."
+  },
+  {
+    "id": 53,
+    "pregunta": "¿Contra qué selección debutó Lionel Messi en una Copa del Mundo y además anotó gol (Alemania 2006)?",
+    "opciones": [
+      "Serbia y Montenegro",
+      "Angola",
+      "Países Bajos"
+    ],
+    "respuesta": "Serbia y Montenegro",
+    "dato": "Entró de cambio al minuto 75 con el dorsal 19 y selló la goleada 6-0 a pase de Hernán Crespo, convirtiéndose en el argentino más joven en anotar en un Mundial."
+  },
+  {
+    "id": 54,
+    "pregunta": "En el Mundial de Estados Unidos 1994, ¿por qué sustancia dio positivo Diego Maradona en el control antidopaje que lo suspendió del torneo?",
+    "opciones": [
+      "Efedrina",
+      "Cocaína",
+      "Nandrolona"
+    ],
+    "respuesta": "Efedrina",
+    "dato": "Aquella imagen de la enfermera llevándoselo de la mano de la cancha tras el juego contra Nigeria precedió a su famosa e histórica frase: 'Me cortaron las piernas'."
+  },
+  {
+    "id": 55,
+    "pregunta": "¿Qué estrella de Inglaterra vio la tarjeta roja en Francia 1998 por patear desde el suelo a Diego Simeone?",
+    "opciones": [
+      "David Beckham",
+      "Michael Owen",
+      "Alan Shearer"
+    ],
+    "respuesta": "David Beckham",
+    "dato": "La expulsión desató la eliminación de Inglaterra ante Argentina por penales y Beckham fue duramente crucificado por la prensa y la afición británica durante meses."
+  },
+  {
+    "id": 56,
+    "pregunta": "¿Cómo ejecutó el uruguayo Sebastián 'El Loco' Abreu el penal decisivo para clasificar a semis en Sudáfrica 2010?",
+    "opciones": [
+      "La cobró 'A la Panenka' (picadita)",
+      "Un disparo potente al ángulo izquierdo",
+      "Un tiro raso al centro"
+    ],
+    "respuesta": "La cobró 'A la Panenka' (picadita)",
+    "dato": "Fiel a su apodo, congeló los corazones de los uruguayos picando la pelota con total frialdad frente a Ghana en el último tiro de la tanda."
+  },
+  {
+    "id": 57,
+    "pregunta": "¿Qué estrella brasileña anotó un tiro libre espectacular de casi 40 metros techando al portero David Seaman en Corea-Japón 2002?",
+    "opciones": [
+      "Ronaldinho",
+      "Rivaldo",
+      "Roberto Carlos"
+    ],
+    "respuesta": "Ronaldinho",
+    "dato": "El golazo eliminó a Inglaterra en cuartos de final. Años después, 'Dinho' admitió que el tiro llevaba intención de centro, pero el efecto cerró directo al arco."
+  },
+  {
+    "id": 58,
+    "pregunta": "¿Qué jugador nigeriano se volvió viral en Estados Unidos 1994 por celebrar un gol metiéndose adentro de la red y sacudiéndola con furia?",
+    "opciones": [
+      "Rashidi Yekini",
+      "Jay-Jay Okocha",
+      "Daniel Amokachi"
+    ],
+    "respuesta": "Rashidi Yekini",
+    "dato": "Fue la emotiva reacción tras anotar el primer gol en la historia de Nigeria en los Mundiales, durante el partido que ganaron 3-0 a Bulgaria."
+  },
+  {
+    "id": 59,
+    "pregunta": "¿Qué histórico delantero camerunés celebraba sus goles bailando en el banderín de córner en Italia 1990 a sus 38 años?",
+    "opciones": [
+      "Roger Milla",
+      "Samuel Eto'o",
+      "Patrick M'Boma"
+    ],
+    "respuesta": "Roger Milla",
+    "dato": "Se convirtió en una de las figuras más queridas de Italia 90 al meter cuatro goles saliendo desde la banca, llevando a Camerún a unos históricos cuartos de final."
+  },
+  {
+    "id": 60,
+    "pregunta": "Inmortalizado por la cámara lenta detrás de la red, ¿a qué portero venció Andrés Iniesta para darle a España el Mundial de 2010?",
+    "opciones": [
+      "Maarten Stekelenburg",
+      "Gianluigi Buffon",
+      "Oliver Kahn"
+    ],
+    "respuesta": "Maarten Stekelenburg",
+    "dato": "El gol cayó al minuto 116 de la prórroga ante Países Bajos. En el festejo, Iniesta se quitó la camiseta para mostrar un homenaje a su amigo fallecido Dani Jarque."
+  },
+  {
+    "id": 61,
+    "pregunta": "En Brasil 2014, ¿qué icónico delantero alemán se volvió viral al tropezarse cómicamente durante una jugada de tiro libre prefabricada contra Argelia?",
+    "opciones": [
+      "Thomas Müller",
+      "Miroslav Klose",
+      "Bastian Schweinsteiger"
+    ],
+    "respuesta": "Thomas Müller",
+    "dato": "La jugada consistía en amagar la carrera y caer al césped para distraer a la barrera, pero Argelia no se movió y el tropiezo quedó grabado como un momento gracioso."
+  },
+  {
+    "id": 62,
+    "pregunta": "¿Qué hizo el técnico argentino Diego Maradona al celebrar el gol agónico de Martín Palermo contra Perú en las eliminatorias hacia 2010?",
+    "opciones": [
+      "Se lanzó de pecho deslizándose por el césped inundado",
+      "Pateó el banderín de córner",
+      "Se puso a llorar abrazado al cuarto árbitro"
+    ],
+    "respuesta": "Se lanzó de pecho deslizándose por el césped inundado",
+    "dato": "Bajo una tormenta torrencial en el Estadio Monumental, el festejo en 'vuelo de palomita' de Maradona sobre el pasto mojado se volvió una de las imágenes más virales del fútbol."
+  },
+  {
+    "id": 63,
+    "pregunta": "En el Mundial de Catar 2022, ¿a qué jugador de Países Bajos le dedicó Lionel Messi su viral frase: '¿Qué mirás, bobo? Andá p'allá'?",
+    "opciones": [
+      "Wout Weghorst",
+      "Virgil van Dijk",
+      "Memphis Depay"
+    ],
+    "respuesta": "Wout Weghorst",
+    "dato": "Ocurrió en la zona mixta tras un partido de cuartos de final sumamente ríspido y caliente que se definió en tanda de penales."
+  },
+  {
+    "id": 64,
+    "pregunta": "¿Qué famosa cantante internacional interpretó el 'Waka Waka', el himno oficial de Sudáfrica 2010 que acumuló miles de millones de vistas?",
+    "opciones": [
+      "Shakira",
+      "Jennifer Lopez",
+      "Rihanna"
+    ],
+    "respuesta": "Shakira",
+    "dato": "La canción se convirtió en un fenómeno cultural global y es ampliamente considerada una de las mejores y más virales melodías en la historia del torneo."
+  },
+  {
+    "id": 65,
+    "pregunta": "Durante el Mundial de Brasil 2014, ¿qué peculiar insecto gigante se posó en el hombro de James Rodríguez tras anotar un penal ante Brasil?",
+    "opciones": [
+      "Un saltamontes verde",
+      "Una mariposa monarca",
+      "Un escarabajo Hércules"
+    ],
+    "respuesta": "Un saltamontes verde",
+    "dato": "El jugador colombiano continuó el partido sin darse cuenta del enorme insecto en su manga, dejando una de las fotos de stock más bizarras y virales del torneo."
+  },
+  {
+    "id": 66,
+    "pregunta": "En la semifinal de Brasil 2014, las cámaras de televisión captaron a un fanático brasileño llorando abrazado a una réplica de plástico de la Copa del Mundo. ¿Cómo se le conoció?",
+    "opciones": [
+      "El 'Gaúcho da Copa'",
+      "El 'Torcedor Triste'",
+      "El 'Rey del Maracaná'"
+    ],
+    "respuesta": "El 'Gaúcho da Copa'",
+    "dato": "Su nombre real era Clovis Acosta Fernandes. Su imagen recorriendo el mundo tras el doloroso 7-1 ante Alemania conmovió a millones en redes sociales."
+  },
+  {
+    "id": 67,
+    "pregunta": "¿Qué estrella de Italia falló el penal decisivo en la tanda contra Francia, permitiendo que los galos avanzaran en los cuartos de final de 1998?",
+    "opciones": [
+      "Luigi Di Biagio",
+      "Alessandro Del Piero",
+      "Filippo Inzaghi"
+    ],
+    "respuesta": "Luigi Di Biagio",
+    "dato": "Estrelló su disparo en el travesaño del Stade de France, provocando que cayera desplomado de espaldas en el pasto en señal de absoluta desolación."
+  },
+  {
+    "id": 68,
+    "pregunta": "En Rusia 2018, ¿qué director técnico de la Selección Mexicana se volvió viral por su efusivo festejo cayendo de rodillas tras el gol del 'Chucky' Lozano a Alemania?",
+    "opciones": [
+      "Juan Carlos Osorio",
+      "Miguel 'Piojo' Herrera",
+      "Ricardo La Volpe"
+    ],
+    "respuesta": "Juan Carlos Osorio",
+    "dato": "El estratega colombiano rompió en llanto en el área técnica tras consumar un planteamiento táctico perfecto contra el campeón del mundo defensor."
+  },
+  {
+    "id": 69,
+    "pregunta": "En el Mundial de Corea-Japón 2002, ¿qué delantero italiano vio una polémica tarjeta roja ante Corea del Sur por una supuesta simulación decretada por el árbitro Byron Moreno?",
+    "opciones": [
+      "Francesco Totti",
+      "Christian Vieri",
+      "Filippo Inzaghi"
+    ],
+    "respuesta": "Francesco Totti",
+    "dato": "La expulsión en la prórroga sepultó las aspiraciones de una de las plantillas italianas más talentosas de la historia en un partido catalogado de escándalo arbitral."
+  },
+  {
+    "id": 70,
+    "pregunta": "Durante la Copa del Mundo de Alemania 2006, ¿qué director técnico de Argentina dejó en la banca a un joven Lionel Messi durante la eliminación ante Alemania en cuartos?",
+    "opciones": [
+      "José Pékerman",
+      "Alfio Basile",
+      "Marcelo Bielsa"
+    ],
+    "respuesta": "José Pékerman",
+    "dato": "Prefirió meter a Julio Cruz por un lesionado Abbondanzieri. La imagen de Messi sentado en la banca con los brazos cruzados y semblante serio persiguió al DT por años."
+  },
+  {
+    "id": 71,
+    "pregunta": "En Brasil 2014, ¿qué jugador de la selección de Ghana besó un fajo de dólares en el vestidor tras desatarse un escándalo por exigencias de premios económicos?",
+    "opciones": [
+      "John Boye",
+      "Asamoah Gyan",
+      "Kevin-Prince Boateng"
+    ],
+    "respuesta": "John Boye",
+    "dato": "El gobierno de Ghana tuvo que enviar un avión con más de 3 millones de dólares en efectivo a Brasil para evitar un boicot de los futbolistas antes de jugar ante Portugal."
+  },
+  {
+    "id": 72,
+    "pregunta": "¿Qué polémico gesto inmortalizó el técnico alemán Joachim Löw en las transmisiones de televisión durante los Mundiales de 2010 y 2014?",
+    "opciones": [
+      "Hurgarse la nariz y comerse los mocos",
+      "Romper su pizarra táctica",
+      "Morderse las uñas hasta sangrar"
+    ],
+    "respuesta": "Hurgarse la nariz y comerse los mocos",
+    "dato": "Las cámaras de alta definición lo captaron en múltiples ocasiones realizando manías antihigiénicas en el banquillo, lo que generó oleadas de memes en redes."
+  },
+  {
+    "id": 73,
+    "pregunta": "En la final de Catar 2022, ¿qué polémico gesto realizó el portero argentino Emiliano 'Dibu' Martínez al recibir el trofeo del Guante de Oro?",
+    "opciones": [
+      "Se lo colocó en la entrepierna mirando hacia los palcos",
+      "Le dio la espalda al emir de Catar",
+      "Se lo aventó a la tribuna de aficionados franceses"
+    ],
+    "respuesta": "Se lo colocó en la entrepierna mirando hacia los palcos",
+    "dato": "El arquero explicó más tarde que lo hizo porque la afición de Francia lo estuvo abucheando e insultando durante todo el partido de la final."
+  },
+  {
+    "id": 74,
+    "pregunta": "Durante la inauguración de Rusia 2018, ¿qué estrella del pop británico causó un escándalo internacional al mostrar el dedo medio directo a la cámara de televisión?",
+    "opciones": [
+      "Robbie Williams",
+      "Ed Sheeran",
+      "Elton John"
+    ],
+    "respuesta": "Robbie Williams",
+    "dato": "Lo hizo a la mitad de su presentación musical en vivo frente al presidente Vladimir Putin y miles de millones de espectadores en todo el planeta."
+  },
+  {
+    "id": 75,
+    "pregunta": "En el Mundial de Sudáfrica 2010, ¿qué portero cometió un osado error viral al dejar escapar un tiro de largo alcance del estadounidense Clint Dempsey?",
+    "opciones": [
+      "Robert Green (Inglaterra)",
+      "Iker Casillas (España)",
+      "Hugo Lloris (Francia)"
+    ],
+    "respuesta": "Robert Green (Inglaterra)",
+    "dato": "El disparo raso iba directo a sus manos, pero el balón se le escurrió entre los guantes en el debut de Inglaterra, costándole la titularidad el resto del torneo."
+  },
+  {
+    "id": 76,
+    "pregunta": "¿Qué estrella de la Selección de Francia lideró un motín masivo dentro del camión del equipo en el Mundial de Sudáfrica 2010 negándose a entrenar?",
+    "opciones": [
+      "Patrice Evra",
+      "Franck Ribéry",
+      "Thierry Henry"
+    ],
+    "respuesta": "Patrice Evra",
+    "dato": "El escándalo estalló en el entrenamiento de Knysna tras la expulsión del delantero Nicolas Anelka por insultar al director técnico Raymond Domenech."
+  },
+  {
+    "id": 77,
+    "pregunta": "En Rusia 2018, ¿qué estrella de la Selección de Brasil se volvió objeto de burlas y memes globales por rodar excesivamente en el pasto tras recibir faltas menores?",
+    "opciones": [
+      "Neymar Jr.",
+      "Philippe Coutinho",
+      "Gabriel Jesus"
+    ],
+    "respuesta": "Neymar Jr.",
+    "dato": "Surgió el viral 'Neymar Challenge', donde aficionados de todo el mundo se tiraban al piso a rodar dramáticamente imitando al atacante del PSG."
+  },
+  {
+    "id": 78,
+    "pregunta": "¿Qué histórico jugador español besó apasionadamente en vivo a su novia y periodista, Sara Carbonero, durante una entrevista tras ganar la final de 2010?",
+    "opciones": [
+      "Iker Casillas",
+      "Gerard Piqué",
+      "Sergio Ramos"
+    ],
+    "respuesta": "Iker Casillas",
+    "dato": "El capitán español interrumpió la pregunta técnica de Carbonero dejándose llevar por la euforia del campeonato del mundo, regalando un momento romántico muy viral."
+  },
+  {
+    "id": 79,
+    "pregunta": "En el Mundial de Alemania 2006, ¿qué jugador de Portugal guiñó el ojo de forma cómplice hacia su banca tras provocar la expulsión de su compañero de club Wayne Rooney?",
+    "opciones": [
+      "Cristiano Ronaldo",
+      "Luís Figo",
+      "Deco"
+    ],
+    "respuesta": "Cristiano Ronaldo",
+    "dato": "Ambos jugaban en el Manchester United. El polémico guiño enfureció a la prensa de Inglaterra, que acusó a CR7 de traicionero y manipulador de árbitros."
+  },
+  {
+    "id": 80,
+    "pregunta": "¿Qué famoso animal del acuario de Oberhausen en Alemania se volvió un fenómeno viral global en 2010 por predecir con 100% de efectividad los resultados del Mundial?",
+    "opciones": [
+      "El pulpo Paul",
+      "El delfín Fred",
+      "La tortuga marina Cabeza"
+    ],
+    "respuesta": "El pulpo Paul",
+    "dato": "Elegía una caja con comida decorada con la bandera del país ganador. Predijo con éxito el campeonato de España y todas las llaves de Alemania."
+  },
+  {
+    "id": 999,
+    "opciones": [
+      "Simularon mecer a un bebé",
+      "Bailaron samba junto al banderín",
+      "Se taparon los ojos frente a las cámaras"
+    ],
+    "respuesta": "Simularon mecer a un bebé",
+    "dato": "Fue un homenaje improvisado en la cancha para el hijo recién nacido de Bebeto, Mattheus Oliveira, quien años más tarde también fue futbolista profesional."
   }
 ]
