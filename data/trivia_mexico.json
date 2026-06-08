@@ -246,17 +246,17 @@
   },
   {
     "id": 36,
-    "pregunta": "¿Qué equipo ganó el Mundial jugado en México en 1970?",
-    "opciones": ["Brasil", "Italia", "Alemania"],
-    "respuesta": "Brasil",
-    "dato": "Brasil de Pelé ganó el Mundial 1970 en México. Muchos lo consideran el mejor equipo de la historia."
+    "pregunta": "¿Quién es el jugador con más partidos en la historia de la Selección Mexicana?",
+    "opciones": ["A. Guardado", "R. Márquez", "G. Ochoa"],
+    "respuesta": "A. Guardado",
+    "dato": "Andrés Guardado acumuló más de 180 partidos con El Tri. El capitán más querido de su generación. 🫡"
   },
   {
     "id": 37,
-    "pregunta": "¿Qué equipo ganó el Mundial jugado en México en 1986?",
-    "opciones": ["Argentina", "Alemania", "Francia"],
-    "respuesta": "Argentina",
-    "dato": "Argentina de Maradona ganó el Mundial 1986. 'La mano de Dios' y el 'Gol del Siglo' fueron en ese torneo."
+    "pregunta": "¿Quién anotó el gol de México contra Francia en Sudáfrica 2010?",
+    "opciones": ["Chicharito", "Guardado", "C. Vela"],
+    "respuesta": "Chicharito",
+    "dato": "Javier Hernández entró de cambio y anotó de cabeza para el 2-0. Era su primer Mundial y ya era héroe. 🙌"
   },
   {
     "id": 38,
@@ -267,10 +267,10 @@
   },
   {
     "id": 39,
-    "pregunta": "¿Qué selecciones jugaron el 'Partido del Siglo' en el Azteca en 1970?",
-    "opciones": ["Italia vs Alemania", "Brasil vs Argentina", "México vs Italia"],
-    "respuesta": "Italia vs Alemania",
-    "dato": "Italia y Alemania Federal disputaron una semifinal épica que terminó 4-3. Se le llama el 'Partido del Siglo'. ¡Y fue en nuestro Azteca!"
+    "pregunta": "¿Qué selección derrotó a México en la final de la Copa Confederaciones 1999?",
+    "opciones": ["Brasil", "Argentina", "Alemania"],
+    "respuesta": "Brasil",
+    "dato": "México llegó a la final de la Copa Confederaciones 1999 como anfitrión, pero Brasil fue superior. Aun así, fue un logro histórico para El Tri. 🥈"
   },
   {
     "id": 40,
@@ -295,31 +295,31 @@
   },
   {
     "id": 43,
-    "pregunta": "¿Cuántos países son sede del Mundial 2026?",
-    "opciones": ["3", "2", "4"],
-    "respuesta": "3",
-    "dato": "USA, Canadá y México organizan juntos el Mundial 2026. Es la primera vez que 3 países son anfitriones."
+    "pregunta": "¿Quién anotó el famoso gol de cabeza ante Italia en el Mundial 2002?",
+    "opciones": ["J. Borgetti", "C. Blanco", "Palencia"],
+    "respuesta": "J. Borgetti",
+    "dato": "Jared Borgetti cabeceó de forma magistral ante Italia en Corea-Japón 2002. Uno de los goles más importantes de la historia del Tri. ⚽"
   },
   {
     "id": 44,
-    "pregunta": "¿Cuántos equipos participan en el Mundial 2026?",
-    "opciones": ["48", "32", "36"],
-    "respuesta": "48",
-    "dato": "El Mundial 2026 expande el torneo a 48 selecciones, con 12 grupos de 4. 16 equipos más que en Qatar 2022."
+    "pregunta": "¿Qué jugador mexicano disputó seis Copas del Mundo?",
+    "opciones": ["G. Ochoa", "R. Márquez", "A. Carbajal"],
+    "respuesta": "G. Ochoa",
+    "dato": "Guillermo Ochoa disputó los Mundiales de 2006, 2010, 2014, 2018, 2022 y 2026. Un récord histórico para un portero mexicano. 🧤"
   },
   {
     "id": 45,
-    "pregunta": "¿Cuándo inicia el Mundial 2026?",
-    "opciones": ["11 de junio", "1 de junio", "20 de junio"],
-    "respuesta": "11 de junio",
-    "dato": "El Mundial 2026 arranca el 11 de junio. La final será el 19 de julio en el MetLife Stadium de Nueva York."
+    "pregunta": "¿En qué Juegos Olímpicos ganó México la medalla de oro en fútbol?",
+    "opciones": ["Londres 2012", "Atenas 2004", "Tokio 2020"],
+    "respuesta": "Londres 2012",
+    "dato": "México venció 2-1 a Brasil en la final olímpica de Londres 2012. Chicharito y Peralta anotaron. El día más grande del fútbol mexicano. 🥇"
   },
   {
     "id": 46,
-    "pregunta": "¿En qué ciudad será la final del Mundial 2026?",
-    "opciones": ["Nueva York", "Los Ángeles", "Miami"],
-    "respuesta": "Nueva York",
-    "dato": "La final se jugará en el MetLife Stadium de East Rutherford, Nueva Jersey, área metropolitana de Nueva York."
+    "pregunta": "¿A quién venció México en la semifinal olímpica de Londres 2012?",
+    "opciones": ["Japón", "Corea del Sur", "Uruguay"],
+    "respuesta": "Japón",
+    "dato": "México venció a Japón en las semis y luego derrotó a Brasil en la final. Una generación de oro: Chicharito, Peralta, Guardado, Layún."
   },
   {
     "id": 47,
