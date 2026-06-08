@@ -5,6 +5,7 @@ import { Users, Globe, Hash, Calendar, MessageCircle, Bell, Target } from "lucid
 import { Suspense } from "react";
 import Link from "next/link";
 import UsersFilters from "./UsersFilters";
+import BulkProButton from "./BulkProButton";
 
 function getSupabaseAdmin() {
   return createAdmin(
@@ -133,6 +134,7 @@ export default async function GodUsersPage({
             </p>
           </div>
         </div>
+        <BulkProButton />
       </div>
 
       <Suspense>

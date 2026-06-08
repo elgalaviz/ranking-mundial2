@@ -17,7 +17,7 @@ const APP_URL = (process.env.NEXT_PUBLIC_APP_URL || "https://rankingmundial26.co
 const PRONO_SPONSOR = process.env.PRONO_SPONSOR || "";
 const WA_BOT_NUMBER = process.env.WA_BOT_NUMBER || "5218112993097";
 const META_APP_SECRET = process.env.META_APP_SECRET || "";
-const MAX_FREE_QUERIES = 5;
+const MAX_FREE_QUERIES = 25;
 
 function verifyMetaSignature(rawBody: string, signature: string | null): boolean {
   if (!META_APP_SECRET) {
