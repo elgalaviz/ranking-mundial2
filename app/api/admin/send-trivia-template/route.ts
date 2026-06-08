@@ -50,7 +50,12 @@ export async function POST(req: NextRequest) {
   const errors: string[] = [];
 
   for (const user of users) {
-    const trivia = list[Math.floor(Math.random() * list.length)];
+    // Elegir trivia no vista por este usuario
+    const { data: seen } = await db.from("trivia_historial").select("trivia_id").eq("user_id", user.id);
+    const seenIds = new Set((seen || []).map((r: { trivia_id: number }) => r.trivia_id));
+    const pool = list.filter(t => !seenIds.has(t.id));
+    const source = pool.length > 0 ? pool : list;
+    const trivia = source[Math.floor(Math.random() * source.length)];
     const [opA, opB, opC] = trivia.opciones;
 
     const phone = user.phone.startsWith("+") ? user.phone.slice(1) : user.phone;

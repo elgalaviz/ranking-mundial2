@@ -20,20 +20,32 @@ function loadTrivia(): TriviaItem[] {
   } catch { return []; }
 }
 
-function getRandomTrivia(): TriviaItem {
-  const list = loadTrivia();
-  return list.length > 0 ? list[Math.floor(Math.random() * list.length)] : {
-    id: 0,
-    pregunta: "¿Quién es el máximo goleador histórico de la Selección Mexicana?",
-    opciones: ["Chicharito", "Hugo Sánchez", "C. Blanco"],
-    respuesta: "Chicharito",
-    dato: "Javier Hernández tiene 52 goles con El Tri. El mejor de todos.",
-  };
-}
-
 function getTriviaById(id: number): TriviaItem | null {
   const list = loadTrivia();
   return list.find(t => t.id === id) ?? null;
+}
+
+async function getUnseenTrivia(supabase: ReturnType<typeof getSupabase>, userId: string): Promise<TriviaItem> {
+  const list = loadTrivia();
+  const { data: seen } = await supabase.from("trivia_historial").select("trivia_id").eq("user_id", userId);
+  const seenIds = new Set((seen || []).map((r: { trivia_id: number }) => r.trivia_id));
+  const unseen = list.filter(t => !seenIds.has(t.id));
+  const pool = unseen.length > 0 ? unseen : list; // si ya vio todas, reinicia
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+async function recordTriviaAnswer(
+  supabase: ReturnType<typeof getSupabase>,
+  userId: string,
+  triviaId: number,
+  acerto: boolean
+): Promise<{ total: number; aciertos: number }> {
+  await supabase.from("trivia_historial").insert({ user_id: userId, trivia_id: triviaId, acerto });
+  const [{ count: total }, { count: aciertos }] = await Promise.all([
+    supabase.from("trivia_historial").select("*", { count: "exact", head: true }).eq("user_id", userId),
+    supabase.from("trivia_historial").select("*", { count: "exact", head: true }).eq("user_id", userId).eq("acerto", true),
+  ]);
+  return { total: total ?? 0, aciertos: aciertos ?? 0 };
 }
 
 const VERIFY_TOKEN = process.env.META_VERIFY_TOKEN || "";
@@ -409,12 +421,15 @@ export async function POST(req: NextRequest) {
           const optIndex = text === "trivia_tpl_A" ? 0 : text === "trivia_tpl_B" ? 1 : 2;
           const elegida = trivia.opciones[optIndex];
           const acerto = elegida === trivia.respuesta;
-          const intro = acerto ? "¡Correcto! 🎉" : `No era esa. La respuesta correcta es *${trivia.respuesta}*.`;
-          const msg = `${acerto ? "✅" : "❌"} ${intro}\n\n💡 ${trivia.dato}`;
-          await sendWhatsAppText({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from, body: msg });
+          const { total, aciertos } = await recordTriviaAnswer(supabase, u.id, trivia.id, acerto);
           await supabase.from("users").update({ trivia_activa_id: null }).eq("id", u.id);
 
-          // Si no tiene alertas activas, invitarlo a activarlas
+          const intro = acerto ? "¡Correcto! 🎉" : `No era esa. La respuesta correcta es *${trivia.respuesta}*.`;
+          const score = `🏆 Llevas *${aciertos} de ${total}* trivia${total === 1 ? "" : "s"} respondidas correctamente.`;
+          const recordatorio = `💬 Puedes pedir más cuando quieras — solo escríbeme *"quiero una trivia"*.`;
+          const msg = `${acerto ? "✅" : "❌"} ${intro}\n\n💡 ${trivia.dato}\n\n${score}\n${recordatorio}`;
+          await sendWhatsAppText({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from, body: msg });
+
           if (!u.alertas_activas) {
             await sendWhatsAppReplyButtons({
               accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from,
@@ -427,7 +442,7 @@ export async function POST(req: NextRequest) {
           }
         }
       } else {
-        await sendWhatsAppText({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from, body: "Ups, no encontré la pregunta de trivia. 😕 Escríbeme \"trivia\" para jugar una nueva." });
+        await sendWhatsAppText({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from, body: "Ups, no encontré la pregunta de trivia. 😕 Escríbeme *\"quiero una trivia\"* para jugar una nueva." });
       }
       return new NextResponse("ok", { status: 200 });
     }
@@ -442,9 +457,14 @@ export async function POST(req: NextRequest) {
         if (trivia) {
           const elegida = trivia.opciones[optIndex];
           const acerto = elegida === trivia.respuesta;
-          const emoji = acerto ? "✅" : "❌";
+          const { data: u } = await supabase.from("users").select("id").eq("whatsapp_id", waId).single();
+          let scoreStr = "";
+          if (u?.id) {
+            const { total, aciertos } = await recordTriviaAnswer(supabase, u.id, trivia.id, acerto);
+            scoreStr = `\n\n🏆 Llevas *${aciertos} de ${total}* trivia${total === 1 ? "" : "s"} respondidas correctamente.`;
+          }
           const intro = acerto ? "¡Correcto! 🎉" : `No era esa. La respuesta correcta es *${trivia.respuesta}*.`;
-          const msg = `${emoji} ${intro}\n\n💡 ${trivia.dato}`;
+          const msg = `${acerto ? "✅" : "❌"} ${intro}\n\n💡 ${trivia.dato}${scoreStr}`;
           await sendWhatsAppText({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from, body: msg });
         }
       }
@@ -644,21 +664,21 @@ export async function POST(req: NextRequest) {
           console.log(`🛠️ buscarWikipedia("${args.consulta}") →`, result.slice(0, 120));
           messages.push({ tool_call_id: toolCall.id, role: "tool", content: result });
         } else if (toolCall.type === "function" && toolCall.function.name === "getTriviaAleatoria") {
-          const result = getTriviaAleatoria();
-          console.log("🛠️ getTriviaAleatoria →", result.slice(0, 120));
-          const trivia = JSON.parse(result);
-          if (trivia.buttons) {
+          const q = await getUnseenTrivia(supabase, user.id);
+          const buttons = q.opciones.map((op: string, i: number) => ({ id: `trivia_mx_${q.id}_${i}`, title: op.slice(0, 20) }));
+          console.log(`🛠️ getTriviaAleatoria → id=${q.id} "${q.pregunta.slice(0, 40)}"`);
+          if (buttons.length > 0) {
             await sendWhatsAppReplyButtons({
               accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from,
-              body: `¡Aquí va una trivia! ⚽\n\n*${trivia.pregunta}*`,
-              buttons: trivia.buttons,
+              body: `¡Aquí va una trivia! ⚽\n\n*${q.pregunta}*`,
+              buttons,
               footer: "Toca una opción para responder",
             });
             await supabase.from("users").update({ consultas_hoy: consultasHoy + 1 }).eq("id", user.id);
             await supabase.from("registros_whatsapp").insert({ user_id: user.id, tipo_mensaje: "chatbot" });
             return new NextResponse("ok", { status: 200 });
           }
-          messages.push({ tool_call_id: toolCall.id, role: "tool", content: result });
+          messages.push({ tool_call_id: toolCall.id, role: "tool", content: JSON.stringify({ pregunta: q.pregunta, opciones: q.opciones }) });
         }
       }
       const secondResponse = await openai.chat.completions.create({
