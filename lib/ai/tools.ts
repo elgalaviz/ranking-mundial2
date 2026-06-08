@@ -214,14 +214,14 @@ export async function buscarWikipedia(consulta: string): Promise<string> {
   try {
     // 1. Buscar el artículo más relevante
     const searchUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(consulta)}&format=json&srlimit=1&srprop=snippet&origin=*`;
-    const searchRes = await fetch(searchUrl, { signal: AbortSignal.timeout(5000) });
+    const searchRes = await fetch(searchUrl, { signal: AbortSignal.timeout(3000) });
     const searchData = await searchRes.json() as { query?: { search?: Array<{ title: string; snippet: string }> } };
     const hit = searchData?.query?.search?.[0];
     if (!hit) return JSON.stringify({ message: "No se encontraron resultados en Wikipedia." });
 
-    // 2. Obtener el resumen completo del artículo
+    // 2. Obtener el resumen (paralelo al paso 1 ya terminó, solo fetch del summary)
     const summaryUrl = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(hit.title)}`;
-    const summaryRes = await fetch(summaryUrl, { signal: AbortSignal.timeout(5000) });
+    const summaryRes = await fetch(summaryUrl, { signal: AbortSignal.timeout(3000) });
     const summary = await summaryRes.json() as { extract?: string; title?: string };
 
     return JSON.stringify({
@@ -330,7 +330,7 @@ export const tools: ChatCompletionTool[] = [
     type: 'function',
     function: {
       name: 'buscarWikipedia',
-      description: 'Busca información en Wikipedia para verificar o ampliar datos específicos sobre fútbol: goleadores, jugadas, récords, jugadores históricos, detalles de partidos. Úsala en inglés para mejores resultados. Úsala cuando necesites confirmar un dato puntual que no tienes en el historial local.',
+      description: 'ÚLTIMO RECURSO: solo úsala si el dato NO está en buscarHistorial y el usuario lo pidió explícitamente. Evita llamarla para preguntas generales o datos que ya conoces. Tarda varios segundos.',
       parameters: {
         type: 'object',
         properties: {
