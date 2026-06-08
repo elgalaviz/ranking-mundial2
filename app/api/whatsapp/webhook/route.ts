@@ -577,7 +577,8 @@ export async function POST(req: NextRequest) {
         const { data: pat } = await supabase.from("patrocinadores").select("nombre").eq("activo", true).limit(1).maybeSingle();
         const sponsor = pat?.nombre || "nuestros amigos";
         const footer = `Trivia patrocinada por: ${sponsor}`;
-        const trivia = getRandomTrivia();
+        const triviaList = loadTrivia();
+        const trivia = triviaList[Math.floor(Math.random() * triviaList.length)];
         const opciones = trivia.opciones
           .map((op, i) => ({
             id: op === trivia.respuesta ? "trivia_correcta" : `trivia_incorrecta_${i}`,
