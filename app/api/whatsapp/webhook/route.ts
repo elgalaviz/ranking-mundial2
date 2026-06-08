@@ -399,7 +399,7 @@ export async function POST(req: NextRequest) {
     if (text === "trivia_tpl_A" || text === "trivia_tpl_B" || text === "trivia_tpl_C") {
       const { data: u } = await supabase
         .from("users")
-        .select("id, trivia_activa_id")
+        .select("id, trivia_activa_id, alertas_activas")
         .eq("whatsapp_id", waId)
         .single();
 
@@ -412,8 +412,19 @@ export async function POST(req: NextRequest) {
           const intro = acerto ? "¡Correcto! 🎉" : `No era esa. La respuesta correcta es *${trivia.respuesta}*.`;
           const msg = `${acerto ? "✅" : "❌"} ${intro}\n\n💡 ${trivia.dato}`;
           await sendWhatsAppText({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from, body: msg });
-          // Limpiar la trivia activa
           await supabase.from("users").update({ trivia_activa_id: null }).eq("id", u.id);
+
+          // Si no tiene alertas activas, invitarlo a activarlas
+          if (!u.alertas_activas) {
+            await sendWhatsAppReplyButtons({
+              accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from,
+              body: "⚽ ¿Quieres que te avise 15 minutos antes de cada partido del Mundial?",
+              buttons: [
+                { id: "si alertas", title: "✅ Sí, actívalas" },
+                { id: "no alertas", title: "❌ No gracias" },
+              ],
+            });
+          }
         }
       } else {
         await sendWhatsAppText({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from, body: "Ups, no encontré la pregunta de trivia. 😕 Escríbeme \"trivia\" para jugar una nueva." });

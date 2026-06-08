@@ -8,7 +8,7 @@ export default function TriviaTemplateButton() {
   const [result, setResult] = useState<{ sent: number; failed: number; total: number } | null>(null);
 
   async function handleSend() {
-    if (!confirm("¿Enviar trivia de El Tri a todos los usuarios con alertas activas?")) return;
+    if (!confirm("¿Enviar trivia de El Tri a TODOS los usuarios? Los que no tengan alertas activas recibirán invitación a activarlas después de responder.")) return;
     setLoading(true);
     setResult(null);
     try {
@@ -37,7 +37,7 @@ export default function TriviaTemplateButton() {
         <span className="text-sm text-gray-600">
           ✅ {result.sent} enviados
           {result.failed > 0 && <span className="text-red-500 ml-2">❌ {result.failed} fallidos</span>}
-          {" "}de {result.total} con alertas
+          {" "}de {result.total} usuarios
         </span>
       )}
     </div>

@@ -33,16 +33,15 @@ export async function POST(req: NextRequest) {
 
   const db = getAdminDb();
 
-  // Obtener todos los usuarios con alertas activas y número de teléfono
+  // Obtener todos los usuarios con número de teléfono
   const { data: users, error } = await db
     .from("users")
     .select("id, whatsapp_id, phone")
-    .eq("alertas_activas", true)
     .not("phone", "is", null);
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   if (!users || users.length === 0) {
-    return NextResponse.json({ sent: 0, message: "No hay usuarios con alertas activas" });
+    return NextResponse.json({ sent: 0, message: "No hay usuarios registrados" });
   }
 
   const list = loadTrivia();
