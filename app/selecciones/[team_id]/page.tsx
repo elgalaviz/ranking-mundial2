@@ -257,7 +257,7 @@ function JugadorCard({ jugador, posicion }: { jugador: Jugador; posicion: string
   const apellido = jugador.nombre.split(" ").slice(-1)[0];
 
   return (
-    <div className={`flex flex-col items-center text-center gap-1.5 p-2 rounded-xl transition-shadow hover:shadow-md ${jugador.destacado ? "ring-2 ring-yellow-400" : ""}`}>
+    <Link href={`/jugadores/${jugador.id}`} className={`flex flex-col items-center text-center gap-1.5 p-2 rounded-xl transition-shadow hover:shadow-md cursor-pointer ${jugador.destacado ? "ring-2 ring-yellow-400" : ""}`}>
       {/* Foto circular */}
       <div
         className="w-16 h-16 rounded-full overflow-hidden shrink-0 relative"
@@ -295,6 +295,6 @@ function JugadorCard({ jugador, posicion }: { jugador: Jugador; posicion: string
           <p className="text-[10px] text-gray-400">{jugador.edad} años</p>
         )}
       </div>
-    </div>
+    </Link>
   );
 }
