@@ -99,6 +99,10 @@ export async function GET() {
           foto_url: p.photo ?? null,
         }));
 
+        // Borrar solo los jugadores que ya no están en el squad (preserva foto_custom_url y destacado)
+        const newIds = jugadores.map(j => j.id);
+        await supabase.from("jugadores").delete().eq("team_id", team.id).not("id", "in", `(${newIds.join(",")})`);
+
         const { error } = await supabase
           .from("jugadores")
           .upsert(jugadores, { onConflict: "id" });
