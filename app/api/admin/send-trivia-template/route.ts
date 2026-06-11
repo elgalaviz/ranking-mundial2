@@ -25,10 +25,17 @@ function getAdminDb() {
 }
 
 export async function POST(req: NextRequest) {
-  const supabase = await createServerClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user || user.email !== GOD_EMAIL) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  // Autenticación: sesión de admin O CRON_SECRET por header
+  const authHeader = req.headers.get("authorization");
+  const cronSecret = process.env.CRON_SECRET;
+  const validCron = cronSecret && authHeader === `Bearer ${cronSecret}`;
+
+  if (!validCron) {
+    const supabase = await createServerClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user || user.email !== GOD_EMAIL) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
   }
 
   const db = getAdminDb();
