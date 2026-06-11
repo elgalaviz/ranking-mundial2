@@ -19,6 +19,7 @@ export default function SyncButtons() {
       const data: SyncResult = await res.json();
       setSyncResult(data);
       setSyncState(data.ok ? "done" : "error");
+      if (data.ok) setTimeout(() => window.location.reload(), 1000);
     } catch {
       setSyncState("error");
     }
