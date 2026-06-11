@@ -68,6 +68,11 @@ export async function GET() {
     const first = await apiFetch<ApiPlayersResponse>(
       `/players?league=${LEAGUE_ID}&season=${SEASON}&page=1`
     );
+
+    if (!first.response || !Array.isArray(first.response)) {
+      return NextResponse.json({ ok: false, error: "API no devolvió jugadores", raw: first }, { status: 500 });
+    }
+
     allPlayers.push(...first.response);
 
     const totalPages = first.paging?.total ?? 1;
@@ -78,7 +83,9 @@ export async function GET() {
       const data = await apiFetch<ApiPlayersResponse>(
         `/players?league=${LEAGUE_ID}&season=${SEASON}&page=${page}`
       );
-      allPlayers.push(...data.response);
+      if (data.response && Array.isArray(data.response)) {
+        allPlayers.push(...data.response);
+      }
     }
 
     if (allPlayers.length === 0) {
