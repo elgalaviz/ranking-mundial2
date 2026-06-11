@@ -51,8 +51,8 @@
     "datos_mexico": {
       "participo": false,
       "fase": null,
-      "eliminado_por": null,
-      "forma_eliminacion": null,
+      "eliminado_por": "Estados Unidos",
+      "forma_eliminacion": "Eliminado en partido clasificatorio previo en Roma",
       "goles_a_favor": null,
       "goles_en_contra": null
     }
@@ -65,7 +65,7 @@
     "tercer_lugar": "Brasil",
     "cuarto_lugar": "Suecia",
     "resultado_final": "4-2",
-    "goleador": "Leônidas",
+    "goleador": "Leônidas da Silva",
     "goles_goleador": 7,
     "total_goles": 84,
     "total_equipos": 15,
@@ -81,7 +81,7 @@
       "participo": false,
       "fase": null,
       "eliminado_por": null,
-      "forma_eliminacion": null,
+      "forma_eliminacion": "No participó por retiro/boicot general de América",
       "goles_a_favor": null,
       "goles_en_contra": null
     }
@@ -161,8 +161,8 @@
     "hechos_clave": [
       "Debut y primer título de Pelé con 17 años",
       "Just Fontaine estableció el récord de más goles en un solo torneo (13)",
-      "Brasil primera selección en ganar fuera de su continente",
-      "Primera transmisión televisiva internacional"
+      "Brasil primera selección en ganar fuera de su continent",
+      "Primera transmission televisiva internacional"
     ],
     "datos_mexico": {
       "participo": true,
@@ -181,7 +181,7 @@
     "tercer_lugar": "Chile",
     "cuarto_lugar": "Yugoslavia",
     "resultado_final": "3-1",
-    "goleador": "Garrincha",
+    "goleador": "Garrincha, Vavá, L. Sánchez, F. Albert, V. Ivanov, D. Jerković",
     "goles_goleador": 4,
     "total_goles": 89,
     "total_equipos": 16,
@@ -283,8 +283,8 @@
     "datos_mexico": {
       "participo": false,
       "fase": null,
-      "eliminado_por": null,
-      "forma_eliminacion": null,
+      "eliminado_por": "Premundial CONCACAF",
+      "forma_eliminacion": "Eliminado en el hexagonal final de Haití",
       "goles_a_favor": null,
       "goles_en_contra": null
     }
@@ -341,8 +341,8 @@
     "datos_mexico": {
       "participo": false,
       "fase": null,
-      "eliminado_por": null,
-      "forma_eliminacion": null,
+      "eliminado_por": "Premundial CONCACAF",
+      "forma_eliminacion": "Eliminado en el hexagonal final de Tegucigalpa",
       "goles_a_favor": null,
       "goles_en_contra": null
     }
@@ -399,8 +399,8 @@
     "datos_mexico": {
       "participo": false,
       "fase": null,
-      "eliminado_por": null,
-      "forma_eliminacion": null,
+      "eliminado_por": "Sanción FIFA",
+      "forma_eliminacion": "Descalificado por el caso de los 'Cachirules'",
       "goles_a_favor": null,
       "goles_en_contra": null
     }
@@ -529,7 +529,7 @@
     "tercer_lugar": "Alemania",
     "cuarto_lugar": "Uruguay",
     "resultado_final": "1-0",
-    "goleador": "Thomas Müller",
+    "goleador": "Thomas Müller, D. Forlán, W. Sneijder, D. Villa",
     "goles_goleador": 5,
     "total_goles": 145,
     "total_equipos": 32,

@@ -12,7 +12,7 @@
       "goles_contra": 13,
       "goleador_del_torneo": "Manuel Rosas (2)"
     },
-    "once_historico": ["Felipe Rosas (capitán)", "Manuel Rosas", "Roberto Gayón", "Juan Carreño", "Rafael Garza Gutiérrez"],
+    "once_historico": ["Rafael Garza Gutiérrez (capitán)", "Manuel Rosas", "Felipe Rosas", "Roberto Gayón", "Juan Carreño"],
     "partidos": [
       {
         "rival": "Francia",
@@ -233,7 +233,7 @@
       "goles_contra": 4,
       "goleador_del_torneo": "Javier Valdivia (2)"
     },
-    "once_historico": ["Ignacio Calderón (GK)", "Gustavo Peña (capitán)", "Javier Valdivia", "Javier Fragoso", "Ignacio Basaguren", "José Luis González", "Aaron Padilla", "Mario Peláez"],
+    "once_historico": ["Ignacio Calderón (GK)", "Gustavo Peña (capitán)", "Javier Valdivia", "Javier Fragoso", "Ignacio Basaguren", "José Luis González", "Aarón Padilla", "Mario Pérez"],
     "partidos": [
       {
         "rival": "Unión Soviética",
@@ -317,7 +317,7 @@
       "nota": "Eliminados en penales 1-4 en Cuartos de Final",
       "goleador_del_torneo": "Fernando Quirarte (2), Manuel Negrete (1), Hugo Sánchez (1), Luis Flores (1), Raúl Servín (1)"
     },
-    "once_historico": ["Pablo Larios (GK)", "Fernando Quirarte", "Hugo Sánchez", "Manuel Negrete", "Raúl Servín", "Luis Flores", "Javier Aguirre", "Tomás Boy", "Alfredo del Mazo", "Carlos de los Cobos"],
+    "once_historico": ["Pablo Larios (GK)", "Fernando Quirarte", "Hugo Sánchez", "Manuel Negrete", "Raúl Servín", "Luis Flores", "Javier Aguirre", "Tomás Boy", "Felix Cruz", "Carlos de los Cobos"],
     "partidos": [
       {
         "rival": "Bélgica",
@@ -352,7 +352,7 @@
         "marcador": "0-0",
         "anotadores_mexico": [],
         "eventos_ineditos": "Eliminados en penales 1-4 en Cuartos de Final",
-        "expulsados": ["Thomas Berthold (ALE)"]
+        "expulsados": ["Javier Aguirre (MEX)", "Thomas Berthold (ALE)"]
       }
     ]
   },
@@ -398,7 +398,7 @@
         "marcador": "1-1",
         "anotadores_mexico": ["Alberto García Aspe"],
         "eventos_ineditos": "Eliminados en penales 1-3 en Octavos",
-        "expulsados": ["Luis García"]
+        "expulsados": ["Luis García (MEX)"]
       }
     ]
   },
@@ -415,7 +415,7 @@
       "goles_contra": 7,
       "goleador_del_torneo": "Luis Hernández (4)"
     },
-    "once_historico": ["Jorge Campos (GK)", "Luis Hernández", "Cuauhtémoc Blanco", "Alberto García Aspe", "Ricardo Peláez", "Pavel Pardo", "Ramón Ramírez", "Claudio Suárez", "Ramón Morales"],
+    "once_historico": ["Jorge Campos (GK)", "Luis Hernández", "Cuauhtémoc Blanco", "Alberto García Aspe", "Ricardo Peláez", "Pavel Pardo", "Ramón Ramírez", "Claudio Suárez", "Duilio Davino"],
     "partidos": [
       {
         "rival": "Corea del Sur",
@@ -429,7 +429,7 @@
         "marcador": "2-2",
         "anotadores_mexico": ["Alberto García Aspe", "Cuauhtémoc Blanco"],
         "eventos_ineditos": "Gol acrobático de Cuauhtémoc Blanco",
-        "expulsados": ["Pavel Pardo"]
+        "expulsados": ["Pavel Pardo (MEX)"]
       },
       {
         "rival": "Países Bajos",
@@ -460,7 +460,7 @@
       "goles_contra": 4,
       "goleador_del_torneo": "Jared Borgetti (2)"
     },
-    "once_historico": ["Oswaldo Sánchez (GK)", "Rafael Márquez", "Jared Borgetti", "Cuauhtémoc Blanco", "Gerardo Torrado", "Pavel Pardo", "Claudio Suárez", "Braulio Luna"],
+    "once_historico": ["Oswaldo Sánchez (GK)", "Rafael Márquez", "Jared Borgetti", "Cuauhtémoc Blanco", "Gerardo Torrado", "Pavel Pardo", "Manuel Vidrio", "Braulio Luna"],
     "partidos": [
       {
         "rival": "Croacia",
@@ -488,7 +488,7 @@
         "marcador": "0-2",
         "anotadores_mexico": [],
         "eventos_ineditos": "Derrota en Octavos contra el rival de CONCACAF",
-        "expulsados": ["Rafael Márquez"]
+        "expulsados": ["Rafael Márquez (MEX)"]
       }
     ]
   },
@@ -506,7 +506,7 @@
       "nota": "Eliminados en tiempo extra en Octavos",
       "goleador_del_torneo": "Omar Bravo (2)"
     },
-    "once_historico": ["Oswaldo Sánchez (GK)", "Rafael Márquez", "Cuauhtémoc Blanco (capitán)", "Omar Bravo", "Pavel Pardo", "Andrés Guardado", "Gerardo Torrado", "Francisco Fonseca", "Zinha"],
+    "once_historico": ["Oswaldo Sánchez (GK)", "Rafael Márquez (capitán)", "Carlos Salcido", "Omar Bravo", "Pavel Pardo", "Andrés Guardado", "Gerardo Torrado", "Francisco Fonseca", "Zinha"],
     "partidos": [
       {
         "rival": "Irán",
@@ -527,7 +527,7 @@
         "marcador": "1-2",
         "anotadores_mexico": ["Francisco Fonseca"],
         "eventos_ineditos": "Omar Bravo falló un penal",
-        "expulsados": ["Luis Pérez"]
+        "expulsados": ["Luis Pérez (MEX)"]
       },
       {
         "rival": "Argentina",
@@ -551,7 +551,7 @@
       "goles_contra": 5,
       "goleador_del_torneo": "Javier Hernández (2)"
     },
-    "once_historico": ["Guillermo Ochoa (GK)", "Rafael Márquez", "Javier Hernández", "Andrés Guardado", "Cuauhtémoc Blanco", "Carlos Vela", "Giovani dos Santos", "Gerardo Torrado", "Héctor Moreno"],
+    "once_historico": ["Óscar Pérez (GK)", "Rafael Márquez", "Javier Hernández", "Andrés Guardado", "Cuauhtémoc Blanco", "Carlos Vela", "Giovani dos Santos", "Gerardo Torrado", "Héctor Moreno"],
     "partidos": [
       {
         "rival": "Sudáfrica",
@@ -686,7 +686,7 @@
       "goles_contra": 3,
       "goleador_del_torneo": "Henry Martín (1), Luis Chávez (1)"
     },
-    "once_historico": ["Guillermo Ochoa (GK)", "Hirving Lozano", "Henry Martín", "Luis Chávez", "Héctor Moreno", "Andrés Guardado (capitán - último mundial)", "Edson Álvarez", "Alexis Vega", "Orbelín Pineda", "Roberto Alvarado"],
+    "once_historico": ["Guillermo Ochoa (GK)", "Hirving Lozano", "Henry Martín", "Luis Chávez", "Héctor Moreno", "Andrés Guardado (capitán - último mundial)", "Edson Álvarez", "Alexis Vega", "Orbelín Pineda", "César Montes"],
     "partidos": [
       {
         "rival": "Polonia",
