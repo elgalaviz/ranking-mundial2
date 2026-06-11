@@ -21,12 +21,35 @@ async function apiFetch<T>(path: string): Promise<T> {
     cache: "no-store",
   });
   const json = await res.json();
-  return json.response as T;
+  return json as T;
 }
 
 async function sleep(ms: number) {
   return new Promise((r) => setTimeout(r, ms));
 }
+
+type ApiPlayer = {
+  player: {
+    id: number;
+    name: string;
+    firstname: string;
+    lastname: string;
+    age: number | null;
+    photo: string | null;
+  };
+  statistics: Array<{
+    team: { id: number; name: string; logo: string };
+    games: {
+      position: string | null;
+      number: number | null;
+    };
+  }>;
+};
+
+type ApiPlayersResponse = {
+  response: ApiPlayer[];
+  paging: { current: number; total: number };
+};
 
 export async function GET() {
   const auth = await createServerClient();
@@ -38,68 +61,82 @@ export async function GET() {
   const supabase = getSupabase();
 
   try {
-    // 1. Obtener equipos del Mundial desde fixtures
-    type Fixture = { teams: { home: { id: number; name: string; logo: string }; away: { id: number; name: string; logo: string } } };
-    const fixtures = await apiFetch<Fixture[]>(`/fixtures?league=${LEAGUE_ID}&season=${SEASON}`);
+    // 1. Obtener todos los jugadores del Mundial 2026 paginando
+    const allPlayers: ApiPlayer[] = [];
 
-    const teamsMap = new Map<number, { id: number; nombre: string; logo_url: string }>();
-    for (const f of fixtures) {
-      const { home, away } = f.teams;
-      teamsMap.set(home.id, { id: home.id, nombre: home.name, logo_url: home.logo });
-      teamsMap.set(away.id, { id: away.id, nombre: away.name, logo_url: away.logo });
+    // Primera página para saber cuántas hay
+    const first = await apiFetch<ApiPlayersResponse>(
+      `/players?league=${LEAGUE_ID}&season=${SEASON}&page=1`
+    );
+    allPlayers.push(...first.response);
+
+    const totalPages = first.paging?.total ?? 1;
+
+    // Páginas restantes
+    for (let page = 2; page <= totalPages; page++) {
+      await sleep(300);
+      const data = await apiFetch<ApiPlayersResponse>(
+        `/players?league=${LEAGUE_ID}&season=${SEASON}&page=${page}`
+      );
+      allPlayers.push(...data.response);
     }
+
+    if (allPlayers.length === 0) {
+      return NextResponse.json({ ok: false, error: "La API no devolvió jugadores" }, { status: 500 });
+    }
+
+    // 2. Extraer equipos únicos de las estadísticas de los jugadores
+    const teamsMap = new Map<number, { id: number; nombre: string; logo_url: string }>();
+    for (const entry of allPlayers) {
+      const team = entry.statistics?.[0]?.team;
+      if (team) {
+        teamsMap.set(team.id, { id: team.id, nombre: team.name, logo_url: team.logo });
+      }
+    }
+
     const teams = [...teamsMap.values()];
 
-    // 2. Upsert selecciones
+    // 3. Upsert selecciones
     const { error: teamsError } = await supabase
       .from("selecciones")
       .upsert(teams, { onConflict: "id" });
     if (teamsError) throw new Error(`Error upsert selecciones: ${teamsError.message}`);
 
-    // 3. Para cada equipo, traer squad y upsert jugadores
-    let totalJugadores = 0;
-    const errores: string[] = [];
+    // 4. Construir lista de jugadores y hacer upsert
+    const jugadores = allPlayers
+      .filter(entry => entry.statistics?.[0]?.team?.id)
+      .map(entry => {
+        const stats = entry.statistics[0];
+        return {
+          id: entry.player.id,
+          team_id: stats.team.id,
+          nombre: entry.player.name,
+          posicion: stats.games.position ?? null,
+          numero: stats.games.number ?? null,
+          edad: entry.player.age ?? null,
+          foto_url: entry.player.photo ?? null,
+        };
+      });
 
-    for (const team of teams) {
-      try {
-        type SquadResponse = { team: { id: number }; players: { id: number; name: string; age: number; number: number; position: string; photo: string }[] };
-        const squads = await apiFetch<SquadResponse[]>(`/players/squads?team=${team.id}`);
-        const players = squads[0]?.players ?? [];
+    const { error } = await supabase
+      .from("jugadores")
+      .upsert(jugadores, { onConflict: "id" });
 
-        if (players.length === 0) continue;
+    if (error) throw new Error(`Error upsert jugadores: ${error.message}`);
 
-        const jugadores = players.map((p) => ({
-          id: p.id,
-          team_id: team.id,
-          nombre: p.name,
-          posicion: p.position,
-          numero: p.number ?? null,
-          edad: p.age ?? null,
-          foto_url: p.photo ?? null,
-        }));
-
-        const { error } = await supabase
-          .from("jugadores")
-          .upsert(jugadores, { onConflict: "id" });
-
-        if (error) {
-          errores.push(`${team.nombre}: ${error.message}`);
-        } else {
-          totalJugadores += jugadores.length;
-        }
-
-        // Pausa para no saturar la API
-        await sleep(200);
-      } catch (e) {
-        errores.push(`${team.nombre}: ${String(e)}`);
-      }
+    // 5. Resumen por equipo
+    const porEquipo: Record<string, number> = {};
+    for (const j of jugadores) {
+      const nombre = teamsMap.get(j.team_id)?.nombre ?? String(j.team_id);
+      porEquipo[nombre] = (porEquipo[nombre] || 0) + 1;
     }
 
     return NextResponse.json({
       ok: true,
+      paginas: totalPages,
       selecciones: teams.length,
-      jugadores: totalJugadores,
-      errores: errores.length > 0 ? errores : undefined,
+      jugadores: jugadores.length,
+      por_equipo: porEquipo,
     });
   } catch (err) {
     return NextResponse.json({ ok: false, error: String(err) }, { status: 500 });
