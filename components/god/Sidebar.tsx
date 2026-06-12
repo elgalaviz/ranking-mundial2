@@ -15,6 +15,7 @@ import {
   LogOut,
   User,
   Shirt,
+  Trophy,
 } from "lucide-react";
 
 const navigation = [
@@ -23,6 +24,7 @@ const navigation = [
   { name: "Partidos", href: "/god/partidos", icon: Calendar },
   { name: "Jugadores", href: "/god/jugadores", icon: Shirt },
   { name: "Pronósticos", href: "/god/pronosticos", icon: Target },
+  { name: "Trivia", href: "/god/trivia", icon: Trophy },
   { name: "Pagos", href: "/god/pagos", icon: DollarSign },
   { name: "Patrocinios", href: "/god/patrocinadores", icon: Megaphone },
   { name: "Bot", href: "/god/bot", icon: Bot },

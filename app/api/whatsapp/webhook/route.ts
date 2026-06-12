@@ -39,13 +39,22 @@ async function recordTriviaAnswer(
   userId: string,
   triviaId: number,
   acerto: boolean
-): Promise<{ total: number; aciertos: number }> {
+): Promise<{ total: number; aciertos: number; esLider: boolean }> {
   await supabase.from("trivia_historial").insert({ user_id: userId, trivia_id: triviaId, acerto });
-  const [{ count: total }, { count: aciertos }] = await Promise.all([
+  const [{ count: total }, { count: aciertos }, { data: allAciertos }] = await Promise.all([
     supabase.from("trivia_historial").select("*", { count: "exact", head: true }).eq("user_id", userId),
     supabase.from("trivia_historial").select("*", { count: "exact", head: true }).eq("user_id", userId).eq("acerto", true),
+    supabase.from("trivia_historial").select("user_id").eq("acerto", true),
   ]);
-  return { total: total ?? 0, aciertos: aciertos ?? 0 };
+  const myAciertos = aciertos ?? 0;
+  let esLider = false;
+  if (myAciertos > 0 && allAciertos) {
+    const counts: Record<string, number> = {};
+    for (const r of allAciertos) counts[r.user_id] = (counts[r.user_id] || 0) + 1;
+    const maxAciertos = Math.max(...Object.values(counts));
+    esLider = myAciertos >= maxAciertos;
+  }
+  return { total: total ?? 0, aciertos: myAciertos, esLider };
 }
 
 const VERIFY_TOKEN = process.env.META_VERIFY_TOKEN || "";
@@ -421,13 +430,14 @@ export async function POST(req: NextRequest) {
           const optIndex = text === "trivia_tpl_A" ? 0 : text === "trivia_tpl_B" ? 1 : 2;
           const elegida = trivia.opciones[optIndex];
           const acerto = elegida === trivia.respuesta;
-          const { total, aciertos } = await recordTriviaAnswer(supabase, u.id, trivia.id, acerto);
+          const { total, aciertos, esLider } = await recordTriviaAnswer(supabase, u.id, trivia.id, acerto);
           await supabase.from("users").update({ trivia_activa_id: null }).eq("id", u.id);
 
           const intro = acerto ? "¡Correcto! 🎉" : `No era esa. La respuesta correcta es *${trivia.respuesta}*.`;
           const score = `🏆 Llevas *${aciertos} de ${total}* trivia${total === 1 ? "" : "s"} respondidas correctamente.`;
+          const lider = esLider ? `\n🥇 *¡Eres el líder del ranking de trivia!* Sigue así.` : "";
           const recordatorio = `💬 Puedes pedir más cuando quieras — solo escríbeme *"quiero una trivia"*.`;
-          const msg = `${acerto ? "✅" : "❌"} ${intro}\n\n💡 ${trivia.dato}\n\n${score}\n${recordatorio}`;
+          const msg = `${acerto ? "✅" : "❌"} ${intro}\n\n💡 ${trivia.dato}\n\n${score}${lider}\n${recordatorio}`;
           await sendWhatsAppText({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from, body: msg });
 
           if (!u.alertas_activas) {
@@ -460,8 +470,8 @@ export async function POST(req: NextRequest) {
           const { data: u } = await supabase.from("users").select("id").eq("whatsapp_id", waId).single();
           let scoreStr = "";
           if (u?.id) {
-            const { total, aciertos } = await recordTriviaAnswer(supabase, u.id, trivia.id, acerto);
-            scoreStr = `\n\n🏆 Llevas *${aciertos} de ${total}* trivia${total === 1 ? "" : "s"} respondidas correctamente.`;
+            const { total, aciertos, esLider } = await recordTriviaAnswer(supabase, u.id, trivia.id, acerto);
+            scoreStr = `\n\n🏆 Llevas *${aciertos} de ${total}* trivia${total === 1 ? "" : "s"} respondidas correctamente.${esLider ? "\n🥇 *¡Eres el líder del ranking de trivia!* Sigue así." : ""}`;
           }
           const intro = acerto ? "¡Correcto! 🎉" : `No era esa. La respuesta correcta es *${trivia.respuesta}*.`;
           const msg = `${acerto ? "✅" : "❌"} ${intro}\n\n💡 ${trivia.dato}${scoreStr}`;
