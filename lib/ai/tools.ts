@@ -347,143 +347,127 @@ export async function getMarcador(equipo?: string): Promise<string> {
       return { local: p.equipo_local, visitante: p.equipo_visitante, hora_cdmx: hora, resultado };
     });
 
-    // Buscar en la API: primero en vivo, luego todos los de hoy
-    const liveRes = await fetch("https://v3.football.api-sports.io/fixtures?league=1&season=2026&live=all", {
-      headers, cache: "no-store",
-    });
-    const liveJson = await liveRes.json();
-    let fixtures: any[] = liveJson?.response || [];
+    const inputEs = equipo ? equipo.toLowerCase().trim().replace(/^(los |las |el |la )/i, "") : "";
+    const q = equipo ? resolverNombreEquipo(equipo) : "";
 
-    if (fixtures.length === 0) {
-      const todayRes = await fetch(`https://v3.football.api-sports.io/fixtures?league=1&season=2026&date=${todayStr}`, {
-        headers, cache: "no-store",
-      });
-      const todayJson = await todayRes.json();
-      fixtures = todayJson?.response || [];
-    }
-
-    if (fixtures.length === 0 && !hayPartidosHoy) {
-      return JSON.stringify({ message: "No hay partidos en curso ni programados para hoy." });
-    }
-
-    // Filtrar por equipo si se especificó
+    // Si se pide un equipo específico, ir directo a la API por team_id (más confiable que live/date)
     if (equipo) {
-      const q = resolverNombreEquipo(equipo);
-      fixtures = fixtures.filter((f: any) =>
-        f.teams?.home?.name?.toLowerCase().includes(q) ||
-        f.teams?.away?.name?.toLowerCase().includes(q)
-      );
-      if (fixtures.length === 0) {
-        // Antes de decir "no juega hoy", revisar si está en el calendario de hoy de la BD
-        // Buscar con el término original en español Y el resuelto en inglés
-        const inputEs = equipo.toLowerCase().trim().replace(/^(los |las |el |la )/i, "");
-        const enBD = resumenHoy.find(p =>
-          p.local.toLowerCase().includes(q) || p.visitante.toLowerCase().includes(q) ||
-          p.local.toLowerCase().includes(inputEs) || p.visitante.toLowerCase().includes(inputEs)
-        );
-        if (enBD) {
-          return JSON.stringify({
-            partido_hoy: true,
-            local: enBD.local,
-            visitante: enBD.visitante,
-            hora_cdmx: enBD.hora_cdmx,
-            resultado: enBD.resultado,
-            nota: "Dato de marcador obtenido de la base de datos (la API no devolvió datos en vivo).",
-          });
-        }
+      const { data: selData } = await supabase
+        .from("selecciones")
+        .select("id")
+        .or(`nombre.ilike.%${equipo}%,nombre.ilike.%${inputEs}%`)
+        .limit(1)
+        .maybeSingle();
 
-        // No está en BD hoy — buscar en la API directamente por team_id
-        const { data: selData } = await supabase
-          .from("selecciones")
-          .select("id")
-          .or(`nombre.ilike.%${equipo}%,nombre.ilike.%${inputEs}%`)
-          .limit(1)
-          .maybeSingle();
+      if (selData?.id) {
+        const [liveRes, recentRes] = await Promise.all([
+          fetch(`https://v3.football.api-sports.io/fixtures?league=1&season=2026&team=${selData.id}&live=all`, { headers, cache: "no-store" }),
+          fetch(`https://v3.football.api-sports.io/fixtures?league=1&season=2026&team=${selData.id}&last=3`, { headers, cache: "no-store" }),
+        ]);
+        const liveFixtures: any[] = (await liveRes.json())?.response || [];
+        const recentFixtures: any[] = (await recentRes.json())?.response || [];
 
-        if (selData?.id) {
-          const apiTeamRes = await fetch(
-            `https://v3.football.api-sports.io/fixtures?league=1&season=2026&team=${selData.id}&last=3`,
-            { headers, cache: "no-store" }
+        // Priorizar en vivo; si no, usar los últimos jugados
+        const teamFixtures = liveFixtures.length > 0 ? liveFixtures : recentFixtures;
+
+        if (teamFixtures.length > 0) {
+          const eventsResults = await Promise.all(
+            teamFixtures.map((f: any) =>
+              fetch(`https://v3.football.api-sports.io/fixtures/events?fixture=${f.fixture.id}&type=Goal`, { headers, cache: "no-store" })
+                .then(r => r.json())
+                .then(j => ({ id: f.fixture.id, eventos: j?.response || [] }))
+                .catch(() => ({ id: f.fixture.id, eventos: [] }))
+            )
           );
-          const apiTeamJson = await apiTeamRes.json();
-          const teamFixtures: any[] = apiTeamJson?.response || [];
-          if (teamFixtures.length > 0) {
-            // Buscar goleadores de cada partido en paralelo
-            const eventsResults = await Promise.all(
-              teamFixtures.map((f: any) =>
-                fetch(`https://v3.football.api-sports.io/fixtures/events?fixture=${f.fixture.id}&type=Goal`, {
-                  headers, cache: "no-store",
-                })
-                  .then(r => r.json())
-                  .then(j => ({ id: f.fixture.id, eventos: j?.response || [] }))
-                  .catch(() => ({ id: f.fixture.id, eventos: [] }))
-              )
-            );
-            const eventosPorId: Record<number, any[]> = {};
-            for (const e of eventsResults) eventosPorId[e.id] = e.eventos;
+          const eventosPorId: Record<number, any[]> = {};
+          for (const e of eventsResults) eventosPorId[e.id] = e.eventos;
 
-            const recent = teamFixtures.map((f: any) => {
-              const fecha = new Date(f.fixture.date).toLocaleString("es-MX", {
-                timeZone: "America/Mexico_City",
-                weekday: "long", month: "long", day: "numeric",
-                hour: "2-digit", minute: "2-digit",
-              });
-              const status = f.fixture?.status?.short;
-              const terminado = ["FT", "AET", "PEN"].includes(status);
-              const goles = (eventosPorId[f.fixture.id] || []).map((e: any) => ({
-                minuto: e.time?.elapsed,
-                jugador: e.player?.name,
-                equipo: e.team?.name,
-                tipo: e.detail === "Own Goal" ? "autogol" : e.detail === "Penalty" ? "penal" : "gol",
-              }));
-              return {
-                local: f.teams?.home?.name,
-                visitante: f.teams?.away?.name,
-                fecha_cdmx: fecha,
-                estado: terminado ? "Terminado" : status === "NS" ? "Por comenzar" : "En curso",
-                resultado: terminado ? `${f.goals?.home ?? 0}-${f.goals?.away ?? 0}` : null,
-                goleadores: goles,
-              };
+          const STATUS_ES: Record<string, string> = {
+            NS: "Por comenzar", "1H": "Primer tiempo", HT: "Medio tiempo",
+            "2H": "Segundo tiempo", ET: "Tiempo extra", P: "Penales",
+            FT: "Terminado", AET: "Terminado (ET)", PEN: "Terminado (penales)",
+            PST: "Pospuesto", CANC: "Cancelado", ABD: "Abandonado",
+          };
+
+          const result = teamFixtures.map((f: any) => {
+            const fecha = new Date(f.fixture.date).toLocaleString("es-MX", {
+              timeZone: "America/Mexico_City",
+              weekday: "long", month: "long", day: "numeric",
+              hour: "2-digit", minute: "2-digit",
             });
-            return JSON.stringify({ partidos_recientes: recent, partidos_de_hoy: resumenHoy });
-          }
-        }
-
-        // Sin partido hoy — buscar próximo en la BD
-        const { data: proximos } = await supabase
-          .from("partidos")
-          .select("equipo_local, equipo_visitante, fecha_utc, estadio, ciudad, fase, grupo")
-          .or(`equipo_local.ilike.%${equipo}%,equipo_visitante.ilike.%${equipo}%`)
-          .gte("fecha_utc", new Date().toISOString())
-          .order("fecha_utc", { ascending: true })
-          .limit(1);
-        if (proximos && proximos.length > 0) {
-          const p = proximos[0];
-          const fecha = new Date(p.fecha_utc).toLocaleString("es-MX", {
-            timeZone: "America/Mexico_City",
-            weekday: "long", month: "long", day: "numeric",
-            hour: "2-digit", minute: "2-digit",
-          });
-          return JSON.stringify({
-            sin_partido_hoy: true,
-            mensaje: `${equipo} no tiene partido hoy.`,
-            proximo_partido: {
-              local: p.equipo_local,
-              visitante: p.equipo_visitante,
+            const status = f.fixture?.status?.short;
+            const terminado = ["FT", "AET", "PEN"].includes(status);
+            const enVivo = ["1H", "2H", "HT", "ET", "P"].includes(status);
+            const goles = (eventosPorId[f.fixture.id] || []).map((e: any) => ({
+              minuto: e.time?.elapsed,
+              jugador: e.player?.name,
+              equipo: e.team?.name,
+              tipo: e.detail === "Own Goal" ? "autogol" : e.detail === "Penalty" ? "penal" : "gol",
+            }));
+            return {
+              local: f.teams?.home?.name,
+              visitante: f.teams?.away?.name,
               fecha_cdmx: fecha,
-              estadio: p.estadio,
-              ciudad: p.ciudad,
-              fase: p.fase,
-              grupo: p.grupo,
-            },
-            partidos_de_hoy: resumenHoy,
+              estado: STATUS_ES[status] ?? status,
+              minuto: enVivo ? f.fixture?.status?.elapsed : null,
+              resultado: (terminado || enVivo) ? `${f.goals?.home ?? 0}-${f.goals?.away ?? 0}` : null,
+              goleadores: goles,
+            };
           });
+          return JSON.stringify({ partidos: result, partidos_de_hoy: resumenHoy });
         }
+      }
+
+      // No encontrado en API — revisar BD de hoy
+      const enBD = resumenHoy.find(p =>
+        p.local.toLowerCase().includes(q) || p.visitante.toLowerCase().includes(q) ||
+        p.local.toLowerCase().includes(inputEs) || p.visitante.toLowerCase().includes(inputEs)
+      );
+      if (enBD) {
         return JSON.stringify({
-          message: `${equipo} no tiene partido hoy y no encontré próximos partidos agendados.`,
+          partido_hoy: true,
+          local: enBD.local,
+          visitante: enBD.visitante,
+          hora_cdmx: enBD.hora_cdmx,
+          resultado: enBD.resultado ?? "Sin resultado aún",
           partidos_de_hoy: resumenHoy,
         });
       }
+
+      // Buscar próximo partido en la BD
+      const { data: proximos } = await supabase
+        .from("partidos")
+        .select("equipo_local, equipo_visitante, fecha_utc, estadio, ciudad, fase, grupo")
+        .or(`equipo_local.ilike.%${equipo}%,equipo_visitante.ilike.%${equipo}%`)
+        .gte("fecha_utc", new Date().toISOString())
+        .order("fecha_utc", { ascending: true })
+        .limit(1);
+      if (proximos && proximos.length > 0) {
+        const p = proximos[0];
+        const fecha = new Date(p.fecha_utc).toLocaleString("es-MX", {
+          timeZone: "America/Mexico_City",
+          weekday: "long", month: "long", day: "numeric",
+          hour: "2-digit", minute: "2-digit",
+        });
+        return JSON.stringify({
+          sin_partido_hoy: true,
+          mensaje: `${equipo} no tiene partido hoy.`,
+          proximo_partido: { local: p.equipo_local, visitante: p.equipo_visitante, fecha_cdmx: fecha, estadio: p.estadio, ciudad: p.ciudad, fase: p.fase, grupo: p.grupo },
+          partidos_de_hoy: resumenHoy,
+        });
+      }
+      return JSON.stringify({ message: `No encontré información de ${equipo}.`, partidos_de_hoy: resumenHoy });
+    }
+
+    // Sin equipo específico: todos los partidos en vivo o de hoy
+    const liveRes = await fetch("https://v3.football.api-sports.io/fixtures?league=1&season=2026&live=all", { headers, cache: "no-store" });
+    let fixtures: any[] = (await liveRes.json())?.response || [];
+    if (fixtures.length === 0) {
+      const todayRes = await fetch(`https://v3.football.api-sports.io/fixtures?league=1&season=2026&date=${todayStr}`, { headers, cache: "no-store" });
+      fixtures = (await todayRes.json())?.response || [];
+    }
+    if (fixtures.length === 0 && !hayPartidosHoy) {
+      return JSON.stringify({ message: "No hay partidos en curso ni programados para hoy." });
     }
 
     const STATUS_ES: Record<string, string> = {
