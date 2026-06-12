@@ -5,7 +5,7 @@ import crypto from "crypto";
 import { sendWhatsAppText } from "@/lib/ai/sendWhatsAppText";
 import { sendWhatsAppReplyButtons } from "@/lib/ai/sendWhatsAppInteractive";
 import { getSystemPrompt } from "@/lib/ai/systemPrompt";
-import { tools, getPartidos, getJugadores, getGrupos, buscarHistorial, buscarWikipedia, getTriviaAleatoria } from "@/lib/ai/tools";
+import { tools, getPartidos, getJugadores, getGrupos, getMarcador, buscarHistorial, buscarWikipedia, getTriviaAleatoria } from "@/lib/ai/tools";
 import { welcomeMessage, limitReachedMessage, pronoGuardadoMessage } from "@/lib/fanbot/messages";
 
 export const runtime = "nodejs";
@@ -608,8 +608,19 @@ export async function POST(req: NextRequest) {
     const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
     const { data: botConfig } = await supabase.from("bot_config").select("prompt").eq("id", 1).maybeSingle();
     const systemPrompt = getSystemPrompt({ contacto: { name: user.name }, promptOverride: botConfig?.prompt ?? null });
+
+    // Cargar historial reciente de conversación (últimos 6 mensajes = 3 intercambios)
+    const { data: historialMsgs } = await supabase
+      .from("mensajes_bot")
+      .select("role, content")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false })
+      .limit(6);
+    const historial = (historialMsgs || []).reverse() as { role: "user" | "assistant"; content: string }[];
+
     const messages: OpenAI.Chat.ChatCompletionMessageParam[] = [
       { role: "system", content: systemPrompt },
+      ...historial,
       { role: "user", content: text },
     ];
 
@@ -654,6 +665,11 @@ export async function POST(req: NextRequest) {
               .maybeSingle();
             if (next) pronoMatch = { id: next.id, equipo_local: next.equipo_local, equipo_visitante: next.equipo_visitante };
           }
+        } else if (toolCall.type === "function" && toolCall.function.name === "getMarcador") {
+          const args = JSON.parse(toolCall.function.arguments);
+          const result = await getMarcador(args.equipo);
+          console.log(`🛠️ getMarcador(${args.equipo || "todos"}) →`, result.slice(0, 120));
+          messages.push({ tool_call_id: toolCall.id, role: "tool", content: result });
         } else if (toolCall.type === "function" && toolCall.function.name === "getGrupos") {
           const args = JSON.parse(toolCall.function.arguments);
           const result = await getGrupos(args.grupo);
@@ -739,6 +755,22 @@ export async function POST(req: NextRequest) {
         buttons,
         footer: "🎮 Solo entretenimiento · Sin dinero real",
       });
+    }
+
+    // Guardar conversación en mensajes_bot para memoria futura
+    await supabase.from("mensajes_bot").insert([
+      { user_id: user.id, role: "user", content: text },
+      { user_id: user.id, role: "assistant", content: reply },
+    ]);
+    // Limpiar historial viejo (conservar sólo últimos 20 mensajes por usuario)
+    const { data: viejos } = await supabase
+      .from("mensajes_bot")
+      .select("id")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false })
+      .range(20, 9999);
+    if (viejos && viejos.length > 0) {
+      await supabase.from("mensajes_bot").delete().in("id", viejos.map((r: { id: string }) => r.id));
     }
 
     // Incrementar contador solo si el bot tuvo información que dar

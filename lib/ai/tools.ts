@@ -160,6 +160,89 @@ export async function getJugadores(equipo?: string, posicion?: string, nombre?: 
   }
 }
 
+// --- getMarcador ---
+export async function getMarcador(equipo?: string): Promise<string> {
+  console.log(`🛠️ getMarcador(equipo=${equipo || "todos"})`);
+  try {
+    const headers = { "x-apisports-key": process.env.API_FOOTBALL_KEY! };
+
+    // Primero intentar partidos en vivo
+    const liveRes = await fetch("https://v3.football.api-sports.io/fixtures?league=1&season=2026&live=all", {
+      headers, cache: "no-store",
+    });
+    const liveJson = await liveRes.json();
+    let fixtures: any[] = liveJson?.response || [];
+
+    // Si no hay en vivo, buscar los de hoy
+    if (fixtures.length === 0) {
+      const today = new Date().toLocaleDateString("en-CA", { timeZone: "America/Mexico_City" }); // YYYY-MM-DD
+      const todayRes = await fetch(`https://v3.football.api-sports.io/fixtures?league=1&season=2026&date=${today}`, {
+        headers, cache: "no-store",
+      });
+      const todayJson = await todayRes.json();
+      fixtures = todayJson?.response || [];
+    }
+
+    if (fixtures.length === 0) return JSON.stringify({ message: "No hay partidos en curso ni programados para hoy." });
+
+    // Filtrar por equipo si se especificó
+    if (equipo) {
+      const q = equipo.toLowerCase();
+      fixtures = fixtures.filter((f: any) =>
+        f.teams?.home?.name?.toLowerCase().includes(q) ||
+        f.teams?.away?.name?.toLowerCase().includes(q)
+      );
+      if (fixtures.length === 0) return JSON.stringify({ message: `${equipo} no tiene partido hoy.` });
+    }
+
+    const STATUS_ES: Record<string, string> = {
+      NS: "Por comenzar", "1H": "Primer tiempo", HT: "Medio tiempo",
+      "2H": "Segundo tiempo", ET: "Tiempo extra", P: "Penales",
+      FT: "Terminado", AET: "Terminado (ET)", PEN: "Terminado (penales)",
+      PST: "Pospuesto", CANC: "Cancelado", ABD: "Abandonado",
+    };
+
+    // Obtener eventos (goles) de cada partido en paralelo
+    const eventosPromises = fixtures.map((f: any) =>
+      fetch(`https://v3.football.api-sports.io/fixtures/events?fixture=${f.fixture.id}&type=Goal`, {
+        headers, cache: "no-store",
+      })
+        .then(r => r.json())
+        .then(j => ({ fixtureId: f.fixture.id, eventos: j?.response || [] }))
+        .catch(() => ({ fixtureId: f.fixture.id, eventos: [] }))
+    );
+    const eventosData = await Promise.all(eventosPromises);
+    const eventosPorPartido: Record<number, any[]> = {};
+    for (const e of eventosData) eventosPorPartido[e.fixtureId] = e.eventos;
+
+    const result = fixtures.map((f: any) => {
+      const eventos = eventosPorPartido[f.fixture.id] || [];
+      const goles = eventos.map((e: any) => ({
+        minuto: e.time?.elapsed ?? null,
+        jugador: e.player?.name ?? null,
+        equipo: e.team?.name ?? null,
+        tipo: e.detail === "Own Goal" ? "autogol" : e.detail === "Penalty" ? "penal" : "gol",
+      }));
+      return {
+        local: f.teams?.home?.name,
+        visitante: f.teams?.away?.name,
+        goles_local: f.goals?.home ?? null,
+        goles_visitante: f.goals?.away ?? null,
+        estado: STATUS_ES[f.fixture?.status?.short] ?? f.fixture?.status?.long ?? "Desconocido",
+        minuto: f.fixture?.status?.elapsed ?? null,
+        estadio: f.fixture?.venue?.name ?? null,
+        ciudad: f.fixture?.venue?.city ?? null,
+        goleadores: goles,
+      };
+    });
+
+    return JSON.stringify(result);
+  } catch (e) {
+    console.error("Error en getMarcador:", e);
+    return JSON.stringify({ error: "No se pudo obtener el marcador en este momento." });
+  }
+}
+
 // --- getTriviaAleatoria ---
 export function getTriviaAleatoria(): string {
   console.log("🛠️ getTriviaAleatoria()");
@@ -236,6 +319,23 @@ export async function buscarWikipedia(consulta: string): Promise<string> {
 
 // --- Definición de la herramienta para OpenAI ---
 export const tools: ChatCompletionTool[] = [
+  {
+    type: 'function',
+    function: {
+      name: 'getMarcador',
+      description: 'Obtiene el marcador en tiempo real de los partidos del Mundial 2026 que están en curso o se jugaron hoy. Úsala cuando el usuario pregunte cómo va un partido, el marcador actual, cómo quedó, cuántos goles lleva un equipo, el resultado de hoy, o cualquier pregunta sobre el score del día.',
+      parameters: {
+        type: 'object',
+        properties: {
+          equipo: {
+            type: 'string',
+            description: 'Nombre del equipo a consultar (ej. "México", "Argentina"). Omitir para ver todos los partidos del día.',
+          },
+        },
+        required: [],
+      },
+    },
+  },
   {
     type: 'function',
     function: {
