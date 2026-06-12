@@ -192,7 +192,39 @@ export async function getMarcador(equipo?: string): Promise<string> {
         f.teams?.home?.name?.toLowerCase().includes(q) ||
         f.teams?.away?.name?.toLowerCase().includes(q)
       );
-      if (fixtures.length === 0) return JSON.stringify({ message: `${equipo} no tiene partido hoy.` });
+      if (fixtures.length === 0) {
+        // Sin partido hoy — buscar próximo en la BD
+        const supabase = getSupabase();
+        const { data: proximos } = await supabase
+          .from("partidos")
+          .select("equipo_local, equipo_visitante, fecha_utc, estadio, ciudad, fase, grupo")
+          .or(`equipo_local.ilike.%${equipo}%,equipo_visitante.ilike.%${equipo}%`)
+          .gte("fecha_utc", new Date().toISOString())
+          .order("fecha_utc", { ascending: true })
+          .limit(1);
+        if (proximos && proximos.length > 0) {
+          const p = proximos[0];
+          const fecha = new Date(p.fecha_utc).toLocaleString("es-MX", {
+            timeZone: "America/Mexico_City",
+            weekday: "long", month: "long", day: "numeric",
+            hour: "2-digit", minute: "2-digit",
+          });
+          return JSON.stringify({
+            sin_partido_hoy: true,
+            mensaje: `${equipo} no tiene partido hoy.`,
+            proximo_partido: {
+              local: p.equipo_local,
+              visitante: p.equipo_visitante,
+              fecha_cdmx: fecha,
+              estadio: p.estadio,
+              ciudad: p.ciudad,
+              fase: p.fase,
+              grupo: p.grupo,
+            },
+          });
+        }
+        return JSON.stringify({ message: `${equipo} no tiene partido hoy y no encontré próximos partidos agendados.` });
+      }
     }
 
     const STATUS_ES: Record<string, string> = {
