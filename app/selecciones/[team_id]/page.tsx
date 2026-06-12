@@ -75,7 +75,7 @@ async function getStats(teamId: number): Promise<{ jugados: number; ganados: num
   try {
     const res = await fetch(`${API_BASE}/teams/statistics?league=1&season=2026&team=${teamId}`, {
       headers: { "x-apisports-key": API_KEY },
-      next: { revalidate: 3600 },
+      next: { revalidate: 1800 },
     });
     const json = await res.json();
     const s = json.response;

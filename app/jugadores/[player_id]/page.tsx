@@ -96,7 +96,7 @@ async function getApiStats(playerId: number): Promise<ApiStats | null> {
       `${API_BASE}/players?id=${playerId}&season=2026&league=1`,
       {
         headers: { "x-apisports-key": API_KEY },
-        next: { revalidate: 3600 },
+        next: { revalidate: 1800 },
       }
     );
     const json = await res.json();
