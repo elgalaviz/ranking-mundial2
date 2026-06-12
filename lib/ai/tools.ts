@@ -392,6 +392,44 @@ export async function getMarcador(equipo?: string): Promise<string> {
           });
         }
 
+        // No está en BD hoy — buscar en la API directamente por team_id
+        const { data: selData } = await supabase
+          .from("selecciones")
+          .select("id")
+          .or(`nombre.ilike.%${equipo}%,nombre.ilike.%${inputEs}%`)
+          .limit(1)
+          .maybeSingle();
+
+        if (selData?.id) {
+          const apiTeamRes = await fetch(
+            `https://v3.football.api-sports.io/fixtures?league=1&season=2026&team=${selData.id}&last=3`,
+            { headers, cache: "no-store" }
+          );
+          const apiTeamJson = await apiTeamRes.json();
+          const teamFixtures: any[] = apiTeamJson?.response || [];
+          if (teamFixtures.length > 0) {
+            const recent = teamFixtures.map((f: any) => {
+              const fecha = new Date(f.fixture.date).toLocaleString("es-MX", {
+                timeZone: "America/Mexico_City",
+                weekday: "long", month: "long", day: "numeric",
+                hour: "2-digit", minute: "2-digit",
+              });
+              const status = f.fixture?.status?.short;
+              const terminado = ["FT", "AET", "PEN"].includes(status);
+              return {
+                local: f.teams?.home?.name,
+                visitante: f.teams?.away?.name,
+                fecha_cdmx: fecha,
+                estado: terminado ? "Terminado" : status === "NS" ? "Por comenzar" : "En curso",
+                resultado: terminado
+                  ? `${f.goals?.home ?? 0}-${f.goals?.away ?? 0}`
+                  : null,
+              };
+            });
+            return JSON.stringify({ partidos_recientes: recent, partidos_de_hoy: resumenHoy });
+          }
+        }
+
         // Sin partido hoy — buscar próximo en la BD
         const { data: proximos } = await supabase
           .from("partidos")
