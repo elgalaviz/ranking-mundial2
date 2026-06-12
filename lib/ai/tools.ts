@@ -160,6 +160,97 @@ export async function getJugadores(equipo?: string, posicion?: string, nombre?: 
   }
 }
 
+// Alias español → fragmento del nombre en inglés que usa la API
+const ALIAS_EQUIPOS: Record<string, string> = {
+  // Apodos y variantes en español
+  "corea": "korea",
+  "corea del sur": "korea",
+  "corea sur": "korea",
+  "checa": "czech",
+  "república checa": "czech",
+  "republica checa": "czech",
+  "alemania": "germany",
+  "francia": "france",
+  "españa": "spain",
+  "países bajos": "netherlands",
+  "paises bajos": "netherlands",
+  "holanda": "netherlands",
+  "suiza": "switzerland",
+  "bélgica": "belgium",
+  "belgica": "belgium",
+  "dinamarca": "denmark",
+  "suecia": "sweden",
+  "noruega": "norway",
+  "irlanda": "ireland",
+  "escocia": "scotland",
+  "gales": "wales",
+  "turquía": "turkey",
+  "turquia": "turkey",
+  "rumania": "romania",
+  "rumanía": "romania",
+  "hungría": "hungary",
+  "hungria": "hungary",
+  "grecia": "greece",
+  "austria": "austria",
+  "croacia": "croatia",
+  "eslovenia": "slovenia",
+  "eslovaquia": "slovakia",
+  "polonia": "poland",
+  "ucrania": "ukraine",
+  "rusia": "russia",
+  "serbia": "serbia",
+  "marruecos": "morocco",
+  "argelia": "algeria",
+  "egipto": "egypt",
+  "sudáfrica": "south africa",
+  "sudafrica": "south africa",
+  "nigeria": "nigeria",
+  "camerún": "cameroon",
+  "camerun": "cameroon",
+  "costa de marfil": "ivory coast",
+  "japón": "japan",
+  "japon": "japan",
+  "irán": "iran",
+  "iran": "iran",
+  "arabia": "saudi",
+  "arabia saudita": "saudi",
+  "arabia saudí": "saudi",
+  "emiratos": "emirates",
+  "australia": "australia",
+  "nueva zelanda": "new zealand",
+  "nueva zelandia": "new zealand",
+  "estados unidos": "united states",
+  "eeuu": "united states",
+  "eua": "united states",
+  "usa": "united states",
+  "costa rica": "costa rica",
+  "panamá": "panama",
+  "panama": "panama",
+  "el salvador": "el salvador",
+  "república dominicana": "dominican",
+  "peru": "peru",
+  "perú": "peru",
+  "ecuador": "ecuador",
+  "bolivia": "bolivia",
+  "paraguay": "paraguay",
+  "uruguay": "uruguay",
+  "chile": "chile",
+  "colombia": "colombia",
+  "venezuela": "venezuela",
+  "méxico": "mexico",
+  "mexico": "mexico",
+  "argentina": "argentina",
+  "brasil": "brazil",
+  "portugal": "portugal",
+  "inglaterra": "england",
+  "italia": "italy",
+};
+
+function resolverNombreEquipo(input: string): string {
+  const normalizado = input.toLowerCase().trim();
+  return ALIAS_EQUIPOS[normalizado] ?? normalizado;
+}
+
 // --- getMarcador ---
 export async function getMarcador(equipo?: string): Promise<string> {
   console.log(`🛠️ getMarcador(equipo=${equipo || "todos"})`);
@@ -187,7 +278,7 @@ export async function getMarcador(equipo?: string): Promise<string> {
 
     // Filtrar por equipo si se especificó
     if (equipo) {
-      const q = equipo.toLowerCase();
+      const q = resolverNombreEquipo(equipo);
       fixtures = fixtures.filter((f: any) =>
         f.teams?.home?.name?.toLowerCase().includes(q) ||
         f.teams?.away?.name?.toLowerCase().includes(q)
