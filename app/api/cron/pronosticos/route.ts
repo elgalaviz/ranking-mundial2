@@ -72,7 +72,7 @@ export async function POST(req: NextRequest) {
       : "Empate";
 
     const msg = acerto
-      ? pronoAcertoMessage(partidoStr, equipoElegido, prono.momio, 200, PRONO_SPONSOR || undefined)
+      ? pronoAcertoMessage(partidoStr, equipoElegido, PRONO_SPONSOR || undefined)
       : pronoFalloMessage(partidoStr, equipoElegido, resultadoRealStr);
 
     await sendWhatsAppText({

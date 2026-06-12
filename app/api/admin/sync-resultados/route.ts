@@ -102,7 +102,7 @@ export async function POST(req: NextRequest) {
                 : "Empate";
 
               const msg = acerto
-                ? pronoAcertoMessage(nombrePartido, labelElegido, prono.momio, 200, PRONO_SPONSOR)
+                ? pronoAcertoMessage(nombrePartido, labelElegido, PRONO_SPONSOR)
                 : pronoFalloMessage(nombrePartido, labelElegido, labelGanador);
 
               try {

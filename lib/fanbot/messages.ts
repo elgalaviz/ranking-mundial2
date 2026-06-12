@@ -46,20 +46,13 @@ export function pronoGuardadoMessage(
 export function pronoAcertoMessage(
   partido: string,
   equipoElegido: string,
-  momio: number,
-  apuesta = 200,
   sponsor?: string
 ): string {
-  const ganancia = Math.round(apuesta * momio);
-  const sponsorPart = sponsor
-    ? `En *${sponsor}* hubieras ganado *$${ganancia} pesos* 🤑`
-    : `Hubieras ganado *$${ganancia} pesos* 🤑`;
+  const sponsorPart = sponsor ? `\n_Pronóstico patrocinado por ${sponsor}_` : "";
   return (
     `⚽ *¡Acertaste el pronóstico!*\n\n` +
     `*${partido}*\n\n` +
-    `Tu apuesta por *${equipoElegido}* fue correcta.\n\n` +
-    `${sponsorPart}\n\n` +
-    `_🎮 Solo entretenimiento · Sin dinero real_`
+    `Tu apuesta por *${equipoElegido}* fue correcta. 🎯${sponsorPart}`
   );
 }
 
