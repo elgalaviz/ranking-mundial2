@@ -374,6 +374,21 @@ export async function getMarcador(equipo?: string): Promise<string> {
         f.teams?.away?.name?.toLowerCase().includes(q)
       );
       if (fixtures.length === 0) {
+        // Antes de decir "no juega hoy", revisar si está en el calendario de hoy de la BD
+        const enBD = resumenHoy.find(p =>
+          p.local.toLowerCase().includes(q) || p.visitante.toLowerCase().includes(q)
+        );
+        if (enBD) {
+          return JSON.stringify({
+            partido_hoy: true,
+            local: enBD.local,
+            visitante: enBD.visitante,
+            hora_cdmx: enBD.hora_cdmx,
+            resultado: enBD.resultado,
+            nota: "Dato de marcador obtenido de la base de datos (la API no devolvió datos en vivo).",
+          });
+        }
+
         // Sin partido hoy — buscar próximo en la BD
         const { data: proximos } = await supabase
           .from("partidos")
