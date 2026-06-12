@@ -246,9 +246,74 @@ const ALIAS_EQUIPOS: Record<string, string> = {
   "italia": "italy",
 };
 
+const GENTILICIOS: Record<string, string> = {
+  // América
+  "mexicanos": "mexico", "aztecas": "mexico", "tricolor": "mexico", "el tri": "mexico",
+  "argentinos": "argentina", "albicelestes": "argentina", "gaucho": "argentina", "gauchos": "argentina",
+  "brasileños": "brazil", "brasileros": "brazil", "cariocas": "brazil", "canarinha": "brazil", "verdeamarela": "brazil",
+  "colombianos": "colombia", "cafeteros": "colombia",
+  "chilenos": "chile", "la roja": "chile",
+  "uruguayos": "uruguay", "charrúas": "uruguay", "charruas": "uruguay", "celestes": "uruguay",
+  "ecuatorianos": "ecuador", "tricolor ecuatoriano": "ecuador",
+  "peruanos": "peru", "incas": "peru",
+  "paraguayos": "paraguay", "guaraníes": "paraguay", "guaranies": "paraguay",
+  "bolivianos": "bolivia", "la verde": "bolivia",
+  "venezolanos": "venezuela", "vinotinto": "venezuela",
+  "costaricenses": "costa rica", "ticos": "costa rica",
+  "panameños": "panama", "canaleros": "panama",
+  "estadounidenses": "united states", "americanos": "united states", "yanquis": "united states",
+  "canadienses": "canada",
+  // Europa
+  "españoles": "spain", "la furia": "spain", "la furia roja": "spain",
+  "franceses": "france", "galos": "france", "les bleus": "france",
+  "alemanes": "germany", "germanos": "germany", "la mannschaft": "germany", "mannschaft": "germany",
+  "ingleses": "england", "los tres leones": "england", "tres leones": "england",
+  "italianos": "italy", "azzurri": "italy", "la azzurri": "italy",
+  "portugueses": "portugal", "lusitanos": "portugal",
+  "holandeses": "netherlands", "neerlandeses": "netherlands", "naranja mecánica": "netherlands", "naranja mecanica": "netherlands",
+  "belgas": "belgium", "diablos rojos": "belgium",
+  "suizos": "switzerland", "helvéticos": "switzerland", "helveticos": "switzerland",
+  "checos": "czech", "checoslovacos": "czech",
+  "polacos": "poland",
+  "croatas": "croatia",
+  "serbios": "serbia",
+  "escoceses": "scotland",
+  "galeses": "wales",
+  "irlandeses": "ireland",
+  "daneses": "denmark",
+  "suecos": "sweden",
+  "noruegos": "norway",
+  "austriacos": "austria", "austriacos": "austria",
+  "turcos": "turkey",
+  "griegos": "greece",
+  "ucranianos": "ukraine",
+  "húngaros": "hungary", "hungaros": "hungary",
+  "rumanos": "romania",
+  "eslovenos": "slovenia",
+  "eslovacos": "slovakia",
+  // África
+  "marroquíes": "morocco", "marroquies": "morocco", "leones del atlas": "morocco",
+  "nigerianos": "nigeria", "súper águilas": "nigeria", "super aguilas": "nigeria",
+  "cameruneses": "cameroon", "leones indomables": "cameroon",
+  "argelinos": "algeria",
+  "egipcios": "egypt", "faraones": "egypt",
+  "sudafricanos": "south africa", "bafana bafana": "south africa",
+  "ivorenses": "ivory coast", "elefantes": "ivory coast",
+  // Asia
+  "japoneses": "japan", "samurais": "japan", "samuráis": "japan", "samurái azul": "japan",
+  "coreanos": "korea", "coreanos del sur": "korea", "taeguk warriors": "korea",
+  "iraníes": "iran", "persas": "iran",
+  "saudíes": "saudi", "saudis": "saudi", "arabes": "saudi",
+  "australianos": "australia", "socceroos": "australia",
+  "neozelandeses": "new zealand", "all whites": "new zealand",
+  "emiratíes": "emirates", "emiratis": "emirates",
+};
+
 function resolverNombreEquipo(input: string): string {
-  const normalizado = input.toLowerCase().trim();
-  return ALIAS_EQUIPOS[normalizado] ?? normalizado;
+  const normalizado = input.toLowerCase().trim()
+    // quitar artículos comunes al inicio
+    .replace(/^(los |las |el |la |los |las )/i, "");
+  return GENTILICIOS[normalizado] ?? ALIAS_EQUIPOS[normalizado] ?? normalizado;
 }
 
 // --- getMarcador ---
