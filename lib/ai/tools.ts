@@ -375,8 +375,11 @@ export async function getMarcador(equipo?: string): Promise<string> {
       );
       if (fixtures.length === 0) {
         // Antes de decir "no juega hoy", revisar si está en el calendario de hoy de la BD
+        // Buscar con el término original en español Y el resuelto en inglés
+        const inputEs = equipo.toLowerCase().trim().replace(/^(los |las |el |la )/i, "");
         const enBD = resumenHoy.find(p =>
-          p.local.toLowerCase().includes(q) || p.visitante.toLowerCase().includes(q)
+          p.local.toLowerCase().includes(q) || p.visitante.toLowerCase().includes(q) ||
+          p.local.toLowerCase().includes(inputEs) || p.visitante.toLowerCase().includes(inputEs)
         );
         if (enBD) {
           return JSON.stringify({
