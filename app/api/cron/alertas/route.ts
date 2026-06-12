@@ -30,12 +30,6 @@ function buildTemplateParams(partido: Record<string, string>, patrocinador: stri
 }
 
 function formatAlertMessage(partido: Record<string, string>, patrocinador: string | null): string {
-  const fecha = new Date(partido.fecha_utc).toLocaleTimeString("es-MX", {
-    timeZone: "America/Mexico_City",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-
   let msg = `⚽ *¡En 15 minutos arranca!*\n\n`;
   msg += `🆚 *${partido.equipo_local}* vs *${partido.equipo_visitante}*\n`;
   if (partido.estadio) msg += `🏟 ${partido.estadio} en ${partido.ciudad || ""}\n`;
@@ -93,6 +87,8 @@ export async function POST(req: NextRequest) {
     }
 
     let totalEnviadas = 0;
+    let totalFallidas = 0;
+    const erroresEnvio: string[] = [];
 
     for (const partido of partidos) {
       const mensaje = formatAlertMessage(partido, mensajePatrocinador);
@@ -100,13 +96,18 @@ export async function POST(req: NextRequest) {
       const idShort = partido.id.replace(/-/g, "");
       const buttonPayload = `quiero_pronostico_${idShort}`;
 
+      // Filtrar usuarios sin teléfono
+      const usuariosConPhone = (usuarios as Array<{ id: string; phone: string | null }>).filter(u => u.phone);
+
+      console.log(`[alertas] Partido: ${partido.equipo_local} vs ${partido.equipo_visitante} | Usuarios: ${usuariosConPhone.length} | Template: ${ALERT_TEMPLATE_NAME || "texto plano"}`);
+
       // Enviar a todos los usuarios
-      const envios = usuarios.map((user: Record<string, string>) => {
+      const envios = usuariosConPhone.map((user) => {
         const send = ALERT_TEMPLATE_NAME
           ? sendWhatsAppTemplate({
               accessToken: WHATSAPP_TOKEN,
               phoneNumberId: PHONE_NUMBER_ID,
-              to: user.phone,
+              to: user.phone!,
               templateName: ALERT_TEMPLATE_NAME,
               bodyParams: buildTemplateParams(partido, mensajePatrocinador),
               buttonPayload,
@@ -114,7 +115,7 @@ export async function POST(req: NextRequest) {
           : sendWhatsAppText({
               accessToken: WHATSAPP_TOKEN,
               phoneNumberId: PHONE_NUMBER_ID,
-              to: user.phone,
+              to: user.phone!,
               body: mensaje,
             });
 
@@ -126,6 +127,11 @@ export async function POST(req: NextRequest) {
               tipo_mensaje: "alerta_partido",
             });
             totalEnviadas++;
+          } else {
+            totalFallidas++;
+            const errMsg = JSON.stringify(result.error).slice(0, 100);
+            erroresEnvio.push(`${user.phone}: ${errMsg}`);
+            console.error(`[alertas] Fallo envío a ${user.phone}:`, result.error);
           }
         });
       });
@@ -142,8 +148,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       ok: true,
       enviadas: totalEnviadas,
+      fallidas: totalFallidas,
       partidos: partidos.length,
       usuarios: usuarios.length,
+      errores: erroresEnvio.slice(0, 5),
     });
   } catch (err) {
     console.error("Cron alertas error:", err);
