@@ -115,6 +115,19 @@ export function getSystemPrompt({
   promptOverride?: string | null;
 }) {
   const nombre = contacto.name || "un fan";
-  const template = promptOverride ?? DEFAULT_SYSTEM_PROMPT;
+  const fechaHoy = new Date().toLocaleDateString("es-MX", {
+    timeZone: "America/Mexico_City",
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+  const horaHoy = new Date().toLocaleTimeString("es-MX", {
+    timeZone: "America/Mexico_City",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+  const fechaInyectada = `\n\n📅 HOY ES: ${fechaHoy}, ${horaHoy} hora de México (CDMX). Usa esta fecha como referencia para "hoy", "mañana", "esta semana", etc.`;
+  const template = (promptOverride ?? DEFAULT_SYSTEM_PROMPT) + fechaInyectada;
   return template.replace(/\{\{nombre\}\}/g, nombre);
 }
