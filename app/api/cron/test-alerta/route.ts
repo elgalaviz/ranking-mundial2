@@ -96,5 +96,6 @@ export async function POST(req: NextRequest) {
     partido: `${partido.equipo_local} vs ${partido.equipo_visitante}`,
     fecha_utc: partido.fecha_utc,
     enviado_a: ADMIN_PHONE,
+    meta_response: result.ok ? (result as {ok: true; data: unknown}).data : (result as {ok: false; error: unknown}).error,
   });
 }
