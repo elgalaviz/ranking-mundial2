@@ -321,25 +321,50 @@ export async function getMarcador(equipo?: string): Promise<string> {
   console.log(`🛠️ getMarcador(equipo=${equipo || "todos"})`);
   try {
     const headers = { "x-apisports-key": process.env.API_FOOTBALL_KEY! };
+    const supabase = getSupabase();
 
-    // Primero intentar partidos en vivo
+    // Calcular rango del día de hoy en CDMX (en UTC para la BD)
+    const todayStr = new Date().toLocaleDateString("en-CA", { timeZone: "America/Mexico_City" }); // YYYY-MM-DD
+    const inicioHoy = new Date(`${todayStr}T06:00:00Z`); // 00:00 CDMX = 06:00 UTC
+    const finHoy = new Date(`${todayStr}T06:00:00Z`);
+    finHoy.setUTCDate(finHoy.getUTCDate() + 1); // 00:00 CDMX del día siguiente
+
+    // Obtener partidos de hoy desde la BD (siempre, como contexto de calendario)
+    const { data: partidosHoy } = await supabase
+      .from("partidos")
+      .select("equipo_local, equipo_visitante, fecha_utc, estadio, ciudad, fase, grupo, goles_local, goles_visitante")
+      .gte("fecha_utc", inicioHoy.toISOString())
+      .lt("fecha_utc", finHoy.toISOString())
+      .order("fecha_utc", { ascending: true });
+
+    const hayPartidosHoy = partidosHoy && partidosHoy.length > 0;
+    const resumenHoy = (partidosHoy || []).map(p => {
+      const hora = new Date(p.fecha_utc).toLocaleTimeString("es-MX", {
+        timeZone: "America/Mexico_City", hour: "2-digit", minute: "2-digit",
+      });
+      const resultado = p.goles_local !== null && p.goles_visitante !== null
+        ? `${p.goles_local}-${p.goles_visitante}` : null;
+      return { local: p.equipo_local, visitante: p.equipo_visitante, hora_cdmx: hora, resultado };
+    });
+
+    // Buscar en la API: primero en vivo, luego todos los de hoy
     const liveRes = await fetch("https://v3.football.api-sports.io/fixtures?league=1&season=2026&live=all", {
       headers, cache: "no-store",
     });
     const liveJson = await liveRes.json();
     let fixtures: any[] = liveJson?.response || [];
 
-    // Si no hay en vivo, buscar los de hoy
     if (fixtures.length === 0) {
-      const today = new Date().toLocaleDateString("en-CA", { timeZone: "America/Mexico_City" }); // YYYY-MM-DD
-      const todayRes = await fetch(`https://v3.football.api-sports.io/fixtures?league=1&season=2026&date=${today}`, {
+      const todayRes = await fetch(`https://v3.football.api-sports.io/fixtures?league=1&season=2026&date=${todayStr}`, {
         headers, cache: "no-store",
       });
       const todayJson = await todayRes.json();
       fixtures = todayJson?.response || [];
     }
 
-    if (fixtures.length === 0) return JSON.stringify({ message: "No hay partidos en curso ni programados para hoy." });
+    if (fixtures.length === 0 && !hayPartidosHoy) {
+      return JSON.stringify({ message: "No hay partidos en curso ni programados para hoy." });
+    }
 
     // Filtrar por equipo si se especificó
     if (equipo) {
@@ -350,7 +375,6 @@ export async function getMarcador(equipo?: string): Promise<string> {
       );
       if (fixtures.length === 0) {
         // Sin partido hoy — buscar próximo en la BD
-        const supabase = getSupabase();
         const { data: proximos } = await supabase
           .from("partidos")
           .select("equipo_local, equipo_visitante, fecha_utc, estadio, ciudad, fase, grupo")
@@ -377,9 +401,13 @@ export async function getMarcador(equipo?: string): Promise<string> {
               fase: p.fase,
               grupo: p.grupo,
             },
+            partidos_de_hoy: resumenHoy,
           });
         }
-        return JSON.stringify({ message: `${equipo} no tiene partido hoy y no encontré próximos partidos agendados.` });
+        return JSON.stringify({
+          message: `${equipo} no tiene partido hoy y no encontré próximos partidos agendados.`,
+          partidos_de_hoy: resumenHoy,
+        });
       }
     }
 
@@ -424,7 +452,7 @@ export async function getMarcador(equipo?: string): Promise<string> {
       };
     });
 
-    return JSON.stringify(result);
+    return JSON.stringify({ partidos: result, partidos_de_hoy: resumenHoy });
   } catch (e) {
     console.error("Error en getMarcador:", e);
     return JSON.stringify({ error: "No se pudo obtener el marcador en este momento." });
