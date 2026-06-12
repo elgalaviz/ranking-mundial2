@@ -25,7 +25,7 @@ async function getLeaderboard(): Promise<Row[]> {
   if (!data) return [];
 
   const map: Record<string, { phone: string; respuestas: number; aciertos: number }> = {};
-  for (const r of data as Array<{ user_id: string; acerto: boolean; users: { phone: string } }>) {
+  for (const r of data as unknown as Array<{ user_id: string; acerto: boolean; users: { phone: string } }>) {
     if (!map[r.user_id]) map[r.user_id] = { phone: r.users.phone, respuestas: 0, aciertos: 0 };
     map[r.user_id].respuestas++;
     if (r.acerto) map[r.user_id].aciertos++;
