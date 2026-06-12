@@ -303,8 +303,8 @@ export default async function JugadorPage({ params }: { params: Promise<{ player
           ) : (
             <div className="text-center py-8 text-gray-400">
               <p className="text-4xl mb-3">⏳</p>
-              <p className="font-medium text-gray-500">Aún no ha disputado minutos en este Mundial</p>
-              <p className="text-sm mt-1">Las estadísticas se actualizan conforme avanza el torneo</p>
+              <p className="font-medium text-gray-500">Estadísticas aún no disponibles en la API</p>
+              <p className="text-sm mt-1">La API puede tardar unas horas en registrar los datos del partido. Intenta actualizar más tarde.</p>
             </div>
           )}
         </div>
