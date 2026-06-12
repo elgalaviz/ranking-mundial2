@@ -408,6 +408,20 @@ export async function getMarcador(equipo?: string): Promise<string> {
           const apiTeamJson = await apiTeamRes.json();
           const teamFixtures: any[] = apiTeamJson?.response || [];
           if (teamFixtures.length > 0) {
+            // Buscar goleadores de cada partido en paralelo
+            const eventsResults = await Promise.all(
+              teamFixtures.map((f: any) =>
+                fetch(`https://v3.football.api-sports.io/fixtures/events?fixture=${f.fixture.id}&type=Goal`, {
+                  headers, cache: "no-store",
+                })
+                  .then(r => r.json())
+                  .then(j => ({ id: f.fixture.id, eventos: j?.response || [] }))
+                  .catch(() => ({ id: f.fixture.id, eventos: [] }))
+              )
+            );
+            const eventosPorId: Record<number, any[]> = {};
+            for (const e of eventsResults) eventosPorId[e.id] = e.eventos;
+
             const recent = teamFixtures.map((f: any) => {
               const fecha = new Date(f.fixture.date).toLocaleString("es-MX", {
                 timeZone: "America/Mexico_City",
@@ -416,14 +430,19 @@ export async function getMarcador(equipo?: string): Promise<string> {
               });
               const status = f.fixture?.status?.short;
               const terminado = ["FT", "AET", "PEN"].includes(status);
+              const goles = (eventosPorId[f.fixture.id] || []).map((e: any) => ({
+                minuto: e.time?.elapsed,
+                jugador: e.player?.name,
+                equipo: e.team?.name,
+                tipo: e.detail === "Own Goal" ? "autogol" : e.detail === "Penalty" ? "penal" : "gol",
+              }));
               return {
                 local: f.teams?.home?.name,
                 visitante: f.teams?.away?.name,
                 fecha_cdmx: fecha,
                 estado: terminado ? "Terminado" : status === "NS" ? "Por comenzar" : "En curso",
-                resultado: terminado
-                  ? `${f.goals?.home ?? 0}-${f.goals?.away ?? 0}`
-                  : null,
+                resultado: terminado ? `${f.goals?.home ?? 0}-${f.goals?.away ?? 0}` : null,
+                goleadores: goles,
               };
             });
             return JSON.stringify({ partidos_recientes: recent, partidos_de_hoy: resumenHoy });
