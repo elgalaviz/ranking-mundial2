@@ -80,10 +80,18 @@ function verifyMetaSignature(rawBody: string, signature: string | null): boolean
   }
 }
 
+const SCORE_TRIGGERS = [
+  'cómo va', 'como va', 'cómo van', 'como van', 'cómo quedó', 'como quedo',
+  'cómo quedo', 'como quedó', 'marcador', 'resultado', 'ganó', 'gano',
+  'perdió', 'perdio', 'empató', 'empato', 'quién anotó', 'quien anoto',
+  'quién metió', 'quien metio', 'goles', 'score', 'van ganando', 'van perdiendo',
+  'están ganando', 'estan ganando', 'qué marcador', 'que marcador',
+];
+
 const MATCH_TRIGGERS = [
   'partido', 'juego', 'juega', 'jugará', 'jugaran', 'fecha', 'horario',
   'estadio', 'grupo', 'cuándo', 'cuando', 'primer', 'próximo', 'proximo',
-  'resultado', 'marcador', 'jornada', 'fase',
+  'jornada', 'fase',
 ];
 
 function getSupabase() {
@@ -624,12 +632,16 @@ export async function POST(req: NextRequest) {
       { role: "user", content: text },
     ];
 
-    const forceMatchTool = MATCH_TRIGGERS.some((kw) => incomingText.includes(kw));
-    const toolChoice = forceMatchTool
+    const forceScoreTool = SCORE_TRIGGERS.some((kw) => incomingText.includes(kw));
+    const forceMatchTool = !forceScoreTool && MATCH_TRIGGERS.some((kw) => incomingText.includes(kw));
+    const toolChoice = forceScoreTool
+      ? ({ type: "function", function: { name: "getMarcador" } } as const)
+      : forceMatchTool
       ? ({ type: "function", function: { name: "getPartidos" } } as const)
       : ("auto" as const);
 
-    if (forceMatchTool) console.log("🛠️ Forzando herramienta getPartidos");
+    if (forceScoreTool) console.log("🛠️ Forzando herramienta getMarcador");
+    else if (forceMatchTool) console.log("🛠️ Forzando herramienta getPartidos");
 
     let aiResponse = await openai.chat.completions.create({
       model: process.env.OPENAI_MODEL || "gpt-4o-mini",
