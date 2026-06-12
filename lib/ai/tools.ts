@@ -283,7 +283,7 @@ const GENTILICIOS: Record<string, string> = {
   "daneses": "denmark",
   "suecos": "sweden",
   "noruegos": "norway",
-  "austriacos": "austria", "austriacos": "austria",
+  "austriacos": "austria",
   "turcos": "turkey",
   "griegos": "greece",
   "ucranianos": "ukraine",
