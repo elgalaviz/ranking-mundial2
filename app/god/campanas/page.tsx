@@ -86,7 +86,7 @@ export default function CampanasPage() {
           className="w-full border border-gray-200 rounded-lg p-3 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-gray-300 resize-none"
         />
         <p className="text-xs text-amber-600">
-          ⚠️ Solo llega a usuarios que hayan chateado con el bot en las últimas 24h. Para otros necesitas un template aprobado en Meta.
+          ⚠️ Sin template: solo llega a usuarios que hayan chateado en las últimas 24h. Con el template <code className="bg-amber-50 px-1 rounded">activar_alertas</code> aprobado en Meta y la variable <code className="bg-amber-50 px-1 rounded">ACTIVAR_ALERTAS_TEMPLATE_NAME</code> configurada, llega a todos con botones de respuesta.
         </p>
       </div>
 

@@ -1,12 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { sendWhatsAppText } from "@/lib/ai/sendWhatsAppText";
+import { sendWhatsAppTemplate } from "@/lib/ai/sendWhatsAppInteractive";
 
 export const runtime = "nodejs";
 
 const CRON_SECRET = process.env.CRON_SECRET || "";
 const WHATSAPP_TOKEN = process.env.WHATSAPP_TOKEN || "";
 const PHONE_NUMBER_ID = process.env.WHATSAPP_PHONE_NUMBER_ID || "";
+const ACTIVAR_TEMPLATE = process.env.ACTIVAR_ALERTAS_TEMPLATE_NAME || "";
 
 function getSupabase() {
   return createClient(
@@ -56,12 +58,21 @@ export async function POST(req: NextRequest) {
 
   await Promise.allSettled(
     usuarios.map(async (u) => {
-      const result = await sendWhatsAppText({
-        accessToken: WHATSAPP_TOKEN,
-        phoneNumberId: PHONE_NUMBER_ID,
-        to: u.phone!,
-        body: mensaje,
-      });
+      const result = ACTIVAR_TEMPLATE
+        ? await sendWhatsAppTemplate({
+            accessToken: WHATSAPP_TOKEN,
+            phoneNumberId: PHONE_NUMBER_ID,
+            to: u.phone!,
+            templateName: ACTIVAR_TEMPLATE,
+            bodyParams: [u.name || "fanático"],
+            buttonPayloads: ["activar_si", "activar_no"],
+          })
+        : await sendWhatsAppText({
+            accessToken: WHATSAPP_TOKEN,
+            phoneNumberId: PHONE_NUMBER_ID,
+            to: u.phone!,
+            body: mensaje,
+          });
       if (result.ok) enviadas++;
       else fallidas++;
     })

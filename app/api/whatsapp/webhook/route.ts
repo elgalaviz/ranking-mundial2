@@ -512,6 +512,18 @@ export async function POST(req: NextRequest) {
       return new NextResponse("ok", { status: 200 });
     }
 
+    // --- Botones del template activar_alertas ---
+    if (text === "activar_si") {
+      await supabase.from("users").update({ alertas_activas: true }).eq("whatsapp_id", waId);
+      await sendWhatsAppText({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from, body: "✅ *¡Listo!* Te avisaré 15 minutos antes de cada partido. ⚽🔔" });
+      return new NextResponse("ok", { status: 200 });
+    }
+    if (text === "activar_no") {
+      await supabase.from("users").update({ alertas_activas: false }).eq("whatsapp_id", waId);
+      await sendWhatsAppText({ accessToken: WHATSAPP_TOKEN, phoneNumberId: PHONE_NUMBER_ID, to: from, body: "👍 Entendido. Si cambias de opinión escríbeme *\"quiero alertas\"* cuando quieras. ⚽" });
+      return new NextResponse("ok", { status: 200 });
+    }
+
     // --- Comandos especiales (no cuentan contra el límite) ---
     if (incomingText === "sí" || incomingText === "si" || incomingText === "sí alertas" || incomingText === "si alertas" || incomingText === "quiero alertas") {
       await supabase.from("users").update({ alertas_activas: true }).eq("whatsapp_id", waId);
