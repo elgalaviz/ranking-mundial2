@@ -16,6 +16,7 @@ import {
   User,
   Shirt,
   Trophy,
+  Send,
 } from "lucide-react";
 
 const navigation = [
@@ -25,6 +26,7 @@ const navigation = [
   { name: "Jugadores", href: "/god/jugadores", icon: Shirt },
   { name: "Pronósticos", href: "/god/pronosticos", icon: Target },
   { name: "Trivia", href: "/god/trivia", icon: Trophy },
+  { name: "Campañas", href: "/god/campanas", icon: Send },
   { name: "Pagos", href: "/god/pagos", icon: DollarSign },
   { name: "Patrocinios", href: "/god/patrocinadores", icon: Megaphone },
   { name: "Bot", href: "/god/bot", icon: Bot },
