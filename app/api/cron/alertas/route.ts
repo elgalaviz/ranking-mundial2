@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { sendWhatsAppText } from "@/lib/ai/sendWhatsAppText";
-import { sendWhatsAppTemplate } from "@/lib/ai/sendWhatsAppInteractive";
+import { sendWhatsAppTemplate, sendWhatsAppReplyButtons } from "@/lib/ai/sendWhatsAppInteractive";
 
 export const runtime = "nodejs";
 
@@ -19,13 +19,13 @@ function getSupabase() {
 
 function buildTemplateParams(partido: Record<string, string>, patrocinador: string | null): string[] {
   return [
-    partido.equipo_local,                                                              // {{1}}
-    partido.equipo_visitante,                                                          // {{2}}
-    partido.estadio || "",                                                             // {{3}}
-    partido.ciudad || "",                                                              // {{4}}
-    partido.grupo ? `Grupo ${partido.grupo}` : (partido.fase || ""),                  // {{5}}
-    patrocinador || "",                                                                // {{6}}
-    partido.canales || "",                                                             // {{7}}
+    partido.equipo_local,
+    partido.equipo_visitante,
+    partido.estadio || "",
+    partido.ciudad || "",
+    partido.grupo ? `Grupo ${partido.grupo}` : (partido.fase || ""),
+    patrocinador || "",
+    partido.canales || "",
   ];
 }
 
@@ -36,7 +36,6 @@ function formatAlertMessage(partido: Record<string, string>, patrocinador: strin
   if (partido.grupo) msg += `👥 Grupo ${partido.grupo}\n`;
   if (partido.canales) msg += `📺 Donde ver: ${partido.canales}\n`;
   if (patrocinador) msg += `\n🎯 ${patrocinador}`;
-
   return msg;
 }
 
@@ -53,7 +52,6 @@ export async function POST(req: NextRequest) {
     const en15 = new Date(ahora.getTime() + 15 * 60 * 1000);
     const en20 = new Date(ahora.getTime() + 20 * 60 * 1000);
 
-    // Buscar partidos que arrancan en 15-20 minutos y sin alerta enviada
     const { data: partidos, error } = await supabase
       .from("partidos")
       .select("*")
@@ -66,7 +64,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true, enviadas: 0, msg: "Sin partidos próximos" });
     }
 
-    // Obtener patrocinador activo (si hay)
     const { data: patrocinadores } = await supabase
       .from("patrocinadores")
       .select("mensaje_texto")
@@ -76,51 +73,95 @@ export async function POST(req: NextRequest) {
 
     const mensajePatrocinador = patrocinadores?.mensaje_texto || null;
 
-    // Solo usuarios que explícitamente activaron alertas
+    // Usuarios con alertas activas
     const { data: usuarios } = await supabase
       .from("users")
       .select("id, phone")
-      .eq("alertas_activas", true);
+      .eq("alertas_activas", true)
+      .not("phone", "is", null);
 
     if (!usuarios || usuarios.length === 0) {
       return NextResponse.json({ ok: true, enviadas: 0, msg: "Sin usuarios registrados" });
     }
 
+    // Detectar qué usuarios tienen ventana de 24h abierta (escribieron en las últimas 24h)
+    const hace24h = new Date(ahora.getTime() - 24 * 60 * 60 * 1000).toISOString();
+    const { data: conVentana } = await supabase
+      .from("mensajes_bot")
+      .select("user_id")
+      .eq("role", "user")
+      .gte("created_at", hace24h);
+
+    const idsConVentana = new Set((conVentana || []).map((m: { user_id: string }) => m.user_id));
+
     let totalEnviadas = 0;
     let totalFallidas = 0;
+    let usaronVentana = 0;
+    let usaronTemplate = 0;
     const erroresEnvio: string[] = [];
 
     for (const partido of partidos) {
       const mensaje = formatAlertMessage(partido, mensajePatrocinador);
-
       const idShort = partido.id.replace(/-/g, "");
       const buttonPayload = `quiero_pronostico_${idShort}`;
+      const short = (name: string) => name.split(" ")[0].slice(0, 20);
 
-      // Filtrar usuarios sin teléfono
-      const usuariosConPhone = (usuarios as Array<{ id: string; phone: string | null }>).filter(u => u.phone);
+      console.log(`[alertas] ${partido.equipo_local} vs ${partido.equipo_visitante} | ${usuarios.length} usuarios | ventana: ${idsConVentana.size}`);
 
-      console.log(`[alertas] Partido: ${partido.equipo_local} vs ${partido.equipo_visitante} | Usuarios: ${usuariosConPhone.length} | Template: ${ALERT_TEMPLATE_NAME || "texto plano"}`);
+      const envios = (usuarios as Array<{ id: string; phone: string }>).map(async (user) => {
+        const tieneVentana = idsConVentana.has(user.id);
 
-      // Enviar a todos los usuarios
-      const envios = usuariosConPhone.map((user) => {
-        const send = ALERT_TEMPLATE_NAME
-          ? sendWhatsAppTemplate({
+        try {
+          let ok = false;
+
+          if (tieneVentana) {
+            // Ventana abierta: texto gratis + botón interactivo
+            const [r1, r2] = await Promise.all([
+              sendWhatsAppText({
+                accessToken: WHATSAPP_TOKEN,
+                phoneNumberId: PHONE_NUMBER_ID,
+                to: user.phone,
+                body: mensaje,
+              }),
+              sendWhatsAppReplyButtons({
+                accessToken: WHATSAPP_TOKEN,
+                phoneNumberId: PHONE_NUMBER_ID,
+                to: user.phone,
+                body: `¿Cómo crees que quede? 🎯`,
+                buttons: [
+                  { id: `prono_L_100_${idShort}`, title: short(partido.equipo_local) },
+                  { id: `prono_E_100_${idShort}`, title: "Empate" },
+                  { id: `prono_V_100_${idShort}`, title: short(partido.equipo_visitante) },
+                ],
+                footer: "🎮 Solo entretenimiento · Sin dinero real",
+              }),
+            ]);
+            ok = r1.ok;
+            usaronVentana++;
+          } else if (ALERT_TEMPLATE_NAME) {
+            // Sin ventana: template (cobrado)
+            const r = await sendWhatsAppTemplate({
               accessToken: WHATSAPP_TOKEN,
               phoneNumberId: PHONE_NUMBER_ID,
-              to: user.phone!,
+              to: user.phone,
               templateName: ALERT_TEMPLATE_NAME,
               bodyParams: buildTemplateParams(partido, mensajePatrocinador),
               buttonPayload,
-            })
-          : sendWhatsAppText({
+            });
+            ok = r.ok;
+            usaronTemplate++;
+          } else {
+            // Sin template configurado: texto plano
+            const r = await sendWhatsAppText({
               accessToken: WHATSAPP_TOKEN,
               phoneNumberId: PHONE_NUMBER_ID,
-              to: user.phone!,
+              to: user.phone,
               body: mensaje,
             });
+            ok = r.ok;
+          }
 
-        return send.then(async (result) => {
-          if (result.ok) {
+          if (ok) {
             await supabase.from("registros_whatsapp").insert({
               user_id: user.id,
               partido_id: partido.id,
@@ -129,16 +170,15 @@ export async function POST(req: NextRequest) {
             totalEnviadas++;
           } else {
             totalFallidas++;
-            const errMsg = JSON.stringify(result.error).slice(0, 100);
-            erroresEnvio.push(`${user.phone}: ${errMsg}`);
-            console.error(`[alertas] Fallo envío a ${user.phone}:`, result.error);
           }
-        });
+        } catch (e) {
+          totalFallidas++;
+          erroresEnvio.push(`${user.phone}: ${String(e).slice(0, 80)}`);
+        }
       });
 
       await Promise.allSettled(envios);
 
-      // Marcar alerta como enviada
       await supabase
         .from("partidos")
         .update({ alerta_enviada: true })
@@ -149,8 +189,9 @@ export async function POST(req: NextRequest) {
       ok: true,
       enviadas: totalEnviadas,
       fallidas: totalFallidas,
+      ventana_gratis: usaronVentana,
+      template_pagado: usaronTemplate,
       partidos: partidos.length,
-      usuarios: usuarios.length,
       errores: erroresEnvio.slice(0, 5),
     });
   } catch (err) {
@@ -159,7 +200,6 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// GET para verificar que el endpoint responde
 export async function GET() {
   return NextResponse.json({ ok: true, endpoint: "cron/alertas activo" });
 }
